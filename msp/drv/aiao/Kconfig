@@ -1,0 +1,17 @@
+
+menuconfig MT_AIAO
+	bool "AIAO"
+	default y
+	depends on MT_MSP
+	help
+	  Montage AIn AOut Driver
+
+if MT_AIAO
+
+config MT_AIN
+	bool "AIN"
+	default y
+	help
+	  Montage Audio Input
+
+endif #MT_AIAO

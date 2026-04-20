@@ -1,0 +1,4 @@
+how-to use test vectors:
+    1. copy all files into fs
+    2. run sample_mss, and run sub-command 'path' to set the files' path, e.g. /usr/bin/
+    3. run related commands.

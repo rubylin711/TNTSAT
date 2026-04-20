@@ -1,0 +1,6 @@
+ifeq '$(MSPKOPTION_ENABLE_APP)' '1'
+dirs = \
+  Integration \
+  Samples \
+  Unit
+endif

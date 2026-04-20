@@ -1,0 +1,7 @@
+dirs = \
+  ComponentsUnitTests \
+  MP4Parser \
+  PAL \
+  streamer \
+  PALUnitTests \
+

@@ -1,0 +1,3 @@
+dirs = \
+  $(MSPK_PLATFORM) \
+  Common \

@@ -1,0 +1,5058 @@
+/*
+ * @file nv_spr.c
+ * @brief Nagravision Stream Processing APIs implemetation on Montage Symphony4 platform
+ *
+ * Copyright (C) 2020 Montage Technology Group Limited and its affiliated companies
+ * All rights reserved.
+ */
+
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <sys/reboot.h>
+#include <signal.h>
+
+#include <tee_client_api.h>
+#include "nvta_tflts_gptee.h"
+
+#include "mt_common.h"
+#include "mt_adp_audio.h"
+#include "mt_adp_mpi.h"
+#include "mt_adp_pvr.h"
+#include "mt_unf_common.h"
+#include "mt_unf_ecs.h"
+#include "mt_unf_avplay.h"
+#include "mt_unf_sound.h"
+#include "mt_unf_disp.h"
+#include "mt_unf_vo.h"
+#include "mt_unf_demux.h"
+#include "mt_unf_pvr.h"
+#include "mt_unf_gpio.h"
+#include "mt_unf_disp.h"
+
+#include "mt_unf_cipher_v2.h"
+#include "mt_unf_dma.h"
+
+#include "mt_hdmi.h"
+#include "nv_spr.h"
+#include "nocs_sec_impl.h"
+#include "mt_sec_ext.h"
+#include "mt_spr_ext.h"
+#include "mt_record.h"
+
+//#define ONLY_TEST_FOR_CLEAR_TS // test for str
+
+
+
+
+//#define CLOSE_SECOND_TS
+
+#define EMSG(fmt, ...)   printf("[ERR]: %s:%d " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+
+#define DMSG(fmt, ...)   //printf("[DBG]: %s:%d " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+//注意:加了这个打印会导致OTT dual 重复播台的时候，播台失败,DVB+OTT也会失败。
+
+
+#define TMSG(fmt, ...)  //printf("[DBG]: %s:%d " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+
+
+#define CFG_TFL_USE_DYNC_SHMEM 1
+
+#if CFG_TFL_USE_DYNC_SHMEM
+#define TFL_DYNC_SHMEM_SIZE (3 * 1024 * 1024)
+uint8_t tfl_dync_sh_mem[TFL_DYNC_SHMEM_SIZE] = {1};
+TEEC_SharedMemory tfl_shm = {
+    .buffer = (void *)tfl_dync_sh_mem,
+    .size = TFL_DYNC_SHMEM_SIZE,
+    .flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT,
+};
+#endif
+
+static void hex_dump(char *message, const unsigned char *buffer, int len)
+{
+	#if 1
+    int i = 0;
+    if (message) {
+        printf("%s:\n", message);
+    }
+    for (i=0;i<len;i++) {
+        printf("%02X ", buffer[i]);
+		if ((i+1)%16==0)
+			printf("\n");
+    }
+    printf("\n");
+	#endif
+}
+
+//#define FILE_DUMP_DEBUG //这个打开会影响DVB播台，因为影响了码流的注入速度
+						 //但是这个不打开会影响OTT PIP 播台
+#ifdef FILE_DUMP_DEBUG
+
+//audio dump
+#define FILE_DUMP_AUDIO
+#define FILE_DUMP_VIDEO
+
+FILE *gtsfp = NULL;
+
+
+FILE *gVfp = NULL;
+#ifdef FILE_DUMP_AUDIO
+FILE *gAfp = NULL;
+//const char *test_audio_file_name = "/root/simbad/emi4024_audio.m4s";
+//const char *test_audio_file_name = "/root/simbad/emi4029_audio.aac";
+//DMA debug
+const char *test_audio_file_name = "/media/sda1/audio.es";
+//const char *test_audio_file_name = "/root/simbad/emi4024_audio.aac";
+//const char *test_audio_file_name = "/root/simbad/emi402A_audio.aac";
+#endif
+#ifdef FILE_DUMP_VIDEO
+//const char *test_file_name = "/root/simbad/emi4024_video.m4s";
+//const char *test_file_name = "/root/simbad/emi4023.ts";
+//const char *test_file_name = "/root/simbad/stress06_clear.ts";
+const char *test_file_name = "/media/sda1/ott_clear_video_size_0888.es";
+//const char *test_file_name = "/root/simbad/emi4029.es";
+#endif
+
+const char *ts_test_file_name = "/media/sda1/pvr.ts";
+
+static void open_test_file(void);
+static void close_test_file(void);
+static void write_test_file(FILE *fp, unsigned char *pData, unsigned int len);
+#endif
+
+
+#define MT_INVALID_PTS64			(MT_U64)(-1)
+
+
+//replaying test
+//#define LOCAL_TS_BUF_SIZE (188 * 1280 * 10)
+//#define LOCAL_TS_BUF_SIZE (188 * 1280)
+//10M for replay buffering test
+#define LOCAL_TS_BUF_SIZE (0xA00000)
+//total mmz size:32M, ott protect buffer:16M
+#define LOCAL_OTT_SMP_BUF_SIZE (0x1000000)
+
+//intermediate inject data buffer: dvb inject size=188, replaying inject size=1280
+//#define TS_INT_BUF_SIZE (1280)
+#define TS_INT_BUF_SIZE (1280*4)
+
+/*Size shall be 64K bytes aligned*/
+//#define DEMUX_TS_BUF_SIZE 0x100000
+#define DEMUX_TS_BUF_SIZE  (2 * 0x200000) //0x200000//(0x200000*2)//0x200000
+/*For Raw EMIs: 4020, 4021, 4023, injectData::size = 1280*/
+#define DEMUX_RAW_REP_PUT_SIZE (188 * 512)//(1280*10)//
+/*For EMIs: 0020, 0021, 0023, injectData::size = 1316*/
+#define DEMUX_TS_REP_PUT_SIZE (188 * 7 * 64)
+//#define DEMUX_TS_PUT_SIZE (188 * 16) //Debugging
+#define DEMUX_TS_PUT_SIZE (188 * 512) //It should be good for all TS injection
+#define VIDEO_ES_BUF_SIZE 0x10000
+#define AUDIO_ES_BUF_SIZE 0x1000
+#define DEMUX_INVALID_ID 0xFFFFFFFF
+/* 10G bytes or no limits */
+#define MAX_RECORD_FILE_SIZE (10 * 1024 * 1024 * 1024ul)
+
+/* Refer to ISO/IEC 13818-1, table 2-29 */
+enum streamTypeTabel {
+	DVB_STREAM_TYPE_MPEG1_VIDEO = 0x01,
+	DVB_STREAM_TYPE_MPEG2_VIDEO = 0x02,
+	DVB_STREAM_TYPE_MPEG4_VIDEO = 0x10,
+	DVB_STREAM_TYPE_H264_VIDEO  = 0x1B,
+	DVB_STREAM_TYPE_HEVC_VIDEO  = 0x24,
+	DVB_STREAM_TYPE_AVS_VIDEO   = 0x42,
+	DVB_STREAM_TYPE_VC1_VIDEO   = 0xEA,
+	DVB_STREAM_TYPE_MPEG1_AUDIO = 0x03,
+	DVB_STREAM_TYPE_MPEG2_AUDIO = 0x04,
+	DVB_STREAM_TYPE_AAC_AUDIO   = 0x0F,
+	DVB_STREAM_TYPE_AAC_AUDIO_1 = 0x11,
+};
+
+mt_u32 record_pip_flg = 0;
+static TUnsignedInt32 pkcs7_padding_data_length(TUnsignedInt8 *data, TUnsignedInt32 size, TUnsignedInt32 modulus);
+static mt_u8 *vir2phy(const mt_u8 *vir);
+/*
+ * list of static Media Buffers.
+ *
+ * NOTE: This list may be modified based on the specific memory map of device project.
+ */
+
+
+#if 0
+/* ddr zone, 72M, [152:224] */
+#define MM_DDR_MMZ_START		0x9800000//152M
+#define MM_DDR_MMZ_SIZE			0x4800000//72M
+/* av zone, 32M, [224:256] */
+#define MM_AV_MMZ_START			0xe000000//224M
+#define MM_AV_MMZ_SIZE			       0x12000000//288M
+/* pvr0 16M, [226:210] */
+#define MM_OTT_START			0xD200000//210M
+#define MM_OTT_SIZE				0x1000000//16M
+/* pvr0 reused by OTT 16M, [226:210] */
+#define MM_PVR_START			0xD200000//210M
+#define MM_PVR_SIZE				0x1000000//16M
+/* audio es zone, 2M, [228:226] --fixed, only can be extended to lower memory */
+#define MM_AUDIO_ES_START		0x600000//6M
+#define MM_AUDIO_ES_SIZE		0x400000//4M
+#else
+#define MM_DDR_MMZ_START		0xB800000// 184M
+#define MM_DDR_MMZ_SIZE			0x3400000//52M
+
+#define MM_AV_MMZ_START			0x10000000//256M
+#define MM_AV_MMZ_SIZE			0xFC00000//252M
+
+#define MM_OTT_START			0xEC00000//236M pvr0
+#define MM_OTT_SIZE				0x1000000// 16M
+
+#define MM_PVR_START			0xEC00000//236M pvr0 video
+#define MM_PVR_SIZE				0x1000000// 16M
+
+#define MM_AUDIO_ES_START		0xFC00000//252M pvr1 audio
+#define MM_AUDIO_ES_SIZE		0x400000//4M
+
+#define MM_VIDEO_ES_START		0xb980000//0xb980000, video es buffer
+#define MM_VIDEO_ES_SIZE		0x800000//8M
+
+#endif
+//起始地址要求256k 对齐
+
+
+
+/* Note: OTT and PVR shall not co-exist */
+static MBInfo SprMBInfo[] = {
+	/* Audio */
+	{MM_AUDIO_ES_START, MM_AUDIO_ES_SIZE, MB_AUD},
+	/* Video */
+	{MM_AV_MMZ_START, MM_AV_MMZ_SIZE, MB_VID},
+	/* PVR */
+	{MM_PVR_START, MM_PVR_SIZE, MB_REC},
+	/* OTT */
+	{MM_OTT_START, MM_OTT_SIZE, MB_OTT},
+	/* VIDEO ES BUFFER */
+	{MM_VIDEO_ES_START, MM_VIDEO_ES_SIZE, MB_VIDEO_ES},
+};
+
+
+static void getSprMBInfoByType(MBType t, MBInfo *mb)
+{
+	int i = 0;
+
+	for (i = 0; i < sizeof(SprMBInfo) / sizeof(SprMBInfo[0]); i++) {
+		if (SprMBInfo[i].type == t) {
+			mb->size = SprMBInfo[i].size;
+			mb->start = SprMBInfo[i].start;
+			mb->type = SprMBInfo[i].type;
+			break;
+		}
+	}
+}
+
+/*
+ * See mt_unf_demux.h
+ */
+#define MAX_PORT_NUM	(8)
+
+struct chunkInfo {
+	TUnsignedInt8 *start;
+	TUnsignedInt32 size;
+    TUnsignedInt32 sizeInUse;//real size
+	TUnsignedInt8 status; //0:Freed, 1:In-Use
+};
+
+static void *mmz_malloc(const char *area, ulong size);
+static mt_s32 mmz_free(mt_void *p_vir);
+
+static mt_handle voutWindow = MT_INVALID_HANDLE;
+static mt_handle voutWindow2 = MT_INVALID_HANDLE;
+
+static pthread_rwlock_t rwlock = PTHREAD_RWLOCK_INITIALIZER;
+static TBoolean isPlatformInitialized = FALSE;
+struct list_head transportSessionList = {
+	.prev = &transportSessionList,
+	.next = &transportSessionList
+};
+
+TEEC_Context g_teec_ctx;
+
+#define RD_LOCK(lock) \
+	({ \
+		if (pthread_rwlock_rdlock(lock)) { \
+			EMSG("apply a read lock failed"); \
+			return NV_SPR_ERROR;              \
+		} \
+	})
+
+#define RD_UNLOCK(lock) \
+	({ \
+		if (pthread_rwlock_unlock(lock)) { \
+			EMSG("release a read lock failed"); \
+			return NV_SPR_ERROR;			  \
+		} \
+	})
+
+#define WR_LOCK(lock) \
+	({ \
+		if (pthread_rwlock_wrlock(lock)) { \
+			EMSG("apply a write lock failed"); \
+			return NV_SPR_ERROR;			  \
+		} \
+	})
+
+#define WR_UNLOCK(lock) \
+	({ \
+		if (pthread_rwlock_unlock(lock)) { \
+			EMSG("release a write lock failed"); \
+			return NV_SPR_ERROR;			  \
+		} \
+	})
+
+#define CHECK_CALL_MT_FUNC(func, ...) \
+	({ \
+		mt_s32 chk_ret = func(__VA_ARGS__); \
+		if (chk_ret != MT_SUCCESS)		  \
+			EMSG("call " #func " failed, return error = 0x%x", chk_ret); \
+		chk_ret; \
+	})
+
+#define CHECK_TSID_VALIDITY(tsid) \
+	({ \
+		if (tsid == TRANSPORT_SESSION_ID_INVALID) {          \
+			EMSG("the transport session id is invalid"); \
+			return NV_SPR_ERROR_BAD_PARAM;			         \
+		} \
+	})
+
+static void addToListTail(struct list_head *new, struct list_head *head)
+{
+	struct list_head *prev = head->prev;
+	struct list_head *next = head;
+
+	prev->next = new;
+	new->prev = prev;
+	new->next = next;
+	next->prev = new;
+}
+
+static void delFromList(struct list_head *node)
+{
+	struct list_head *prev = node->prev;
+	struct list_head *next = node->next;
+
+	prev->next = next;
+	next->prev = prev;
+}
+
+#if 0 //unused
+static struct transportSession *getTransportSessionByType(enum transportSessionType type)
+{
+	struct transportSession *ts = NULL;
+	struct list_head *node;
+	size_t offset = (size_t)(&((struct transportSession *)0)->listNode);
+
+	for (node = transportSessionList.next; node != &transportSessionList; node = node->next) {
+		ts = (struct transportSession *)((char *)node - offset);
+
+		if (ts->sessionType == type)
+			return ts;
+	}
+
+	return NULL;
+}
+#endif
+
+static struct transportSession *getTransportSessionById(TTransportSessionId tsid)
+{
+	struct transportSession *ts = NULL;
+	struct list_head *node;
+	size_t offset = (size_t)(&((struct transportSession *)0)->listNode);
+
+	for (node = transportSessionList.next; node != &transportSessionList; node = node->next) {
+		ts = (struct transportSession *)((char *)node - offset);
+
+		if (ts->tsid == tsid)
+			return ts;
+	}
+
+	return NULL;
+}
+
+static TBoolean getOthersSessionOpenedFlg( TTransportSessionId tsid )
+{
+	struct transportSession *ts = NULL;
+	struct list_head *node;
+	size_t offset = (size_t)(&((struct transportSession *)0)->listNode);
+
+	for (node = transportSessionList.next; node != &transportSessionList; node = node->next) {
+		ts = (struct transportSession *)((char *)node - offset);
+		printf("getOthersSessionOpenedFlg %d %d tsid = %d \n", ts->tsid, ts->isClosing, tsid );
+		if ( ts->tsid != tsid && ts->isClosing == FALSE)
+		{
+			printf("getOthersSessionOpenedFlg  %d %d ", ts->tsid, ts->isClosing);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+
+static struct transportSession *newTransportSession(TTransportSessionId tsid)
+{
+	struct transportSession *ts;
+
+	ts = getTransportSessionById(tsid);
+	if (ts) {
+		EMSG("current transport session id(%d) is existing", tsid);
+		return NULL;
+	}
+
+	ts = malloc(sizeof(struct transportSession));
+	if (!ts) {
+		EMSG("malloc transport session struct failed");
+		return NULL;
+	}
+	memset(ts, 0x0, sizeof(struct transportSession));
+
+	ts->tsid = tsid;
+	ts->isClosing = FALSE;
+	printf("newTransportSession %d %d \n", ts->tsid, ts->isClosing );
+	ts->sessionType = TRANSPORT_SESSION_TYPE_INVALID;
+	ts->emi = 0xFFFF; //invalid EMI
+
+	ts->smpEnabled = FALSE;
+	ts->smpSetFlag = FALSE;
+
+	ts->playDmxId = DEMUX_INVALID_ID;
+	ts->recordDmxId = DEMUX_INVALID_ID;
+	ts->recordChannelId = 0;
+	ts->avPlayerStreamType = MT_UNF_AVPLAY_STREAM_TYPE_BUTT;
+
+	ts->descramblingCount = 0;
+
+	ts->tsBufHandle = MT_INVALID_HANDLE;
+	ts->avPlayer = MT_INVALID_HANDLE;
+	ts->audioTrack = MT_INVALID_HANDLE;
+
+	ts->doesVidChanOpen = FALSE;
+	ts->doesAudChanOpen = FALSE;
+
+	ts->vidCodecType = MT_UNF_VCODEC_TYPE_MPEG2;
+	ts->audCodecType = HA_AUDIO_ID_PCM;
+
+	ts->tsBuffer = NULL;
+	ts->tsDataSize = 0;
+	ts->tsIntBufferVir = NULL;
+
+	ts->vesInjPointer = NULL;
+	ts->vesInjSize = 0;
+	ts->aesInjPointer = NULL;
+	ts->aesInjSize = 0;
+
+	/* add this transport session to the list tail */
+	addToListTail(&ts->listNode, &transportSessionList);
+
+	return ts;
+}
+
+static void delTransportSession(struct transportSession *ts)
+{
+	delFromList(&ts->listNode);
+
+	free(ts);
+}
+
+static void clearAllTransportSeesion(void)
+{
+	struct transportSession *ts = NULL;
+	struct list_head *node;
+	size_t offset = (size_t)(&((struct transportSession *)0)->listNode);
+
+	for (node = transportSessionList.next; node != &transportSessionList; free(ts)) {
+		ts = (struct transportSession *)((char *)node - offset);
+		node = node->next;
+	}
+
+	transportSessionList.prev = &transportSessionList;
+	transportSessionList.next = &transportSessionList;
+}
+
+static mt_s32 dmacpy(MT_EDMA_CH_E ch, mt_u8 *dst, const mt_u8 *src, mt_u32 size)
+{
+//	printf("%s %d \n", __func__, __LINE__);
+	mt_s32 ret = MT_FAILURE;
+	mt_unf_dma_request_channel(ch);
+	while (MT_EDMA_STATUS_FREE != mt_unf_dma_check(ch)) {
+		//10ms
+		usleep(1000 * 10);
+	}
+
+	ret = mt_unf_dma_memcpy(ch, src, dst, size);
+	
+	mt_unf_dma_release_channel(ch);
+	if (ret != MT_SUCCESS) {
+		printf("dma-%d copy from %p to %p with size(%x) fail  ret = %x \n", ch, src, dst, size, ret);
+		return MT_FAILURE;
+	}
+
+	//printf("dma-%d copy from %p to %p with size(%x) success\n", ch, src, dst, size);
+	return MT_SUCCESS;
+}
+
+static TNvSprStatus openAvPlayer(struct transportSession *ts,
+                                 const void *vidChanParams, const void *audChanParams)
+{
+	mt_s32 ret;
+	MT_UNF_AVPLAY_ATTR_S avPlayerAttr;
+
+	memset((void *)&avPlayerAttr, 0, sizeof(avPlayerAttr));
+
+	ret = MT_UNF_AVPLAY_GetDefaultConfig(&avPlayerAttr, ts->avPlayerStreamType);
+	if (ret != MT_SUCCESS) {
+		EMSG("get AV player attribute failed, return error = 0x%x", ret);
+		return NV_SPR_ERROR;
+	}
+
+	if (ts->avPlayerStreamType == MT_UNF_AVPLAY_STREAM_TYPE_TS)
+		avPlayerAttr.u32DemuxId = ts->playDmxId;
+
+	avPlayerAttr.stStreamAttr.u32VidBufSize = (8*1024*1024);
+	ret = MT_UNF_AVPLAY_Create(&avPlayerAttr, &ts->avPlayer);
+	if (ret != MT_SUCCESS) {
+		EMSG("create AV player failed, return error = 0x%x", ret);
+		return NV_SPR_ERROR;
+	}
+	
+	DMSG("tsid = %d ts->avPlayer = %d ", ts->tsid, ts->avPlayer);
+
+	ts->doesVidChanOpen = FALSE;
+	ts->doesAudChanOpen = FALSE;
+
+	ret = MT_UNF_AVPLAY_ChnOpen(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID, vidChanParams);
+	if (ret != MT_SUCCESS) {
+		EMSG("open video channel failed, return error = 0x%x", ret);
+		goto error;
+	}
+	
+	ts->doesVidChanOpen = TRUE;
+
+	if( ts->bUseSubLayer == FALSE)
+	{
+
+		ret = MT_UNF_AVPLAY_ChnOpen(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_AUD, audChanParams);
+		if (ret != MT_SUCCESS) {
+			EMSG("open audio channel failed, return error = 0x%x", ret);
+			goto error;
+		}
+
+		ts->doesAudChanOpen = TRUE;
+		printf("%s %d openAvPlayer bUseSubLayer = FALSE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+
+	}
+	else
+	{
+		printf("%s %d openAvPlayer bUseSubLayer = TRUE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+	}
+
+	return NV_SPR_NO_ERROR;
+
+error:
+	if (ts->doesVidChanOpen)
+		CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_ChnClose, ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID);
+
+	CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Destroy, ts->avPlayer);
+
+	ts->avPlayer = MT_INVALID_HANDLE;
+	ts->doesVidChanOpen = FALSE;
+	ts->doesAudChanOpen = FALSE;
+
+	return NV_SPR_ERROR;
+}
+
+static void closeAvPlayer(struct transportSession *ts)
+{
+	if (ts->doesVidChanOpen)
+		CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_ChnClose, ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID);
+
+	if (ts->doesAudChanOpen)
+		CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_ChnClose, ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_AUD);
+
+	CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Destroy, ts->avPlayer);
+
+	ts->avPlayer = MT_INVALID_HANDLE;
+	ts->doesVidChanOpen = FALSE;
+	ts->doesAudChanOpen = FALSE;
+}
+
+static TNvSprStatus openWindow(struct transportSession *ts)
+{
+	mt_s32 ret;
+
+       static mt_handle windowHandle = 0;
+	MT_UNF_WINDOW_ATTR_S pWinAttr;
+	printf("%s %d openAvPlayer bUseSubLayer = %d \n",__FUNCTION__,__LINE__,  ts->bUseSubLayer );
+
+#if 1
+	if( ts->bUseSubLayer == FALSE )
+	{
+		if( voutWindow == MT_INVALID_HANDLE )
+		{
+			 memset(&pWinAttr, 0, sizeof(MT_UNF_WINDOW_ATTR_S));
+
+		        pWinAttr.bUseSubLayer = 0;
+		        pWinAttr.bSetVideoBot = 0;
+		        pWinAttr.enDisp = MT_UNF_DISPLAY1;
+		        pWinAttr.bVirtual = MT_FALSE;
+
+		        pWinAttr.stWinAspectAttr.enAspectCvrs = MT_UNF_VO_ASPECT_CVRS_IGNORE;
+		        pWinAttr.stWinAspectAttr.bUserDefAspectRatio = MT_FALSE;
+		        pWinAttr.stWinAspectAttr.u32UserAspectWidth  = 0;
+		        pWinAttr.stWinAspectAttr.u32UserAspectHeight = 0;
+		        pWinAttr.bUseCropRect = MT_FALSE;
+
+		        pWinAttr.stInputRect.s32X = 0;
+		        pWinAttr.stInputRect.s32Y = 0;
+		        pWinAttr.stInputRect.s32Width = 0;
+		        pWinAttr.stInputRect.s32Height = 0;
+
+		        ret = MT_UNF_VO_CreateWindow(&pWinAttr, &voutWindow);
+
+			 MT_UNF_VO_GetWindowAttr(voutWindow, &pWinAttr);
+		        pWinAttr.enDisp = 1;
+		        pWinAttr.stInputRect.s32X = 0;
+		        pWinAttr.stInputRect.s32Y = 0;
+		        pWinAttr.stInputRect.s32Width = 0;
+		        pWinAttr.stInputRect.s32Height = 0;
+		        pWinAttr.stOutputRect.s32X = 0;
+		        pWinAttr.stOutputRect.s32Y = 0;
+		        pWinAttr.stOutputRect.s32Width = 0;
+		        pWinAttr.stOutputRect.s32Height = 0;
+
+		        MT_UNF_VO_SetWindowAttr(voutWindow, &pWinAttr);
+			 printf("%s %d \n",__FUNCTION__,__LINE__);
+
+			ret = CHECK_CALL_MT_FUNC(MT_UNF_DISP_SetDiOnOff, MT_FALSE);
+		}
+	}
+	else
+	{
+		if ( voutWindow2 == MT_INVALID_HANDLE)
+		{
+			 memset(&pWinAttr, 0, sizeof(MT_UNF_WINDOW_ATTR_S));
+		        pWinAttr.bUseSubLayer = 1;
+		        pWinAttr.bSetVideoBot = 1;
+		        pWinAttr.enDisp = MT_UNF_DISPLAY1;
+		        pWinAttr.bVirtual = MT_FALSE;
+		        pWinAttr.stWinAspectAttr.enAspectCvrs = MT_UNF_VO_ASPECT_CVRS_IGNORE;
+		        pWinAttr.stWinAspectAttr.bUserDefAspectRatio = MT_FALSE;
+		        pWinAttr.stWinAspectAttr.u32UserAspectWidth  = 0;
+		        pWinAttr.stWinAspectAttr.u32UserAspectHeight = 0;
+		        pWinAttr.bUseCropRect = MT_FALSE;
+		        pWinAttr.stInputRect.s32X = 0;
+		        pWinAttr.stInputRect.s32Y = 0;
+		        pWinAttr.stInputRect.s32Width = 0;
+		        pWinAttr.stInputRect.s32Height = 0;
+		        ret = MT_UNF_VO_CreateWindow(&pWinAttr, &voutWindow2);
+
+			 MT_UNF_VO_GetWindowAttr(voutWindow2, &pWinAttr);
+	               pWinAttr.enDisp = 1;
+	               pWinAttr.stInputRect.s32X = 0;
+	               pWinAttr.stInputRect.s32Y = 0;
+	               pWinAttr.stInputRect.s32Width = 0;
+	               pWinAttr.stInputRect.s32Height = 0;
+	        	 pWinAttr.stOutputRect.s32X = 40;
+	               pWinAttr.stOutputRect.s32Y = 20;
+	               pWinAttr.stOutputRect.s32Width = 480;
+	               pWinAttr.stOutputRect.s32Height = 360;
+	               MT_UNF_VO_SetWindowAttr(voutWindow2, &pWinAttr);
+		}
+	}
+#endif	
+			
+	if( ts->bUseSubLayer == TRUE )
+	{
+		windowHandle = voutWindow2;
+	}
+	else
+	{
+		windowHandle = voutWindow;
+	}
+
+	ret = MT_UNF_VO_AttachWindow(windowHandle, ts->avPlayer);
+	if (ret != MT_SUCCESS) {
+		EMSG("attach display window failed, return error = 0x%x", ret);
+		return NV_SPR_ERROR;
+	}
+	
+	ret = MT_UNF_VO_SetWindowEnable(windowHandle, MT_TRUE);
+	if (ret != MT_SUCCESS) {
+		EMSG("enable display window to the AV player failed, return error = 0x%x", ret);
+		goto detach_window;
+	}
+		   
+#if 0		   
+	ret = MT_UNF_VO_ResetWindow(windowHandle, MT_UNF_WINDOW_FREEZE_MODE_BLACK);
+	if (ret != MT_SUCCESS) {
+		EMSG("reset window failed, return error = 0x%x", ret);
+		goto detach_window;
+	}
+#endif	
+	   
+	ret = MT_UNF_DISP_VidLayerShow(MT_TRUE);
+	if (ret != MT_SUCCESS) {
+		EMSG("show layer failed, return error = 0x%x", ret);
+		goto disable_window;
+	}
+
+	return NV_SPR_NO_ERROR;
+
+disable_window:
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_SetWindowEnable, windowHandle, MT_FALSE);
+detach_window:
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_DetachWindow, windowHandle, ts->avPlayer);
+
+	return NV_SPR_ERROR;
+}
+
+static void closeWindow(struct transportSession *ts)
+{
+       static mt_handle windowHandle = 0;
+	   
+	printf("%s %d closeWindow bUseSubLayer = %d \n",__FUNCTION__,__LINE__,  ts->bUseSubLayer );
+
+	if( ts->bUseSubLayer  == TRUE)
+	{
+		windowHandle = voutWindow2;
+		printf("closeWindow windowHandle = voutWindow2 windowHandle = %d  bUseSubLayer = %d\n", windowHandle, ts->bUseSubLayer);
+	}
+	else
+	{
+		windowHandle =  voutWindow;
+	}
+	
+//	CHECK_CALL_MT_FUNC(MT_UNF_VO_ResetWindow, windowHandle, MT_UNF_WINDOW_FREEZE_MODE_BLACK);
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_SetWindowEnable, windowHandle, MT_FALSE);
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_DetachWindow, windowHandle, ts->avPlayer);
+	#if 1
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_DestroyWindow, windowHandle);
+
+	if( ts->bUseSubLayer  == TRUE)
+	{
+		voutWindow2 = MT_INVALID_HANDLE;
+	}
+	else
+	{
+		voutWindow = MT_INVALID_HANDLE;
+	}
+	#endif
+}
+
+static TNvSprStatus openAudio(struct transportSession *ts, HA_CODEC_ID_E audCodec)
+{
+	mt_s32 ret;
+	MT_UNF_AUDIOTRACK_ATTR_S *audTrkAttr;
+	audTrkAttr = (MT_UNF_AUDIOTRACK_ATTR_S *)malloc(2 * sizeof(MT_UNF_AUDIOTRACK_ATTR_S));
+	if (NULL == audTrkAttr) {
+		EMSG("Aud buffer alloc fail!");
+		return NV_SPR_ERROR;
+	}
+	memset(audTrkAttr, 0, 2 * sizeof(MT_UNF_AUDIOTRACK_ATTR_S));
+
+	ret = MT_UNF_SND_GetDefaultTrackAttr(MT_UNF_SND_TRACK_TYPE_MASTER, audTrkAttr);
+	if (ret != MT_SUCCESS) {
+		EMSG("get audio track attribute failed, return error = 0x%x", ret);
+		goto free_aud_attr;
+	}
+
+	if (audCodec == HA_AUDIO_ID_AC3PASSTHROUGH ||
+	    audCodec == HA_AUDIO_ID_EAC3PASSTHROUGH ||
+	    audCodec == HA_AUDIO_ID_DTSPASSTHROUGH)
+		audTrkAttr->b_spdif_mod = MT_TRUE;
+
+	ret = MT_UNF_SND_CreateTrack(MT_UNF_SND_0, audTrkAttr, &ts->audioTrack);
+	if (ret != MT_SUCCESS) {
+		EMSG("create audio track failed, return error = 0x%x", ret);
+		goto free_aud_attr;
+	}
+
+	ret = MT_UNF_SND_Attach(ts->audioTrack, ts->avPlayer);
+	if (ret != MT_SUCCESS) {
+		EMSG("attach audio track to the AV player failed, return error = 0x%x", ret);
+		goto destroy_audio_track;
+	}
+
+	if (audCodec == HA_AUDIO_ID_TRUEHD) {
+		ret = MTADP_AVPlay_SetAdecAttr(ts->avPlayer, audCodec, HD_DEC_MODE_THRU, 0);
+
+	} else {
+		ret = MTADP_AVPlay_SetAdecAttr(ts->avPlayer, audCodec, HD_DEC_MODE_RAWPCM, 0);
+	}
+	if (ret != MT_SUCCESS) {
+		EMSG("set audio decoder attribute failed, return error = 0x%x", ret);
+		goto detach_audio_track;
+	}
+	
+	MT_UNF_AVPLAY_Enable_AudioHEAAC(ts->avPlayer);
+
+	return NV_SPR_NO_ERROR;
+detach_audio_track:
+	CHECK_CALL_MT_FUNC(MT_UNF_SND_Detach, ts->audioTrack, ts->avPlayer);
+destroy_audio_track:
+	CHECK_CALL_MT_FUNC(MT_UNF_SND_DestroyTrack, ts->audioTrack);
+	ts->audioTrack = MT_INVALID_HANDLE;
+free_aud_attr:
+	free(audTrkAttr);
+	audTrkAttr = NULL;
+	return NV_SPR_ERROR;
+}
+
+static void closeAudio(struct transportSession *ts)
+{
+	CHECK_CALL_MT_FUNC(MT_UNF_SND_Detach, ts->audioTrack, ts->avPlayer);
+	CHECK_CALL_MT_FUNC(MT_UNF_SND_DestroyTrack, ts->audioTrack);
+	ts->audioTrack = MT_INVALID_HANDLE;
+}
+
+static TNvSprStatus startAvPlayer(struct transportSession *ts,
+                                  MT_UNF_VCODEC_TYPE_E vidCodec, mt_u32 vidPid,
+                                  HA_CODEC_ID_E audCodec, mt_u32 audPid,
+                                  mt_u32 pcrPid, MT_UNF_SYNC_REF_E syncRef)
+{
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	MT_UNF_VCODEC_ATTR_S vidCodecAttr;
+	MT_UNF_AVPLAY_DMX_AVSYNC_ATTR_S dmxAvSyncAttr;
+	MT_UNF_SYNC_ATTR_S syncAttr;
+    MT_UNF_AVPLAY_STOP_OPT_S stopOpt;
+
+	/* Setup audio */
+		printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	if (ts->doesAudChanOpen) {
+		status = openAudio(ts, audCodec);
+		if (status != NV_SPR_NO_ERROR) {
+			EMSG("open audio player failed");
+			return status;
+		}
+
+		ret = MT_UNF_AVPLAY_SetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_AUD_PID, &audPid);
+		if (ret != MT_SUCCESS) {
+			EMSG("set audio pid failed, return error = 0x%x", ret);
+			goto close_audio;
+		}
+	}
+
+	/* Setup video */
+	memset((void *)&vidCodecAttr, 0, sizeof(vidCodecAttr));
+
+	ret = MT_UNF_AVPLAY_GetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_VDEC, &vidCodecAttr);
+	if (ret != MT_SUCCESS) {
+		EMSG("get video decoder attribute failed, return error = 0x%x", ret);
+		goto close_audio;
+	}
+
+    vidCodecAttr.enType = vidCodec;
+    vidCodecAttr.enMode = MT_UNF_VCODEC_MODE_NORMAL;
+	//vidCodecAttr.u32ErrCover = 100;
+	//vidCodecAttr.u32ErrCover = 50;
+    vidCodecAttr.u32ErrCover = 70;
+    vidCodecAttr.u32Priority = 3;
+	vidCodecAttr.u32UseDescInfoFlag = 1;
+	//vidCodecAttr.enUnBlank = MT_UNF_VCODEC_UNBLANK_STABLE;
+    vidCodecAttr.enUnBlank = MT_UNF_VCODEC_UNBLANK_FAST;
+
+    ret = MT_UNF_AVPLAY_SetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_VDEC, &vidCodecAttr);
+	if (ret != MT_SUCCESS) {
+		EMSG("set video decoder attribute failed, return error = 0x%x", ret);
+		goto close_audio;
+	}
+
+	ret = MT_UNF_AVPLAY_SetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_VID_PID, &vidPid);
+	if (ret != MT_SUCCESS) {
+		EMSG("set video pid failed, return error = 0x%x", ret);
+		goto close_audio;
+	}
+
+	ret = MT_UNF_AVPLAY_SetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_PCR_PID, &pcrPid);
+	if (ret != MT_SUCCESS) {
+		EMSG("set pcr pid failed, return error = 0x%x", ret);
+		goto close_audio;
+	}
+
+	if (ts->avPlayerStreamType == MT_UNF_AVPLAY_STREAM_TYPE_TS) {
+		/* Set AV synchronization */
+		memset((void *)&dmxAvSyncAttr, 0, sizeof(dmxAvSyncAttr));
+
+		dmxAvSyncAttr.VdecType = vidCodec;
+		dmxAvSyncAttr.AdecType = audCodec;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		if (syncRef > MT_UNF_SYNC_REF_NONE && syncRef < MT_UNF_AVPLAY_SYNC_REF_BUTT)
+			dmxAvSyncAttr.AvsyncFlage = 1;
+		/*if (!ts->doesAudChanOpen)
+		{
+			dmxAvSyncAttr.AvsyncFlage = MT_UNF_SYNC_REF_NONE;
+		}*/
+
+		ret = MT_UNF_AVPLAY_SetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_DMX_AVSYNC, &dmxAvSyncAttr);
+		if (ret != MT_SUCCESS) {
+			EMSG("set demux AV synchronization failed, return error = 0x%x", ret);
+			goto close_audio;
+		}
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	memset((void *)&syncAttr, 0, sizeof(syncAttr));
+
+	ret = MT_UNF_AVPLAY_GetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_SYNC, &syncAttr);
+	if (ret != MT_SUCCESS) {
+		EMSG("get AV synchronization attribute failed, return error = 0x%x", ret);
+		goto close_audio;
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	syncAttr.enSyncRef = ts->doesAudChanOpen ? syncRef : MT_UNF_SYNC_REF_NONE;
+
+	if ((ts->avPlayerStreamType == MT_UNF_AVPLAY_STREAM_TYPE_TS) &&
+	    (vidCodecAttr.enUnBlank == MT_UNF_VCODEC_UNBLANK_FAST))
+	    syncAttr.bQuickOutput = MT_TRUE;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+    ret = MT_UNF_AVPLAY_SetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_SYNC, &syncAttr);
+	if (ret != MT_SUCCESS) {
+		EMSG("set AV synchronization attribute failed, return error = 0x%x", ret);
+		goto close_audio;
+	}	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+
+	/* clear buffers before starting play */
+//    ret = MT_UNF_AVPLAY_Reset(ts->avPlayer, MT_NULL);
+	if (ret != MT_SUCCESS) {
+		EMSG("reset avplay failed, return error = 0x%x", ret);
+		goto close_audio;
+	}	
+
+
+	/* Start play */
+    ret = MT_UNF_AVPLAY_Start(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID, MT_NULL);
+	if (ret != MT_SUCCESS) {
+		EMSG("start video failed, return error = 0x%x", ret);
+		goto close_audio;
+	}
+
+	if (ts->doesAudChanOpen) {
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		ret = MT_UNF_AVPLAY_Start(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_AUD, MT_NULL);
+		if (ret != MT_SUCCESS) {
+			EMSG("start audio failed, return error = 0x%x", ret);
+			goto stop_video;
+		}
+	}
+
+
+	return NV_SPR_NO_ERROR;
+
+stop_video:
+	stopOpt.u32TimeoutMs = 0;
+	stopOpt.enMode = MT_UNF_AVPLAY_STOP_MODE_BLACK;
+	CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Stop, ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID, &stopOpt);
+close_audio:
+	if (ts->doesAudChanOpen)
+		closeAudio(ts);
+
+	return NV_SPR_ERROR;
+}
+
+static void stopAvPlayer(struct transportSession *ts)
+{
+	MT_UNF_AVPLAY_MEDIA_CHAN_E mediaChannel = 0;
+    MT_UNF_AVPLAY_STOP_OPT_S stopOpt;
+
+	stopOpt.u32TimeoutMs = 0;
+#ifdef STOP_WITH_STILL_FRAME
+	stopOpt.enMode = MT_UNF_AVPLAY_STOP_MODE_STILL;
+#else
+	stopOpt.enMode = MT_UNF_AVPLAY_STOP_MODE_BLACK;
+#endif
+
+	if (ts->doesVidChanOpen)
+		mediaChannel |= MT_UNF_AVPLAY_MEDIA_CHAN_VID;
+
+	if (ts->doesAudChanOpen)
+		mediaChannel |= MT_UNF_AVPLAY_MEDIA_CHAN_AUD;
+
+	//CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Flush, ts->avPlayer);
+	CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Stop, ts->avPlayer, mediaChannel, &stopOpt);
+
+	if (ts->doesAudChanOpen)
+		closeAudio(ts);
+
+}
+
+void nvSprInitialize(void)
+{
+	 mt_s32 ret;
+       MT_UNF_ENC_FMT_E encFormat = MT_UNF_ENC_FMT_1080i_50;
+       MT_UNF_WINDOW_ATTR_S pWinAttr;
+	   
+	TMSG("---------------s6 nvSpr init start 20240809!------------------");
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	if (pthread_rwlock_wrlock(&rwlock)) {
+		EMSG("apply a write lock failed");
+		return;
+	}
+
+	if (isPlatformInitialized) {
+		EMSG("the platform has been initialized");
+		goto error;
+	}
+
+    TEEC_Result tee_res;
+
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	#ifndef ONLY_TEST_FOR_CLEAR_TS
+    /*teec context*/
+    tee_res = TEEC_InitializeContext(NULL, &g_teec_ctx);
+    if (tee_res != TEEC_SUCCESS) {
+        EMSG("Init tee context failed\n"); 
+        goto teec_final;
+    }
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+    /*store the context*/
+    nvGpTeeConfigure(&g_teec_ctx);
+	#endif
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	voutWindow = MT_INVALID_HANDLE;
+       voutWindow2 = MT_INVALID_HANDLE;
+	   	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ret = CHECK_CALL_MT_FUNC(mt_sys_init);
+	if (ret != MT_SUCCESS)
+		goto error;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ret = CHECK_CALL_MT_FUNC(MT_UNF_DISP_Init);
+	if (ret != MT_SUCCESS)
+		goto deinit_sound;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ret = CHECK_CALL_MT_FUNC(mt_hdmi_init, MT_UNF_HDMI_ID_0, encFormat);
+	if (ret != MT_SUCCESS)
+		goto deinit_system;
+
+	ret = CHECK_CALL_MT_FUNC(MTADP_Snd_Init);
+	if (ret != MT_SUCCESS)
+		goto deinit_system;
+
+	printf("snd init success!\n");
+
+	ret = CHECK_CALL_MT_FUNC(MTADP_VO_Init, MT_UNF_VO_DEV_MODE_NORMAL);
+	if (ret != MT_SUCCESS)
+		goto deinit_display;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+#if 0
+        memset(&pWinAttr, 0, sizeof(MT_UNF_WINDOW_ATTR_S));
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+        pWinAttr.bUseSubLayer = 0;
+        pWinAttr.bSetVideoBot = 0;
+        pWinAttr.enDisp = MT_UNF_DISPLAY1;
+        pWinAttr.bVirtual = MT_FALSE;
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+        pWinAttr.stWinAspectAttr.enAspectCvrs = MT_UNF_VO_ASPECT_CVRS_IGNORE;
+        pWinAttr.stWinAspectAttr.bUserDefAspectRatio = MT_FALSE;
+        pWinAttr.stWinAspectAttr.u32UserAspectWidth  = 0;
+        pWinAttr.stWinAspectAttr.u32UserAspectHeight = 0;
+        pWinAttr.bUseCropRect = MT_FALSE;
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+        pWinAttr.stInputRect.s32X = 0;
+        pWinAttr.stInputRect.s32Y = 0;
+        pWinAttr.stInputRect.s32Width = 0;
+        pWinAttr.stInputRect.s32Height = 0;
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+        ret = MT_UNF_VO_CreateWindow(&pWinAttr, &voutWindow);
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	  if (ret != MT_SUCCESS)
+	      goto deinit_vout;
+	  	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	  //bind avplay to vo win
+    	 memset(&pWinAttr, 0, sizeof(MT_UNF_WINDOW_ATTR_S));
+        pWinAttr.bUseSubLayer = 1;
+        pWinAttr.bSetVideoBot = 1;
+        pWinAttr.enDisp = MT_UNF_DISPLAY1;
+        pWinAttr.bVirtual = MT_FALSE;
+        pWinAttr.stWinAspectAttr.enAspectCvrs = MT_UNF_VO_ASPECT_CVRS_IGNORE;
+        pWinAttr.stWinAspectAttr.bUserDefAspectRatio = MT_FALSE;
+        pWinAttr.stWinAspectAttr.u32UserAspectWidth  = 0;
+        pWinAttr.stWinAspectAttr.u32UserAspectHeight = 0;
+        pWinAttr.bUseCropRect = MT_FALSE;
+        pWinAttr.stInputRect.s32X = 0;
+        pWinAttr.stInputRect.s32Y = 0;
+        pWinAttr.stInputRect.s32Width = 0;
+        pWinAttr.stInputRect.s32Height = 0;
+        ret = MT_UNF_VO_CreateWindow(&pWinAttr, &voutWindow2);
+	  if (ret != MT_SUCCESS)
+	      goto deinit_vout;
+
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	 MT_UNF_VO_GetWindowAttr(voutWindow, &pWinAttr);
+        pWinAttr.enDisp = 1;
+        pWinAttr.stInputRect.s32X = 0;
+        pWinAttr.stInputRect.s32Y = 0;
+        pWinAttr.stInputRect.s32Width = 0;
+        pWinAttr.stInputRect.s32Height = 0;
+        pWinAttr.stOutputRect.s32X = 0;
+        pWinAttr.stOutputRect.s32Y = 0;
+        pWinAttr.stOutputRect.s32Width = 0;
+        pWinAttr.stOutputRect.s32Height = 0;
+        MT_UNF_VO_SetWindowAttr(voutWindow, &pWinAttr);
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	 MT_UNF_VO_GetWindowAttr(voutWindow2, &pWinAttr);
+        pWinAttr.enDisp = 1;
+        pWinAttr.stInputRect.s32X = 0;
+        pWinAttr.stInputRect.s32Y = 0;
+        pWinAttr.stInputRect.s32Width = 0;
+        pWinAttr.stInputRect.s32Height = 0;
+        pWinAttr.stOutputRect.s32X = 40;
+        pWinAttr.stOutputRect.s32Y = 20;
+        pWinAttr.stOutputRect.s32Width = 480;
+        pWinAttr.stOutputRect.s32Height = 360;
+        MT_UNF_VO_SetWindowAttr(voutWindow2, &pWinAttr);
+		printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ret = CHECK_CALL_MT_FUNC(MT_UNF_DISP_SetDiOnOff, MT_FALSE);
+	if (ret != MT_SUCCESS)
+		goto deinit_vout;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+#endif
+
+	ret = CHECK_CALL_MT_FUNC(MT_UNF_DMX_Init);
+	if (ret != MT_SUCCESS)
+		goto destroy_window;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ret = CHECK_CALL_MT_FUNC(MTADP_AVPlay_RegADecLib);
+	if (ret != MT_SUCCESS)
+		goto deinit_demux;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ret = CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Init);
+	if (ret != MT_SUCCESS)
+		goto deinit_demux;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	//Fix Bug 125644
+	//GPIO7 used for control external amplifier
+	MT_UNF_GPIO_Init();
+	MT_UNF_GPIO_SetDirBit(MT_UNF_GPIO_7, MT_FALSE);
+	//FIXME: default set unmute
+	MT_UNF_GPIO_WriteBit(MT_UNF_GPIO_7, MT_TRUE);
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+#ifndef ONLY_TEST_FOR_CLEAR_TS
+#if CFG_TFL_USE_DYNC_SHMEM
+    tee_res = TEEC_RegisterSharedMemory(&g_teec_ctx, &tfl_shm);
+    if (tee_res != TEEC_SUCCESS) {
+        EMSG("Register dynamic share memory failed, ret: 0x%08x\n", tee_res);
+        goto deinit_demux;
+    }
+#endif
+#endif
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	isPlatformInitialized = TRUE;
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	if (pthread_rwlock_unlock(&rwlock))
+		EMSG("release a write lock failed");
+
+	DMSG("---------------nvSpr init end!------------------");
+	return;
+
+deinit_demux:
+	CHECK_CALL_MT_FUNC(MT_UNF_DMX_DeInit);
+destroy_window:
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_DestroyWindow, voutWindow);
+	voutWindow = MT_INVALID_HANDLE;
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_DestroyWindow, voutWindow2);
+	voutWindow2 = MT_INVALID_HANDLE;
+deinit_vout:
+	CHECK_CALL_MT_FUNC(MTADP_VO_DeInit);
+deinit_display:
+	CHECK_CALL_MT_FUNC(MTADP_Disp_DeInit);
+deinit_sound:
+	CHECK_CALL_MT_FUNC(MTADP_Snd_DeInit);
+deinit_system:
+	CHECK_CALL_MT_FUNC(mt_sys_deinit);
+teec_final:
+    nvGpTeeConfigure(NULL);
+    TEEC_FinalizeContext(&g_teec_ctx);
+error:
+	if (pthread_rwlock_unlock(&rwlock))
+		EMSG("release a write lock failed");
+
+}
+
+#ifdef LOG_TO_FILE
+extern FILE *gLogFile;
+extern uint8_t gSimbadTerminated;
+#endif
+
+void nvSprTerminate(void)
+{
+	DMSG("In");
+	if (pthread_rwlock_wrlock(&rwlock)) {
+		EMSG("apply a write lock failed");
+		return;
+	}
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+		goto end;
+	}
+
+	isPlatformInitialized = FALSE;
+
+	CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_DeInit);
+	CHECK_CALL_MT_FUNC(MT_UNF_DMX_DeInit);
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_DestroyWindow, voutWindow);
+	CHECK_CALL_MT_FUNC(MT_UNF_VO_DestroyWindow, voutWindow2);
+	voutWindow = MT_INVALID_HANDLE;
+	voutWindow2 = MT_INVALID_HANDLE;
+	CHECK_CALL_MT_FUNC(MTADP_VO_DeInit);
+	CHECK_CALL_MT_FUNC(MTADP_Disp_DeInit);
+	CHECK_CALL_MT_FUNC(MTADP_Snd_DeInit);
+	CHECK_CALL_MT_FUNC(mt_sys_deinit);
+
+	clearAllTransportSeesion();
+
+    nvGpTeeConfigure(NULL);
+#if CFG_TFL_USE_DYNC_SHMEM
+    TEEC_ReleaseSharedMemory(&tfl_shm);
+#endif
+    TEEC_FinalizeContext(&g_teec_ctx);
+
+end:
+	if (pthread_rwlock_unlock(&rwlock))
+		EMSG("release a write lock failed");
+
+#ifdef LOG_TO_FILE
+	/* Close the nvLog */
+	if (gLogFile != NULL) {
+		fclose(gLogFile);
+		gLogFile = NULL;
+		gSimbadTerminated = 1;
+	}
+#endif
+
+	DMSG("Out:>>>>>nvSpr Terminated<<<<<");
+}
+
+void nvSprSetDebug(TUnsignedInt16 level)
+{
+	DMSG("Todo:level=%d", level);
+}
+
+TNvSprStatus nvSprSetSmp(TTransportSessionId tsid, TBoolean smpEnabled)
+{
+    TNvSprStatus st = NV_SPR_NO_ERROR;
+    struct transportSession *ts = NULL;
+
+	TMSG("[In]SMP:%d", smpEnabled);
+
+	WR_LOCK(&rwlock);
+
+	ts = getTransportSessionById(tsid);
+	if (!ts) {
+		EMSG("the transport session identified by this id(%d) isn't existing", tsid);
+		st = NV_SPR_ERROR_BAD_PARAM;
+		goto end;
+	}
+
+    ts->smpEnabled = smpEnabled;
+
+	if (ts->smpEnabled) {
+		ts->smpSetFlag = TRUE;
+	}
+
+end:
+	WR_UNLOCK(&rwlock);
+	TMSG("[Out]SMP:%d", smpEnabled);
+	return st;
+}
+
+void dump_status(TTransportSessionId tsid, MT_UNF_AVPLAY_STATUS_INFO_S *statusInfo, TNvSprStatus st )
+{
+	printf("dump_status tsid = %d rd 0x%x wt 0x%x used 0x%x  frameCount %d  st %d \n",  tsid,
+	statusInfo->stBufStatus[0].u32BufRptr,
+	statusInfo->stBufStatus[0].u32BufWptr,
+	statusInfo->stBufStatus[0].u32UsedSize,
+	statusInfo->u32VidFrameCount, st);
+}
+
+TNvSprStatus nvSprGetDescrambling(TTransportSessionId tsid, TBoolean *status)
+{
+	mt_s32 ret;
+	TNvSprStatus st = NV_SPR_NO_ERROR;
+	struct transportSession *ts;
+	MT_UNF_AVPLAY_STATUS_INFO_S statusInfo;
+	
+	//TMSG("\n");
+	
+	CHECK_TSID_VALIDITY(tsid);
+
+	if (!status) {
+		EMSG("status is NULL pointer");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	RD_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		*status = FALSE;
+		st = NV_SPR_ERROR;
+		goto end;
+	}
+
+	ts = getTransportSessionById(tsid);
+	if (!ts) {
+		//EMSG("the transport session identified by this id(%d) isn't existing", tsid);
+
+		*status = FALSE;
+		st = NV_SPR_ERROR_BAD_PARAM;
+		goto end;
+	}
+
+	ret = MT_UNF_AVPLAY_GetStatusInfo(ts->avPlayer, &statusInfo);
+	if (ret != MT_SUCCESS) {
+		EMSG("Get AVPLAY Status failed");
+		*status = FALSE;
+		st = NV_SPR_ERROR;
+		goto end;
+	}
+
+	//TMSG("###### last vid count = %d ######", ts->descramblingCount);
+	//TMSG("###### current vid count = %d ######", statusInfo.u32VidFrameCount);
+	if (statusInfo.u32VidFrameCount > ts->descramblingCount) {
+		*status = TRUE;
+		TMSG("tsid = %d OK-------------------------------------\n", tsid);
+	} else {
+		*status = FALSE;
+		TMSG("tsid = %d FAIL -----------------------------------\n", tsid);
+	}
+	//remember previous count
+	ts->descramblingCount = statusInfo.u32VidFrameCount;
+	//TMSG("status = %d tsid = %d \n", *status, tsid);
+
+	st = NV_SPR_NO_ERROR;
+end:
+	dump_status(tsid, &statusInfo, st);
+	RD_UNLOCK(&rwlock);
+
+	return st;
+}
+
+TNvSprStatus nvSprCloseSession(TTransportSessionId tsid)
+{
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	struct transportSession *ts;
+	mt_s32 mtRet = 0;
+	
+	printf("%s %d tsid = %d \n",__FUNCTION__,__LINE__, tsid);
+	
+	CHECK_TSID_VALIDITY(tsid);
+
+	DMSG("Spr done, close[tsid=%d]...", tsid);
+
+	mtSecClrPlatDmxId(tsid);
+
+	WR_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto end;
+	}
+
+	ts = getTransportSessionById(tsid);
+	if (!ts) {
+		EMSG("the transport session identified by this id(%d) isn't existing", tsid);
+
+		status = NV_SPR_ERROR_BAD_PARAM;
+		goto end;
+	}
+
+	ts->isClosing = TRUE;
+	printf("nvSprCloseSession tsid=%d isClosing=%d ts->avPlayer = %d\n", ts->tsid, ts->isClosing, ts->avPlayer );
+
+	if (ts->sessionType == TRANSPORT_SESSION_TYPE_DVB
+		|| ts->sessionType == TRANSPORT_SESSION_TYPE_REPLAY
+		|| ts->sessionType == TRANSPORT_SESSION_TYPE_OTT) {
+
+#ifdef STOP_WITH_STILL_FRAME
+		DMSG("closing windows[No, STILL test]...");
+#else
+		CHECK_CALL_MT_FUNC(MT_UNF_DISP_VidLayerShow, MT_FALSE);
+#endif
+
+		/*DMSG("reset before stop");
+		CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Reset, ts->avPlayer, NULL);*/
+
+		DMSG("stopping AvPlayer...");
+		stopAvPlayer(ts);
+		closeWindow(ts);
+		closeAvPlayer(ts);
+		DMSG("AvPlayer Stopped");
+	}
+
+	if (ts->sessionType == TRANSPORT_SESSION_TYPE_RECORD) {
+
+#ifdef USE_DMX_RECORDING
+		mt_record_stop(ts);
+#else
+		TMSG("Stop the REC channel");
+		//CHECK_CALL_MT_FUNC(MT_UNF_PVR_RecStopChn, ts->recordChannelId);
+		mtRet = MT_UNF_PVR_RecStopChn(ts->recordChannelId);
+		TMSG("Stop the REC channel, mtRet:%x", mtRet);
+
+		TMSG("Unregister callback");
+		//CHECK_CALL_MT_FUNC(MT_UNF_PVR_UnRegisterExtraCallBack, ts->recordChannelId,
+		//MT_UNF_PVR_EXTRA_WRITE_CALLBACK);
+		mtRet = MT_UNF_PVR_UnRegisterExtraCallBack(ts->recordChannelId, MT_UNF_PVR_EXTRA_WRITE_CALLBACK);
+		TMSG("Unregister callback, mtRet:%x", mtRet);
+		MT_UNF_PVR_UnRegisterEvent(MT_UNF_PVR_EVENT_REC_DMX_CREATE);
+
+		TMSG("Destroy Rec channel");
+		//CHECK_CALL_MT_FUNC(MT_UNF_PVR_RecDestroyChn, ts->recordChannelId);
+		mtRet = MT_UNF_PVR_RecDestroyChn(ts->recordChannelId);
+		TMSG("Destroy Rec channel, mtRet:%x", mtRet);
+
+		//CHECK_CALL_MT_FUNC(MT_UNF_PVR_RecDeInit);
+		mtRet = MT_UNF_PVR_RecDeInit();
+
+		TMSG("Recorder Deinit done!, mtRet:%x", mtRet);
+#endif
+	}
+
+	if (ts->tsBufHandle != MT_INVALID_HANDLE) {
+		CHECK_CALL_MT_FUNC(MT_UNF_DMX_ResetTSBuffer, ts->tsBufHandle);
+		CHECK_CALL_MT_FUNC(MT_UNF_DMX_DestroyTSBuffer, ts->tsBufHandle);
+
+		if (ts->sessionType == TRANSPORT_SESSION_TYPE_RECORD) {
+			CHECK_CALL_MT_FUNC(MT_UNF_DMX_DetachTSPort, ts->recordDmxId);
+		} else {
+			CHECK_CALL_MT_FUNC(MT_UNF_DMX_DetachTSPort, ts->playDmxId);
+		}
+
+		ts->tsBufHandle = MT_INVALID_HANDLE;
+		ts->tsPort = MT_UNF_DMX_PORT_BUTT;
+
+		DMSG("tsBuf handle destroyed, and tsport detached!");
+	}
+
+	if (ts->avPlayerStreamType == MT_UNF_AVPLAY_STREAM_TYPE_ES
+		|| ts->sessionType == TRANSPORT_SESSION_TYPE_REPLAY) {
+
+		if (ts->aacAdtsHeader != NULL) {
+			mt_unf_cipher_free(ts->aacAdtsHeader);
+			DMSG("aacHeader buffer freed");
+			ts->aacAdtsHeader = NULL;
+		}
+	}
+	if (ts->tsBuffer != NULL) {
+		mt_unf_cipher_free(ts->tsBuffer);
+		ts->tsBuffer = NULL;
+	}
+	if (ts->tsIntBufferVir != NULL) {
+		mt_unf_cipher_free(ts->tsIntBufferVir);
+		ts->tsIntBufferVir = NULL;
+	}
+	delTransportSession(ts); 
+	mtSecResetProtectBufferList();
+	status = NV_SPR_NO_ERROR;
+#ifdef FILE_DUMP_DEBUG
+	close_test_file();
+#endif
+
+end:
+	WR_UNLOCK(&rwlock);
+
+	DMSG(">>>>session(tsid=%d) closed(unlocked)<<<<", tsid);
+	return status;
+}
+
+static void dumpPidList(TNvSprPidList *pids)
+{
+	TUnsignedInt32 i;
+	TNvSprPidInfo *pidInfo;
+
+	//DMSG("dump pid list:");
+
+	for (i = 0; i < pids->count; i++) {
+		pidInfo = pids->elems + i;
+		//printf("[%d]: Stream type(0x%x) -- Pid(%d)\n", i, pidInfo->streamType, pidInfo->pid);
+	}
+}
+
+static TUnsignedInt16 toSecPidType(TUnsignedInt16 streamType)
+{
+	switch (streamType) {
+	case DVB_STREAM_TYPE_MPEG1_VIDEO:
+	case DVB_STREAM_TYPE_MPEG2_VIDEO:
+	case DVB_STREAM_TYPE_MPEG4_VIDEO:
+	case DVB_STREAM_TYPE_H264_VIDEO:
+	case DVB_STREAM_TYPE_AVS_VIDEO:
+	case DVB_STREAM_TYPE_VC1_VIDEO:
+	case DVB_STREAM_TYPE_HEVC_VIDEO:
+		return SEC_PID_VIDEO;
+	case DVB_STREAM_TYPE_MPEG1_AUDIO:
+	case DVB_STREAM_TYPE_MPEG2_AUDIO:
+	case DVB_STREAM_TYPE_AAC_AUDIO:
+	case DVB_STREAM_TYPE_AAC_AUDIO_1:
+		return SEC_PID_AUDIO;
+	default:
+		return SEC_PID_VIDEO; //TODO
+	}
+}
+
+static TNvSprStatus parsePidList(TNvSprPidList *pids,
+                                 MT_UNF_VCODEC_TYPE_E *vidCodec, mt_u32 *vidPid,
+                                 HA_CODEC_ID_E *audCodec, mt_u32 *audPid)
+{
+	TUnsignedInt32 i;
+	TBoolean doFindVideo;
+	TBoolean doFindAudio;
+
+	dumpPidList(pids);
+
+	/* Find video pid */
+	for (i = 0; i < pids->count; i++) {
+		doFindVideo = TRUE;
+
+		switch (pids->elems[i].streamType) {
+		case DVB_STREAM_TYPE_MPEG1_VIDEO:
+			*vidCodec = MT_UNF_VCODEC_TYPE_MPEG2;
+			break;
+
+		case DVB_STREAM_TYPE_MPEG2_VIDEO:
+			*vidCodec = MT_UNF_VCODEC_TYPE_MPEG2;
+			break;
+
+		case DVB_STREAM_TYPE_MPEG4_VIDEO:
+			*vidCodec = MT_UNF_VCODEC_TYPE_MPEG4;
+			break;
+
+		case DVB_STREAM_TYPE_H264_VIDEO:
+			*vidCodec = MT_UNF_VCODEC_TYPE_H264;
+			break;
+
+		case DVB_STREAM_TYPE_AVS_VIDEO:
+			*vidCodec = MT_UNF_VCODEC_TYPE_AVS;
+			break;
+
+		case DVB_STREAM_TYPE_VC1_VIDEO:
+			*vidCodec = MT_UNF_VCODEC_TYPE_VC1;
+			break;
+
+		case DVB_STREAM_TYPE_HEVC_VIDEO:
+			*vidCodec = MT_UNF_VCODEC_TYPE_HEVC;
+			break;
+		default:
+			doFindVideo = FALSE;
+			break;
+		}
+
+		if (doFindVideo) {
+			*vidPid = pids->elems[i].pid;
+			break;
+		}
+	}
+
+	if (i >= pids->count) {
+		EMSG("can't find video from this stream");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	/* Find audio pid */
+	for (i = 0; i < pids->count; i++) {
+		doFindAudio = TRUE;
+
+		switch (pids->elems[i].streamType) {
+		case DVB_STREAM_TYPE_MPEG1_AUDIO:
+			*audCodec = HA_AUDIO_ID_MP2;
+			break;
+
+		case DVB_STREAM_TYPE_MPEG2_AUDIO:
+			*audCodec = HA_AUDIO_ID_MP2;
+			break;
+
+		case DVB_STREAM_TYPE_AAC_AUDIO:
+			*audCodec = HA_AUDIO_ID_AAC;
+			break;
+
+		case DVB_STREAM_TYPE_AAC_AUDIO_1:
+			*audCodec = HA_AUDIO_ID_AAC;
+			break;
+
+		default:
+			doFindAudio = FALSE;
+			break;
+		}
+
+		if (doFindAudio) {
+			*audPid = pids->elems[i].pid;
+			break;
+		}
+	}
+
+	if (i >= pids->count) {
+		EMSG("can't find audio from this stream");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	return NV_SPR_NO_ERROR;
+}
+
+TNvSprStatus nvSprOpenDvbSession(TTransportSessionId tsid, TNvSprPidList *pids, TBoolean smp)
+{
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	struct transportSession *ts = NULL;
+    mt_u32 vidPid = 0;
+    mt_u32 audPid = 0;
+	mt_u32 pcrPid = 0;
+	MT_UNF_SYNC_REF_E syncRef = MT_UNF_SYNC_REF_NONE;
+
+	TUnsignedInt32 i = 0;
+
+	UNUSED(smp);
+	CHECK_TSID_VALIDITY(tsid);
+
+	TMSG("In:tsid=%d\n", tsid);
+
+	if (!pids) {
+		EMSG("pids is NULL pointer");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	if (!pids->elems) {
+		EMSG("pids elements is NULL pointer");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	if (pids->count <= 0) {
+		EMSG("pids list is empty");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	TMSG("nvSprOpenDvbSession  tsid = %d \n", tsid);
+
+	WR_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+
+	ts = getTransportSessionById(tsid);
+	if (ts == NULL) {
+		DMSG("DVB on new tsid:%d", tsid);
+		ts = newTransportSession(tsid);
+		if (!ts) {
+			status = NV_SPR_ERROR;
+			goto error;
+		}
+
+		ts->sessionType = TRANSPORT_SESSION_TYPE_DVB;
+		ts->tsPort = MT_UNF_DMX_PORT_BUTT;
+
+		ts->playDmxId = mtSecGetPlatDmxId(tsid);
+		//DMSG("map tsid(%d) to dmxid(%d)", tsid, ts->playDmxId);
+	} else {
+		DMSG("Warning: session of this id:%d is already running!", tsid);
+		return NV_SPR_NO_ERROR;
+	}
+
+	if( getOthersSessionOpenedFlg(tsid) == FALSE)
+       {
+		ts->bUseSubLayer = FALSE;
+		printf("%s %d openAvPlayer bUseSubLayer = FALSE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+
+	}
+	else
+	{
+		ts->bUseSubLayer = TRUE;
+		printf("%s %d openAvPlayer bUseSubLayer = TRUE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+	}
+
+	
+	status = parsePidList(pids, &ts->vidCodecType, &vidPid, &ts->audCodecType, &audPid);
+	if (status != NV_SPR_NO_ERROR)
+		goto delete_session;
+	
+
+	if (ts->tsPort == MT_UNF_DMX_PORT_BUTT) {
+
+		MT_UNF_DMX_PORT_E port = MT_UNF_DMX_PORT_RAM_0;
+		for (i = 0; i < MAX_PORT_NUM; i++) {
+
+			ret = MT_UNF_DMX_AttachTSPort(ts->playDmxId, port);
+			if (ret != MT_SUCCESS) {
+				EMSG("attach the dvb port to the demux failed, return error = 0x%x", ret);
+
+				status = NV_SPR_ERROR;
+				goto delete_session;
+			}
+
+			ret = MT_UNF_DMX_CreateTSBuffer(port, DEMUX_TS_BUF_SIZE, &ts->tsBufHandle);
+
+			if (ret != MT_SUCCESS) {
+
+				if (ret == MT_ERR_DMX_RECREAT_TSBUFFER) {
+
+					MT_UNF_DMX_DetachTSPort(ts->playDmxId);
+
+					port += 1;
+					DMSG("create TS buffer on port%d failed, try again", port);
+				} else {
+					EMSG("create TS buffer failed, error = 0x%x", ret);
+					status = NV_SPR_ERROR;
+					goto detach_ts_port;
+				}
+
+			} else {
+				DMSG("create TS buffer on port%d success, tsBufHandle:%x", port, ts->tsBufHandle);
+				ts->tsPort = port;
+				break;
+			}
+		}
+	}
+
+	//set pidlist to NOCSAPI
+	//TSecPidInfo *pxPidInfo = (TSecPidInfo *)malloc(sizeof(TSecPidInfo));
+	TSecPidInfo pxPidInfo;
+	//if (NULL != pxPidInfo) {
+		pxPidInfo.sessionType = ts->sessionType;
+		//pxPidInfo->pidNum = pids->count;
+		pxPidInfo.pidNum = 2;
+		//for (i = 0; i < pids->count; i++) {
+		for (i = 0; i < pxPidInfo.pidNum; i++) {
+			pxPidInfo.pidList[i].pid = pids->elems[i].pid;
+			pxPidInfo.pidList[i].type = toSecPidType(pids->elems[i].streamType);
+		//}
+
+		if( getOthersSessionOpenedFlg(tsid) ==  TRUE)
+      	       {
+      	      		pxPidInfo.pidNum = 1;
+			pxPidInfo.pidList[0].pid = vidPid;
+			pxPidInfo.pidList[0].type = SEC_PID_VIDEO;
+		}
+		mtSecSetSessionPid(tsid, &pxPidInfo);
+
+		//free(pxPidInfo);
+	}
+
+	ts->avPlayerStreamType = MT_UNF_AVPLAY_STREAM_TYPE_TS;
+
+	status = openAvPlayer(ts, NULL, NULL);
+	if (status != NV_SPR_NO_ERROR) {
+		EMSG("open AV player failed");
+		goto destroy_ts_buffer;
+	}
+
+	status = openWindow(ts);
+	if (status != NV_SPR_NO_ERROR) {
+		EMSG("open window failed");
+		goto close_avplayer;
+	}
+
+	ret = MT_UNF_DMX_ResetTSBuffer(ts->tsBufHandle);
+	if (ret != MT_SUCCESS) {
+		EMSG("reset TS buffer failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto close_window;
+	}
+
+	pcrPid = vidPid;
+	status = startAvPlayer(ts, ts->vidCodecType, vidPid, ts->audCodecType, audPid, pcrPid, syncRef);
+	if (status != NV_SPR_NO_ERROR) {
+		EMSG("start AV player failed");
+		goto close_window;
+	}
+	ts->vidPid = vidPid;
+	ts->audPid = audPid;
+	ts->pcrPid = pcrPid;
+
+    //allocate when injecting
+	ts->tsBuffer = NULL;
+	ts->tsBufferSize = DEMUX_TS_PUT_SIZE;
+	ts->tsDataSize = 0;
+	ts->tsIntBufferVir = NULL;
+
+#if 1
+	//Everything is ready, now setting the Media Buffers for DVB session: MB_AUD, MB_VID
+	MBInfo mb = {0};
+	getSprMBInfoByType(MB_AUD, &mb);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_AUD);
+	getSprMBInfoByType(MB_VID, &mb);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_VID);
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+#endif
+	WR_UNLOCK(&rwlock);
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+#ifdef FILE_DUMP_DEBUG
+	open_test_file();
+#endif
+
+	TMSG("DVBSession(tsid:%d) Open Success", tsid);
+	return NV_SPR_NO_ERROR;
+
+close_window:
+	closeWindow(ts);
+close_avplayer:
+	closeAvPlayer(ts);
+destroy_ts_buffer:
+	CHECK_CALL_MT_FUNC(MT_UNF_DMX_DestroyTSBuffer, ts->tsBufHandle);
+	ts->tsBufHandle = MT_INVALID_HANDLE;
+detach_ts_port:
+	CHECK_CALL_MT_FUNC(MT_UNF_DMX_DetachTSPort, ts->playDmxId);
+	ts->playDmxId = DEMUX_INVALID_ID;
+delete_session:
+	delTransportSession(ts);
+error:
+	WR_UNLOCK(&rwlock);
+
+	return status;
+}
+
+static mt_u8 *vir2phy(const mt_u8 *vir)
+{
+    mt_s32 ret = MT_SUCCESS;
+    phys_addr_t phy_addr;
+    ulong phy_size;
+		
+    ret = mt_mmz_get_phyaddr((const mt_void *)vir, &phy_addr, &phy_size);
+    if (ret == MT_SUCCESS)
+        return (mt_u8 *)phy_addr;
+	else {
+		EMSG("Get phyaddr by viraddr(%p) failed", vir);
+		while(1);
+        return NULL;
+	}
+}
+
+static const TNvSprStatus mtSprInputDataRawEmiProcess(struct transportSession *ts,
+														const TUnsignedInt8 *data,
+														TUnsignedInt32 size)
+{
+	enum transportSessionType sessionType = ts->sessionType;
+	TUnsignedInt16 emi = ts->emi;
+
+	TNvSprStatus ret = NV_SPR_NO_ERROR;
+
+	TUnsignedInt8 *phyAddr = NULL;
+
+
+	/*RAW-EMI decryption:
+	 * - If input buffer is nvSprAllocateMemory() or mt_unf_cipher_malloc() allocated buffer(Hardware-Buffer), get physical address, and process;
+	 * - If input buffer is a user-space buffer, allocate a Hardware-Buffer, copy input data, then process.
+	 */
+    if (sessionType == TRANSPORT_SESSION_TYPE_REPLAY) {
+//	printf("%s %d emi = %x \n",__FUNCTION__,__LINE__, emi);
+
+#if 1 //Processing RAW EMIs by M2M
+        if (emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+                || emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+                || emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+#else //Processing all EMIs by M2M
+        if (emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+                || emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+                || emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING
+				|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+				|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+				|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1){
+				|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA) {
+#endif
+#if 0 //clear stream replay test
+            memcpy((void *)(ts->tsBuffer + ts->tsDataSize), (const void *)data, size);
+#else
+			//TODO:
+            //copy into continuity buffer
+
+
+            memcpy(ts->tsIntBufferVir, data, size);
+
+            //DMA copy into protected buffer for injecting(after being decrypted)
+            phyAddr = ts->tsBufferPhy + ts->tsDataSize;
+
+            //Intermediate Buffer --> Local TSBuffer (CID0 --> CID5)
+
+           // if (0 != mtSecRawStreamDataProcess(ts->tsid, SESSION_OP_DECRYPT, size, ts->tsIntBufferPhy, phyAddr)) {
+           if (0 != mtSecRawStreamDataProcess(ts->tsid, SESSION_OP_DECRYPT, size, ts->tsIntBufferVir, ts->tsBuffer+ts->tsDataSize)) {
+
+                EMSG("Raw stream data process failed");
+
+				ret = NV_SPR_ERROR;
+
+                goto end;
+            }
+#endif
+
+        } else {
+			//DMSG("copy stream data directly");
+			//TODO:If using M2M to decrypt TS data, should call M2M API first to decrypt data to tsBuffer directly
+
+            memcpy((void *)(ts->tsBuffer + ts->tsDataSize), (const void *)data, size);
+
+        }
+    }
+end:
+
+	return ret;
+}
+
+#if 0 //unused
+static TUnsignedInt32 mtSprInputDataProcess(struct transportSession *ts, const TUnsignedInt8 *data, TUnsignedInt32 size)
+{
+	enum transportSessionType sessionType = ts->sessionType;
+	TUnsignedInt16 emi = ts->emi;
+	TUnsignedInt8 *curTsPos = NULL;
+
+	TUnsignedInt32 size_processed = 0;
+
+	if (sessionType == TRANSPORT_SESSION_TYPE_REPLAY) {
+
+		//hex_dump("dump in data", data, (size > 16 ? 16 : size));
+		/*RAW-EMI decryption:
+		 * - If input buffer is nvSprAllocateMemory() or mt_unf_cipher_malloc() allocated buffer(Hardware-Buffer), get physical address, and process;
+		 * - If input buffer is a user-space buffer, allocate a Hardware-Buffer, copy input data, then process.
+		 */
+		if (emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+			|| emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+			|| emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+			curTsPos = ts->tsBuffer + ts->tsDataSize;
+			memcpy((void *)curTsPos, (const void *)data, size);
+			size_processed = size;
+		} else if (emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA
+				   || emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+				   || emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+				   || emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1) {
+			curTsPos = ts->tsBuffer + ts->tsDataSize;
+			memcpy((void *)curTsPos, (const void *)data, size);
+			size_processed = size;
+		} else {
+			//TODO:how about other EMIs ?
+		}
+	} else if (sessionType == TRANSPORT_SESSION_TYPE_RECORD) {
+		//DMSG("This is record session, inject size:%d\n", size);
+		//data for play
+		curTsPos = ts->tsBuffer + ts->tsDataSize;
+		memcpy((void *)curTsPos, (const void *)data, size);
+		size_processed = size;
+	} else {
+		if (emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+			/*
+			 * DVB session but HLS streaming, input data is already decrypted by opaqueData
+			 * Using dmacpy to move data whether smp is on or off.
+			 */
+			curTsPos = vir2phy(ts->tsBuffer) + ts->tsDataSize;
+			dmacpy(MT_EDMA_CH_0, (mt_u8 *)(curTsPos), (const mt_u8 *)vir2phy(data), size);
+			size_processed = size;
+		} else {
+			//DVB sessions which data is to be descrambled.
+			curTsPos = ts->tsBuffer + ts->tsDataSize;
+			memcpy((void *)curTsPos, (const void *)data, size);
+			size_processed = size;
+		}
+	}
+
+	return size_processed;
+}
+#endif
+
+
+//#define RETRIES_TOTAL 300
+#define RETRIES_TOTAL 2
+
+
+static TNvSprStatus nvSprDvbInjectData(struct transportSession *ts, TUnsignedInt8 *data, TUnsignedInt32 size)
+{
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	MT_UNF_STREAM_BUF_S dmxBuf = {0};
+	mt_u32 getBufRetries = 0;
+	mt_s32 ret = MT_FAILURE;
+	mt_u32 freeSize = 0;
+	MT_UNF_AVPLAY_STATUS_INFO_S aud_info = {0};
+	MT_UNF_AVPLAY_STATUS_INFO_S vid_info = {0};
+	
+//      	TMSG("nvSprDvbInjectData In:size:%d, dataAddr:%x", size, data);
+
+
+	if (ts->isClosing) {
+		return status;//This session is in closing, do not inject data anymore.
+	}
+
+    if (ts->tsBuffer == NULL) {
+        ts->tsBuffer = (TUnsignedInt8 *)mt_unf_cipher_malloc(DEMUX_TS_PUT_SIZE);
+        if (!ts->tsBuffer) {
+            EMSG("malloc stream buffer failed");
+
+            status = NV_SPR_ERROR;
+            goto end;
+        }
+        ts->tsBufferSize = DEMUX_TS_PUT_SIZE;
+        ts->tsDataSize = 0;
+    }
+
+#if 0//def FILE_DUMP_VIDEO
+	{
+		DMSG("write size=%d into test file...", size);
+		write_test_file(gVfp, (TUnsignedInt8 *)(data), size);
+	}
+#endif
+
+	//check if input data starts with 0x47
+	if (0x47 != data[0]) {
+		EMSG("Input data is not TS-Pack, drop it...  data[0] = 0x%x ", data[0]);
+		goto end;
+	}
+
+	if (ts->smpEnabled) {
+		if (ts->smpSetFlag) {
+			//Re-stop-start avplayer for Video disorder when SMP enabled during playing
+			if (ts->sessionType == TRANSPORT_SESSION_TYPE_DVB
+				|| ts->sessionType == TRANSPORT_SESSION_TYPE_REPLAY) {
+
+#ifdef STOP_WITH_STILL_FRAME
+				DMSG("closing window[No, STILL test]");
+#else
+				CHECK_CALL_MT_FUNC(MT_UNF_DISP_VidLayerShow, MT_FALSE);
+#endif
+//				CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Reset, ts->avPlayer, NULL);
+				printf("startAvPlayer----------------------------------------------------------------------\n");
+				stopAvPlayer(ts);
+				status = startAvPlayer(ts, ts->vidCodecType, ts->vidPid, ts->audCodecType, ts->audPid, ts->pcrPid, MT_UNF_SYNC_REF_NONE);
+				if (status != NV_SPR_NO_ERROR) {
+					EMSG("re-start AV player failed,do nothing");
+				}
+
+				CHECK_CALL_MT_FUNC(MT_UNF_DISP_VidLayerShow, MT_TRUE);
+
+				ts->smpSetFlag = FALSE;
+				goto end;
+			} else {
+				DMSG("sessionType:%d[Recording]", ts->sessionType);
+				ts->smpSetFlag = FALSE;
+			}
+		}
+	}
+		//printf("dvb inject  data ...   ts->tsDataSize + size = %d  DEMUX_TS_PUT_SIZE= %d \n", ts->tsDataSize + size, DEMUX_TS_PUT_SIZE);
+
+	do {
+		if (ts->tsDataSize + size < DEMUX_TS_PUT_SIZE) {
+			memcpy((void *)ts->tsBuffer + ts->tsDataSize, (const void *)data, size);
+			ts->tsDataSize += size;
+			status = NV_SPR_NO_ERROR;
+			goto end;
+		}
+		//printf("dvb inject  data ...       999999\n");
+
+
+		freeSize = DEMUX_TS_PUT_SIZE - ts->tsDataSize;
+		if (freeSize) {
+			//DMSG("freeSize:%d", freeSize);
+			memcpy((void *)ts->tsBuffer + ts->tsDataSize, (const void *)data, freeSize);
+
+			ts->tsDataSize = DEMUX_TS_PUT_SIZE;
+
+			data += freeSize;
+			size -= freeSize;
+		}
+
+		if (ts->sessionType == TRANSPORT_SESSION_TYPE_DVB
+			|| ts->sessionType == TRANSPORT_SESSION_TYPE_REPLAY) {
+
+			//check audio es data level
+#if 0			
+			getBufRetries = 0;
+			do {
+				ret = MT_UNF_AVPLAY_GetAudioStatusInfo(ts->avPlayer, &aud_info);
+				if (ret == MT_SUCCESS) {
+					//DMSG("AUD.u32UsedSize=%x", aud_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_AUD].u32UsedSize);
+					//DMSG("AUD.u32BufSize=%x", aud_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_AUD].u32BufSize);
+					//DMSG("AUD.u32BufRptr=%x", aud_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_AUD].u32BufRptr);
+					//DMSG("AUD.u32BufWptr=%x", aud_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_AUD].u32BufWptr);
+					if (aud_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_AUD].u32UsedSize < (64 * 1024)) {
+						break;
+					}
+				} else {
+					//Failed, do nothing
+					EMSG("GetAudioStatusInfo failed\n");
+					break;
+				}
+				//DMSG("Audio ES Data Level High, waiting...");
+
+				//MT_USLEEP(8000);
+				MT_USLEEP(8000);
+				getBufRetries++;
+			} while (getBufRetries < (RETRIES_TOTAL * 10));
+#endif
+			//check video es data level
+			getBufRetries = 0;
+			do {
+				ret = MT_UNF_AVPLAY_GetVideoStatusInfo(ts->avPlayer, &vid_info);
+				if (ret == MT_SUCCESS) {
+					//DMSG("VID.u32UsedSize=%x", vid_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_VID].u32UsedSize);
+					//DMSG("VID.u32BufSize=%x", vid_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_VID].u32BufSize);
+					//DMSG("VID.u32BufRptr=%x", vid_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_VID].u32BufRptr);
+					//DMSG("VID.u32BufWptr=%x", vid_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_VID].u32BufWptr);
+					if (vid_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_VID].u32UsedSize*5 < vid_info.stBufStatus[MT_UNF_AVPLAY_BUF_ID_ES_VID].u32BufSize*4) {
+						break;
+					}
+				} else {
+					//Failed, do nothing
+					EMSG("GetVideoStatusInfo failed\n");
+					break;
+				}
+				//printf("Video ES Data Level High, waiting...");
+
+				//MT_USLEEP(8000);
+				MT_USLEEP(8000);
+				getBufRetries++;
+			} while (getBufRetries < (RETRIES_TOTAL * 10));
+		} else {
+#if 0
+			//Recording sesssion
+			MT_UNF_PVR_REC_STATUS_S recStatus = {0};
+			getBufRetries = 0;
+			do {
+				ret = MT_UNF_PVR_RecGetStatus(ts->recordChannelId, &recStatus);
+				if (ret == MT_SUCCESS) {
+					DMSG("[DoNothing]recStatus.stRecBufStatus.u32BufSize=%x, .u32UsedSize=%x",
+						 recStatus.stRecBufStatus.u32BufSize, recStatus.stRecBufStatus.u32UsedSize);
+					//MT_USLEEP(8000);
+					break;
+				} else {
+					EMSG("PVR_RecGetStatus failed, do nothing");
+					break;
+				}
+			} while (getBufRetries < (RETRIES_TOTAL * 10));
+#endif
+		}
+
+		/* Stream buffer is full, so put the data into the demux */
+		getBufRetries = 0;
+		do {
+			//ret = MT_UNF_DMX_GetTSBuffer(ts->tsBufHandle, ts->tsDataSize, &dmxBuf, 100);
+			ret = MT_UNF_DMX_GetTSBuffer(ts->tsBufHandle, ts->tsDataSize, &dmxBuf, 10);
+			if (ret == MT_SUCCESS)
+				break;
+			//printf("fail\n");
+			getBufRetries++;
+
+			MT_USLEEP(1000);
+		} while (getBufRetries < (RETRIES_TOTAL * 150));
+		if (getBufRetries >= (RETRIES_TOTAL * 150)) {
+			EMSG("GetTSBUffer timeout, Buffer overflow(ret=%x)", ret);
+			status = NV_SPR_ERROR_TIMEOUT;
+			goto end;
+		}
+
+		memcpy((void *)(dmxBuf.pu8Data), (const void *)(ts->tsBuffer), ts->tsDataSize);
+		//TMSG("ts->tsBufHandle =%x  [tsid:%d]put size:%d ",   ts->tsBufHandle,  ts->tsid, ts->tsDataSize);
+		ret = MT_UNF_DMX_PutTSBuffer(ts->tsBufHandle, ts->tsDataSize);
+		if (ret != MT_SUCCESS) {
+			EMSG("inject failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+			goto end;
+		}
+
+		ts->tsDataSize = 0;
+	} while (size);
+
+	status = NV_SPR_NO_ERROR;
+end:
+	return status;
+}
+
+static TNvSprStatus nvSprReplayInjectData(struct transportSession *ts, TUnsignedInt8 *data, TUnsignedInt32 size)
+{
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+    phys_addr_t phyAddrTsBuf = 0;
+	MT_UNF_STREAM_BUF_S dmxBuf = {0};
+	mt_s32 ret = MT_FAILURE;
+	mt_u32 getBufRetries = 0;
+	mt_u32 freeSize = 0;
+	mt_u16 emi = ts->emi;
+
+	mt_u32 dmx_rep_put_size = ((emi & 0xFF00) ? DEMUX_RAW_REP_PUT_SIZE : DEMUX_TS_REP_PUT_SIZE);
+
+
+	if (ts->isClosing) {
+		printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		return status;
+	}
+	
+//	printf("%s %d  size =%d ts->tsDataSize = %d dmx_rep_put_size = %d  \n",__FUNCTION__,__LINE__, size, ts->tsDataSize, dmx_rep_put_size);
+
+	do {
+		//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		if (ts->tsDataSize + size < dmx_rep_put_size) {
+
+              	mtSprInputDataRawEmiProcess(ts, data, size);
+			
+
+			ts->tsDataSize += size;
+			status = NV_SPR_NO_ERROR;
+			//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+			goto end;
+		}
+
+		freeSize = dmx_rep_put_size - ts->tsDataSize;
+		//printf("%s %d freeSize = %d \n",__FUNCTION__,__LINE__, freeSize);
+
+		if (freeSize) {
+			//DMSG("freeSize:%d, size:%d", freeSize, size);
+			//mtSprInputDataRawEmiProcess(ts, data, freeSize);
+			//mtSprInputDataRawEmiProcess(ts, data, size);
+			//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+			mtSprInputDataRawEmiProcess(ts, data, freeSize);
+			//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+			ts->tsDataSize = dmx_rep_put_size;
+
+			data += freeSize;
+			size -= freeSize;
+			//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+			//ts->tsDataSize += size;
+			//size = 0;
+		}
+
+		/* Stream buffer is full, so put the data into the demux */
+		getBufRetries = 0;
+
+		do {
+			//ret = MT_UNF_DMX_GetTSBuffer(ts->tsBufHandle, ts->tsDataSize, &dmxBuf, 10);
+			ret = MT_UNF_DMX_GetTSBufferEx(ts->tsBufHandle, ts->tsDataSize, &dmxBuf, &phyAddrTsBuf, 10);
+			if (ret == MT_SUCCESS)
+				break;
+
+			getBufRetries++;
+//			printf("[NOTE]%s %d \n",__FUNCTION__,__LINE__);
+
+
+			MT_USLEEP(1000);
+		} while (getBufRetries < (RETRIES_TOTAL * 150));
+
+		if (getBufRetries >= (RETRIES_TOTAL * 150)) {
+			EMSG("injection is blocked, tsDataSize:%d", ts->tsDataSize);
+
+			status = NV_SPR_ERROR_TIMEOUT;
+			printf("[NV_SPR_ERROR_TIMEOUT]%s %d \n",__FUNCTION__,__LINE__);
+
+			goto end;
+		}
+		//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		//DMSG("EDMA_CH2 copy size:%d", ts->tsDataSize);
+		if (emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+			|| emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+			|| emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+			//printf("%s %d ts->tsDataSize = %d \n",__FUNCTION__,__LINE__, ts->tsDataSize);
+
+			dmacpy(MT_EDMA_CH_2, (mt_u8 *)(phyAddrTsBuf), (const void *)(ts->tsBufferPhy), ts->tsDataSize);
+			//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		} else if (emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA
+				   || emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+				   || emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+				   || emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1) {
+
+			//If data is processed by descrambler:
+			//memcpy((void *)(dmxBuf.pu8Data), (const void *)(ts->tsBuffer), ts->tsDataSize);
+			//If data is processed by M2M:
+
+			dmacpy(MT_EDMA_CH_2, (mt_u8 *)(phyAddrTsBuf), (const void *)(ts->tsBufferPhy), ts->tsDataSize);
+			//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		} else {
+			DMSG("FATAL:What is this EMI:%x for? Not suppose to be here!", emi);
+		}
+
+		//DMSG("put size:%d", ts->tsDataSize);
+		//ret = MT_UNF_DMX_PutTSBuffer(ts->tsBufHandle, ts->tsDataSize);
+		//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		ret = MT_UNF_DMX_PutTSBufferEx(ts->tsBufHandle, ts->tsDataSize, 0);
+		//printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		if (ret != MT_SUCCESS) {
+			EMSG("inject failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+			goto end;
+		}
+
+		ts->tsDataSize = 0;
+	} while (size);
+	printf("ok tsid = %d \n", ts->tsid);
+
+	status = NV_SPR_NO_ERROR;
+end:
+
+	return status;
+
+}
+
+TNvSprStatus nvSprInjectData(TTransportSessionId tsid, TUnsignedInt32 size, TUnsignedInt8 *data)
+{
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	struct transportSession *ts;
+
+	CHECK_TSID_VALIDITY(tsid);
+
+	//TMSG("InjectData In:size:%d, dataAddr:%x", size, data);
+      //printf("nvSprInjectData ----------------------------------------------------------\n");
+       //write_test_file(gtsfp, (TUnsignedInt8 *)(data), size);
+
+	if (size > 0 && !data) {
+		EMSG("the injected data buffer is invalid");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	WR_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto end;
+	}
+
+	ts = getTransportSessionById(tsid);
+	if (!ts) {
+		EMSG("Session id(%d) isn't existed or closed", tsid);
+
+		status = NV_SPR_ERROR_BAD_PARAM;
+		goto end;
+	}
+
+	/*
+	 * Check if sec stream session is already closed.
+	 * cak Pause-Resume scenario:
+	 *  When caPause is called, secStreamSessionClose is also called,
+	 *  but simbad never calls nvSprSessionClose, so nvSprInjectData
+	 *  never stops injecting data. It causes blocking issue. We
+	 *  get sec stream session status to fix this.
+	 */
+#if 0 //But how about clear stream?
+	if (mtSecGetSessionClosed(tsid, SESSION_OP_DECRYPT)) {
+		DMSG("SecStreamSession(tsid:%d) is closed", tsid);
+		//Do nothing
+		goto end;
+	}
+#endif
+
+//    TMSG("tsid:%d sesstionType:%d", tsid, ts->sessionType);
+    if (ts->sessionType == TRANSPORT_SESSION_TYPE_DVB) {
+#if 1
+        if (mtSecGetSessionEmi(ts->tsid, SESSION_OP_DECRYPT) == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+			//OTT_4023 need this:188 aligned,remove padding part
+			TMSG("raw size:%d\n", size);
+			size = pkcs7_padding_data_length(data, size, 16);
+			TMSG("padding removed size:%d\n", size);
+			TUnsignedInt32 injCount = 0;
+			TUnsignedInt32 injRemain = 0;
+			TUnsignedInt32 i = 0;
+			if (size > DEMUX_TS_PUT_SIZE) {
+				injCount = size / DEMUX_TS_PUT_SIZE;
+				for (i = 0; i < injCount; i++) {
+					status = nvSprDvbInjectData(ts, data + (i * DEMUX_TS_PUT_SIZE), DEMUX_TS_PUT_SIZE);
+				}
+				injRemain = size % DEMUX_TS_PUT_SIZE;
+				if (injRemain) {
+					status = nvSprDvbInjectData(ts, data + (i * DEMUX_TS_PUT_SIZE), injRemain);
+				}
+			} else {
+				status = nvSprDvbInjectData(ts, data, size);
+			}
+
+        } else {
+//	     TMSG("DvbInjectData size:%d\n", size);
+            status = nvSprDvbInjectData(ts, data, size);
+        }
+#else
+		//This is for progra-switch stress test
+            status = nvSprDvbInjectData(ts, data, size);
+#endif
+    } else if (ts->sessionType == TRANSPORT_SESSION_TYPE_REPLAY) {
+    status = nvSprReplayInjectData(ts, data, size);
+    } else if (ts->sessionType == TRANSPORT_SESSION_TYPE_RECORD) {
+        //For injecting, same as Dvb session
+		//TMSG("TRANSPORT_SESSION_TYPE_RECORD padding removed size:%d\n", size);
+		status = nvSprDvbInjectData(ts, data, size);
+		//DMSG("padding removed size:%d\n", size);
+    } else {
+        //TODO
+    }
+
+end:
+	WR_UNLOCK(&rwlock);
+
+	return status;
+}
+
+static mt_s32 recordingWriteCallback(MT_UNF_PVR_DATA_ATTR_S *attr,
+                                     mt_u8 *destVirAddr, ulong destPhyAddr,
+                                     mt_u8 *srcVirAddr, ulong srcPhyAddr,
+                                     mt_u32 offset,
+									 mt_u32 *data_size)
+{
+	mt_s32 ret = MT_FAILURE;
+	mt_u32 tsid;
+	struct transportSession *ts = NULL;
+	MT_UNF_PVR_REC_ATTR_S stRecAttr = {0};
+	TUnsignedInt16 emi;
+	phys_addr_t phyaddr_src, phyaddr_dest;
+	MT_UNF_DMX_RECBUF_STATUS_S rec_buf_status;
+
+
+#if 0
+	//record clear stream for test: set bDoCipher=FALSE, bSupportAdvCa=0
+	//DMSG("record clear stream for playback test.");
+	DMSG("Do nothing but return sucess.");
+	return MT_SUCCESS; 
+#endif 
+
+
+
+	//DMSG("CB In\n");
+	//WR_LOCK(&rwlock); 
+
+	ret = MT_UNF_PVR_RecGetChn(attr->u32ChnID, &stRecAttr);
+	if (MT_SUCCESS != ret) {
+		EMSG("Get Chn by ChnID:%d failed\n", attr->u32ChnID);
+		//WR_UNLOCK(&rwlock);
+		return MT_FAILURE;
+	} 
+
+	tsid = mtSecGetTsIdByDmxId(stRecAttr.u32DemuxID);
+	//DMSG("RecAttr.DmxId:%d, Got tsid:%d", stRecAttr.u32DemuxID, tsid);
+
+	#ifdef FILE_DUMP_DEBUG
+	if( tsid == 2)
+	write_test_file(gtsfp, (TUnsignedInt8 *)(srcVirAddr), *data_size);
+	#endif
+
+	ts = getTransportSessionById(tsid);
+	if (NULL == ts) {
+		//WR_UNLOCK(&rwlock);
+		EMSG("Transport Session not found or closed by tsid:%d", tsid);
+		return MT_FAILURE;
+	}
+	emi = ts->emi;
+       //printf("recordingWriteCallback ---------------------------------------------------------- tsid = %d  data_size= %d \n", tsid, *data_size);
+
+	phyaddr_src = srcPhyAddr;
+	phyaddr_dest = destPhyAddr;
+
+	if (emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+
+		//DMSG("mtSetProcessing... In");
+		//RAW-EMI encryption
+	
+		//printf(" srcPhyAddr=%x destPhyAddr=%x *data_size = 0x%x \n", srcPhyAddr,destPhyAddr, *data_size);
+
+		if (0 != mtSecRawStreamDataProcess(tsid, SESSION_OP_ENCRYPT, *data_size, (const TUnsignedInt8 *)srcVirAddr, (TUnsignedInt8 *)destVirAddr)) {
+			EMSG("Raw stream data encryption process failed(Key may not set YET!!!tsid:%d  data_size = %d srcVirAddr=%x destVirAddr=%x srcPhyAddr=%x destPhyAddr=%x)", 
+				    tsid, *data_size, srcVirAddr, destVirAddr,srcPhyAddr,destPhyAddr);
+			//goto end;
+		}
+	}
+	else if (emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1) {
+
+		//DMSG("mtSetProcessing... In");
+		//RAW-EMI encryption
+		phyaddr_src = srcPhyAddr;
+		phyaddr_dest = destPhyAddr;
+		//printf(" srcPhyAddr=%x destPhyAddr=%x *data_size = 0x%x \n", srcPhyAddr,destPhyAddr, *data_size);
+
+
+		if (0 != mtSecRawStreamDataProcess_phy(tsid, SESSION_OP_ENCRYPT, *data_size, (const TUnsignedInt8 *)srcPhyAddr, (TUnsignedInt8 *)destPhyAddr)) {
+			EMSG("Raw stream data encryption process failed(Key may not set YET!!!tsid:%d  data_size = %d srcVirAddr=%x destVirAddr=%x srcPhyAddr=%x destPhyAddr=%x)", 
+				    tsid, *data_size, srcVirAddr, destVirAddr,srcPhyAddr,destPhyAddr);
+			//goto end;
+		} 
+
+	} else {
+	
+		DMSG("TODO:To be implemented!");
+	}
+
+	//DMSG("<<<<<<<<CB Out, Data recorded, size:%d>>>>>>>>", *data_size);
+	//WR_UNLOCK(&rwlock);
+	return MT_SUCCESS;
+}
+
+
+mt_void MTADP_PVR_CallBack(mt_u32 u32ChnID, MT_UNF_PVR_EVENT_E EventType, mt_s32 s32EventValue, mt_void *args)
+{
+    MT_UNF_PVR_PLAY_MODE_S mode;
+    MT_UNF_PVR_PLAY_POSITION_S stPos = { 0 };
+    MBInfo mb = {0};
+
+    printf("==============call back================\n");
+
+    if (EventType > MT_UNF_PVR_EVENT_REC_RESV)
+    {
+        printf("====callback error!!!\n");
+        return;
+    }
+
+    printf("====channel     %d\n", u32ChnID);
+    printf("====event value %d\n", s32EventValue);
+
+    if (EventType == MT_UNF_PVR_EVENT_REC_DMX_CREATE)
+    {
+        printf("======pvr rec demux channel=0x%x create.====\n",s32EventValue);
+        MT_UNF_DMX_RECBUF_STATUS_S stStatus;
+        MT_S32 ret;
+        ret = MT_UNF_DMX_GetRecBufferStatus((mt_handle)s32EventValue, &stStatus);
+        if (MT_SUCCESS == ret)
+        {
+            printf("666 ========get dmx rec buffer status u32BufPhyAddr=0x%x u32BufSizeAlign=0x%x\n",stStatus.u32BufPhyAddr,stStatus.u32BufSizeAlign);
+		//getSprMBInfoByType(MB_REC, &mb);
+		mb.start =  stStatus.u32BufPhyAddr;
+		mb.size = stStatus.u32BufSizeAlign;
+		printf("MTADP_PVR_CallBack record_pip_flg = %d  \n", record_pip_flg);
+
+		if( record_pip_flg )
+			mtSecSetProtectBuffer(mb.start, mb.size, MB_REC_1);
+		else
+			mtSecSetProtectBuffer(mb.start, mb.size, MB_REC);
+        }
+        else
+        {
+            printf("========get dmx rec buffer status failed!\n");
+        }
+        
+    }
+
+
+    printf("=======================================\n\n");
+
+    return;
+}
+
+
+TNvSprStatus nvSprOpenRecording(TTransportSessionId tsid, TNvSprPidList *pids, TUnsignedInt16 emi,
+                                TBoolean smp, const char *filename)
+{
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	struct transportSession *ts = NULL;
+       mt_u32 vidPid = 0;
+       mt_u32 audPid = 0;
+	mt_u32 pcrPid = 0;
+	int i = 0;
+	
+      printf("nvSprOpenRecording ------------- smp = %d emi = %d tsid= %d \n", smp, emi, tsid);
+
+	 #ifdef FILE_DUMP_DEBUG
+	{
+		open_test_file();
+	}
+	#endif
+
+
+	CHECK_TSID_VALIDITY(tsid);
+
+	UNUSED(smp);
+	DMSG("Recording Open In,tsid=%d, emi=%x", tsid, emi);
+
+	if (!pids) {
+		EMSG("pids is NULL pointer");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	if (!pids->elems) {
+		EMSG("pids elements is NULL pointer");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	if (pids->count <= 0) {
+		EMSG("pids list is empty");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	if (!filename) {
+		EMSG("file name is NULL");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	TMSG("filename to be saved:%s, len:%lu", filename, strlen(filename));
+
+	WR_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+
+	ts = getTransportSessionById(tsid);
+	if (ts == NULL) {
+		DMSG("Recording on new tsid:%d", tsid);
+		ts = newTransportSession(tsid);
+		if (!ts) {
+			status = NV_SPR_ERROR;
+			goto error;
+		}
+
+		ts->recordDmxId = mtSecGetPlatDmxId(tsid);
+
+		DMSG("open record session %d", tsid);
+		ts->sessionType = TRANSPORT_SESSION_TYPE_RECORD;
+		ts->emi = emi;
+		ts->tsPort = MT_UNF_DMX_PORT_BUTT;
+
+	} else {
+		//TODO: recording on same tsid of playing
+		DMSG("TODO:Recording on same tsid:%d", tsid);
+		ts->recordDmxId = ts->playDmxId; //TODO:?
+	}
+
+	if( getOthersSessionOpenedFlg(tsid) == FALSE)
+       {
+		record_pip_flg = FALSE;
+		printf("%s %d nvSprOpenRecording record_pip_flg = FALSE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+
+	}
+	else
+	{
+		record_pip_flg = TRUE;
+		printf("%s %d nvSprOpenRecording record_pip_flg = TRUE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+	}
+
+
+	status = parsePidList(pids, &ts->vidCodecType, &vidPid, &ts->audCodecType, &audPid);
+	if (status != NV_SPR_NO_ERROR)
+		goto delete_session;
+
+       printf("nvSprOpenRecording -----------------ts->tsPort  = %d ts->recordDmxId = %d  \n", ts->tsPort, ts->recordDmxId);
+
+	if (ts->tsPort == MT_UNF_DMX_PORT_BUTT) {
+
+		MT_UNF_DMX_PORT_E port = MT_UNF_DMX_PORT_RAM_0;
+		for (i = 0; i < MAX_PORT_NUM; i++) {
+			ret = MT_UNF_DMX_AttachTSPort(ts->recordDmxId, port);//   1 , MT_UNF_DMX_PORT_RAM_0
+			if (ret != MT_SUCCESS) {
+				EMSG("attach the record port to the demux failed, return error = 0x%x", ret);
+
+				status = NV_SPR_ERROR;
+				goto delete_session;
+			}
+
+			printf("MT_UNF_DMX_CreateTSBuffer port = %d \n", port);
+			ret = MT_UNF_DMX_CreateTSBuffer(port, DEMUX_TS_BUF_SIZE, &ts->tsBufHandle);
+			if (ret != MT_SUCCESS) {
+
+				if (ret == MT_ERR_DMX_RECREAT_TSBUFFER) {
+					MT_UNF_DMX_DetachTSPort(ts->recordDmxId);
+					port += 1;
+					DMSG("create TS buffer on port%d", port);
+				} else {
+					EMSG("create TS buffer failed, error = 0x%x", ret);
+					status = NV_SPR_ERROR;
+					goto detach_record_port;
+				}
+
+			} else {
+				TMSG("create TS buffer on port%d success, tsBufHandle:%lu", port, ts->tsBufHandle);
+				ts->tsPort = port;
+				break;
+			}
+		}
+	} else {
+		//attach directly
+		ret = MT_UNF_DMX_AttachTSPort(ts->recordDmxId, ts->tsPort);
+		if (ret != MT_SUCCESS) {
+			EMSG("attach the record port to the demux failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+			goto delete_session;
+		}
+	}
+
+	//set pidlist to NOCSAPI to start Scrambler
+	if (emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1
+		|| emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+		//TODO:MPEG-TS encryption
+		TSecPidInfo *pxPidInfo = (TSecPidInfo *)malloc(sizeof(TSecPidInfo));
+		if (NULL != pxPidInfo) {
+			pxPidInfo->sessionType = ts->sessionType;
+			pxPidInfo->pidNum = pids->count;
+			for (i = 0; i < pids->count; i++) {
+				pxPidInfo->pidList[i].pid = pids->elems[i].pid;
+				pxPidInfo->pidList[i].type = toSecPidType(pids->elems[i].streamType);
+			}
+			if( getOthersSessionOpenedFlg(tsid) ==  TRUE)
+	      	       {
+	      	      		pxPidInfo->pidNum = 1;
+				pxPidInfo->pidList[0].pid = vidPid;
+				pxPidInfo->pidList[0].type = SEC_PID_VIDEO;
+			}
+			mtSecSetSessionPid(tsid, pxPidInfo);
+			free(pxPidInfo);
+		}
+	}
+
+#if 0
+	ts->tsBuffer = (TUnsignedInt8 *)mt_unf_cipher_malloc(DEMUX_TS_PUT_SIZE);
+	if (!ts->tsBuffer) {
+		EMSG("malloc stream buffer failed");
+
+		status = NV_SPR_ERROR;
+		goto destroy_ts_buffer;
+	}
+
+	ts->tsDataSize = 0;
+#else
+    ts->tsBuffer = NULL;
+    ts->tsDataSize = 0;
+#endif
+
+
+#ifdef USE_DMX_RECORDING
+	ret = mt_record_start(ts, filename, emi, vidPid, audPid);
+	if (ret != MT_SUCCESS) {
+		EMSG("record start failed, return error = 0x%x", ret);
+		status = NV_SPR_ERROR;
+		goto free_ts_buffer;
+	}
+#else
+	ret = MT_UNF_PVR_RecInit();
+	if (ret != MT_SUCCESS) {
+		EMSG("init PVR recorder failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto free_ts_buffer;
+	}
+
+	MT_UNF_PVR_REC_ATTR_S pvrRecordAttr;
+	memset((void *)&pvrRecordAttr, 0, sizeof(pvrRecordAttr));
+
+	if ((vidPid > 0) && (vidPid != 0x1FFF)) {
+		pvrRecordAttr.enIndexType = MT_UNF_PVR_REC_INDEX_TYPE_NONE;
+        pvrRecordAttr.enIndexVidType = ts->vidCodecType;
+        pvrRecordAttr.u32IndexPid = vidPid;
+	} else if ((audPid > 0) && (audPid != 0x1FFF)) {
+        pvrRecordAttr.enIndexType = MT_UNF_PVR_REC_INDEX_TYPE_NONE;
+        pvrRecordAttr.enIndexVidType = MT_UNF_VCODEC_TYPE_BUTT;
+        pvrRecordAttr.u32IndexPid = audPid;
+	} else {
+        EMSG("there is neither video pid nor audio pid in this stream");
+
+		status = NV_SPR_ERROR;
+		goto deinit_pvr_recorder;
+	}
+
+	pvrRecordAttr.u32DemuxID = ts->recordDmxId;
+	pvrRecordAttr.u32DavBufSize = 0xbc0000;//PVR_STUB_TSDATA_SIZE;
+    pvrRecordAttr.u32ScdBufSize = PVR_STUB_SC_BUF_SZIE;
+    pvrRecordAttr.u32IdxBufSize = PVR_STUB_IDX_SHM_SIZE;
+	pvrRecordAttr.u32UsrDataInfoSize = 0;
+	pvrRecordAttr.bIsClearStream = MT_TRUE;
+	pvrRecordAttr.enStreamType = MT_UNF_PVR_STREAM_TYPE_TS;
+
+
+
+	pvrRecordAttr.u64MaxFileSize = MAX_RECORD_FILE_SIZE;
+	pvrRecordAttr.u64MaxTimeInMs = 0;
+	//pvrRecordAttr.bRewind = MT_TRUE;
+    pvrRecordAttr.bRewind = MT_FALSE;
+
+    strcpy(pvrRecordAttr.szFileName, filename);
+    pvrRecordAttr.u32FileNameLen = strlen(pvrRecordAttr.szFileName);
+
+  //  if (pvrRecordAttr.enIndexType == MT_UNF_PVR_REC_INDEX_TYPE_AUDIO)
+		pvrRecordAttr.u32DIO = MT_FALSE;
+	//else
+	//	pvrRecordAttr.u32DIO = MT_TRUE;
+
+	if (emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1) {
+		pvrRecordAttr.bSupportAdvCa = MT_UNF_PVR_REC_DEFALT;//MT_UNF_PVR_REC_DEFALT;//MT_UNF_PVR_REC_COMMON_CRAMBLE; //support phyAddr
+		pvrRecordAttr.stEncryptCfg.bDoCipher = MT_TRUE;
+
+		//To avoid check error
+        pvrRecordAttr.stEncryptCfg.u32KeyLen = 16;
+        pvrRecordAttr.stEncryptCfg.enType = MT_CIPHER_ALG_AES;
+        for(i = 0; i < pvrRecordAttr.stEncryptCfg.u32KeyLen; i++){
+            pvrRecordAttr.stEncryptCfg.au8Key[i] = (10 + i);
+        }
+	} else if (emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+			   || emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+			   || emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+		//pvrRecordAttr.bSupportAdvCa = MT_UNF_PVR_REC_COMMON_CRAMBLE; //support phyAddr
+		//pvrRecordAttr.stEncryptCfg.bDoCipher = MT_FALSE; //record the clear stream
+		//pvrRecordAttr.bSupportAdvCa = 0; //support phyAddr
+		pvrRecordAttr.bSupportAdvCa = MT_UNF_PVR_REC_DEFALT;//MT_UNF_PVR_REC_DEFALT;//MT_UNF_PVR_REC_COMMON_CRAMBLE; //support phyAddr
+        pvrRecordAttr.stEncryptCfg.bDoCipher = MT_TRUE;
+		//To avoid check error
+        pvrRecordAttr.stEncryptCfg.u32KeyLen = 16;
+        pvrRecordAttr.stEncryptCfg.enType = MT_CIPHER_ALG_AES;
+        for(i = 0; i < pvrRecordAttr.stEncryptCfg.u32KeyLen; i++){
+            pvrRecordAttr.stEncryptCfg.au8Key[i] = (10 + i);
+        }
+		DMSG("set bSupportAdvCa=Nagra");
+	} else {
+
+	}
+
+	ret = MT_UNF_PVR_RegisterEvent(MT_UNF_PVR_EVENT_REC_DMX_CREATE, MTADP_PVR_CallBack, NULL);
+	#if 0
+	if (ret != MT_SUCCESS) {
+		EMSG("register PVR  callback failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto deinit_pvr_recorder;
+	}
+	#endif
+	TMSG("1111  ts->recordChannelId = %d \n", ts->recordChannelId);
+	ret = MT_UNF_PVR_RecCreateChn(&ts->recordChannelId, &pvrRecordAttr);
+	if (ret != MT_SUCCESS) {
+		EMSG("create PVR recorder channel failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto deinit_pvr_recorder;
+	}
+	TMSG("SPR Record channel ID:%d", ts->recordChannelId);
+	TMSG("2222 vidPid = %x audPid=%x \n", vidPid, audPid);
+
+	if ((vidPid > 0) && (vidPid != 0x1FFF)) {
+		ret = MT_UNF_PVR_RecSetPid(ts->recordChannelId, pvrRecordAttr.u32DemuxID, (int)vidPid);
+		if (ret != MT_SUCCESS) {
+			EMSG("set video pid to recorder failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+			goto destroy_record_channel;
+		}
+	}
+
+	if ((audPid > 0) && (audPid != 0x1FFF)) {
+		ret = MT_UNF_PVR_RecSetPid(ts->recordChannelId, pvrRecordAttr.u32DemuxID, (int)audPid);
+		if (ret != MT_SUCCESS) {
+			EMSG("set audio pid to recorder failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+			goto destroy_record_channel;
+		}
+	}
+
+	ret = MT_UNF_PVR_RegisterExtraCallback(ts->recordChannelId, MT_UNF_PVR_EXTRA_WRITE_CALLBACK,
+	                                       recordingWriteCallback, NULL);
+	if (ret != MT_SUCCESS) {
+		EMSG("register recording callback failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto destroy_record_channel;
+	}
+
+	ret = MT_UNF_PVR_RecStartChn(ts->recordChannelId);
+	if (ret != MT_SUCCESS) {
+		EMSG("start recording failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto unregister_callback;
+	}
+
+	char attrFile[128] = {0};
+    PVR_PROG_INFO_S userData;
+
+    sprintf(attrFile, "%s.attr", filename);
+    userData.u32MagicNumber = PVR_PROG_INFO_MAGIC;
+	memcpy((void *)(&userData.stRecAttr), (const void *)&pvrRecordAttr,
+	       sizeof(MT_UNF_PVR_REC_ATTR_S));
+	userData.stProgInfo.PcrPid = pcrPid;
+	userData.stProgInfo.VideoType = ts->vidCodecType;
+	userData.stProgInfo.VElementPid = (mt_u16)(vidPid & 0xFFFF);
+	userData.stProgInfo.AudioType = ts->audCodecType;
+	userData.stProgInfo.AElementPid = (mt_u16)(audPid & 0xFFFF);
+
+	ret = MT_UNF_PVR_SetUsrDataInfoByFileName(attrFile, (MT_U8*)&userData, sizeof(PVR_PROG_INFO_S));
+       if (ret != MT_SUCCESS) {
+              EMSG("set user data to record attribute file failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto stop_record_channel;
+        }
+
+	#endif
+	
+	#if 0
+	//set Media Buffers:
+	MBInfo mb = {0};
+	getSprMBInfoByType(MB_REC, &mb);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_REC);
+	//#else
+	MBInfo mb = {0};
+	//getSprMBInfoByType(MB_REC, &mb);
+	mb.start =  rec_buf_status.u32BufPhyAddr;
+	mb.size = rec_buf_status.u32BufSizeAlign;
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_REC);
+	#endif
+
+	WR_UNLOCK(&rwlock);
+
+	TMSG("SPR Recording Open success!");
+
+	return NV_SPR_NO_ERROR;
+
+#ifndef USE_DMX_RECORDING
+stop_record_channel:
+	CHECK_CALL_MT_FUNC(MT_UNF_PVR_RecStopChn, ts->recordChannelId);
+unregister_callback:
+	CHECK_CALL_MT_FUNC(MT_UNF_PVR_UnRegisterExtraCallBack, ts->recordChannelId,
+	                   MT_UNF_PVR_EXTRA_WRITE_CALLBACK);
+destroy_record_channel:
+	CHECK_CALL_MT_FUNC(MT_UNF_PVR_RecDestroyChn, ts->recordChannelId);
+deinit_pvr_recorder:
+	MT_UNF_PVR_UnRegisterEvent(MT_UNF_PVR_EVENT_REC_DMX_CREATE);
+	CHECK_CALL_MT_FUNC(MT_UNF_PVR_RecDeInit);
+#endif
+
+free_ts_buffer:
+	if (ts->tsBuffer != NULL) {
+		mt_unf_cipher_free(ts->tsBuffer);
+		ts->tsBuffer = NULL;
+	}
+	//destroy_ts_buffer:
+	//CHECK_CALL_MT_FUNC(MT_UNF_DMX_DestroyTSBuffer, ts->tsBufHandle);
+	//ts->tsBufHandle = MT_INVALID_HANDLE;
+detach_record_port:
+	CHECK_CALL_MT_FUNC(MT_UNF_DMX_DetachTSPort, ts->recordDmxId);
+	ts->recordDmxId = DEMUX_INVALID_ID;
+delete_session:
+	delTransportSession(ts);
+error:
+	WR_UNLOCK(&rwlock);
+
+	return NV_SPR_ERROR;
+}
+
+TNvSprStatus nvSprOpenReplaying(TTransportSessionId tsid, TNvSprPidList *pids, TUnsignedInt16 emi, TBoolean smp)
+{
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	struct transportSession *ts = NULL;
+	mt_u32 vidPid = 0;
+	mt_u32 audPid = 0;
+	mt_u32 pcrPid = 0;
+	mt_u32 i = 0;
+	MT_UNF_SYNC_REF_E syncRef = MT_UNF_SYNC_REF_NONE;
+
+       printf("nvSprOpenReplaying tsid = %ld  emi = 0x%x  smp = %d  ---------------------------\n", tsid, emi, smp);
+
+ 
+	UNUSED(smp);
+	CHECK_TSID_VALIDITY(tsid);
+
+	if (!pids) {
+		EMSG("pids is NULL pointer");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	if (!pids->elems) {
+		EMSG("pids elements is NULL pointer");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	DMSG("pidinfo:pidcount=%d", pids->count);
+	DMSG("pidinfo:pid=%d,type=%d", pids->elems[0].pid, pids->elems[0].streamType);
+
+	if (pids->count <= 0) {
+		EMSG("pids list is empty");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	WR_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+
+	ts = newTransportSession(tsid);
+	if (!ts) {
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+
+	if( getOthersSessionOpenedFlg(tsid) == FALSE)
+       {
+		ts->bUseSubLayer = FALSE;
+		printf("%s %d nvSprOpenReplaying bUseSubLayer = FALSE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+
+	}
+	else
+	{
+		ts->bUseSubLayer = TRUE;
+		printf("%s %d nvSprOpenReplaying bUseSubLayer = TRUE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+	}
+
+	ts->sessionType = TRANSPORT_SESSION_TYPE_REPLAY;
+	ts->emi = emi;
+	ts->tsPort = MT_UNF_DMX_PORT_BUTT;
+
+	status = parsePidList(pids, &ts->vidCodecType, &vidPid, &ts->audCodecType, &audPid);
+	if (status != NV_SPR_NO_ERROR)
+		goto delete_session;
+
+	ts->playDmxId = mtSecGetPlatDmxId(tsid);
+	TMSG("=================map tsid(%d) to dmxid(%d)===================",
+		 tsid, ts->playDmxId);
+
+	if (ts->tsPort == MT_UNF_DMX_PORT_BUTT) {
+
+		MT_UNF_DMX_PORT_E port = MT_UNF_DMX_PORT_RAM_0;
+		for (i = 0; i < MAX_PORT_NUM; i++) {
+			ret = MT_UNF_DMX_AttachTSPort(ts->playDmxId, port);//   1 , MT_UNF_DMX_PORT_RAM_0
+			if (ret != MT_SUCCESS) {
+				EMSG("attach the record port to the demux failed, return error = 0x%x", ret);
+
+				status = NV_SPR_ERROR;
+				goto delete_session;
+			}
+
+			printf("MT_UNF_DMX_CreateTSBuffer port = %d \n", port);
+			ret = MT_UNF_DMX_CreateTSBuffer(port, DEMUX_TS_BUF_SIZE, &ts->tsBufHandle);
+			if (ret != MT_SUCCESS) {
+
+				if (ret == MT_ERR_DMX_RECREAT_TSBUFFER) {
+					MT_UNF_DMX_DetachTSPort(ts->playDmxId);
+					port += 1;
+					DMSG("create TS buffer on port%d", port);
+				} else {
+					EMSG("create TS buffer failed, error = 0x%x", ret);
+					status = NV_SPR_ERROR;
+					goto detach_ts_port;
+				}
+
+			} else {
+				TMSG("create TS buffer on port%d success, tsBufHandle:%lu", port, ts->tsBufHandle);
+				ts->tsPort = port;
+				break;
+			}
+		}
+	}
+
+	printf(" ts->tsBufHandle=%x  \n", ts->tsBufHandle);
+
+	if (emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1) {
+
+		//TODO:MT_UNF_DMX_GetTSBufferEx(ts->tsBufHandle, ts->tsDataSize, &dmxBuf, &phyAddrTsBuf, 10);
+		//to get phyAddr & size of the TSBuffer
+		MT_UNF_STREAM_BUF_S dmxBuf = {0};
+		phys_addr_t phyAddrTsBuf = 0;
+		//ret = MT_UNF_DMX_GetTSBufferEx(ts->tsBufHandle, 188, &dmxBuf, &phyAddrTsBuf, 10);
+		ret = MT_UNF_DMX_GetTSBufferEx(ts->tsBufHandle, (256*1024), &dmxBuf, &phyAddrTsBuf, 10);
+		if (ret != MT_SUCCESS) {
+			DMSG("Get TsBuffer failed, ret=%x", ret);
+		}
+		DMSG("Got TsBuffer Attr, phyAddr=0x%lx, size=%x for registering", phyAddrTsBuf, DEMUX_TS_BUF_SIZE);
+		if(phyAddrTsBuf%(256*1024) !=0)
+		{
+			phyAddrTsBuf = (phyAddrTsBuf/(256*1024))*(256*1024) + (256*1024);
+		}
+		DMSG("Got TsBuffer Attr, phyAddr=0x%lx, size=%x for registering", phyAddrTsBuf, DEMUX_TS_BUF_SIZE);
+		mtSecSetProtectBuffer(phyAddrTsBuf, DEMUX_TS_BUF_SIZE, MB_OTT);
+	}
+	//set pidlist to NOCSAPI
+	if (emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1
+		|| emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING) {
+		//TODO:MPEG-TS replaying
+		TUnsignedInt32 i = 0;
+		TSecPidInfo *pxPidInfo = (TSecPidInfo *)malloc(sizeof(TSecPidInfo));
+		if (NULL != pxPidInfo) {
+			pxPidInfo->sessionType = ts->sessionType;
+			pxPidInfo->pidNum = pids->count;
+			for (i = 0; i < pids->count; i++) {
+				pxPidInfo->pidList[i].pid = pids->elems[i].pid;
+				pxPidInfo->pidList[i].type = toSecPidType(pids->elems[i].streamType);
+			}
+			printf("tsid = %d pidNum = %d\n", tsid,pxPidInfo->pidNum);
+			if( getOthersSessionOpenedFlg(tsid) ==  TRUE)
+	      	       {
+	      	      		pxPidInfo->pidNum = 1;
+				pxPidInfo->pidList[0].pid = vidPid;
+				pxPidInfo->pidList[0].type = SEC_PID_VIDEO;
+			}
+			mtSecSetSessionPid((unsigned long)tsid, pxPidInfo);
+				printf("%s %d \n",__FUNCTION__,__LINE__);
+
+			free(pxPidInfo);
+				printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		}
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ts->avPlayerStreamType = MT_UNF_AVPLAY_STREAM_TYPE_TS;
+	status = openAvPlayer(ts, NULL, NULL);
+	if (status != NV_SPR_NO_ERROR) {
+		EMSG("open AV player failed");
+		goto destroy_ts_buffer;
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	status = openWindow(ts);
+	if (status != NV_SPR_NO_ERROR) {
+		EMSG("open window failed");
+		goto close_avplayer;
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ret = MT_UNF_DMX_ResetTSBuffer(ts->tsBufHandle);
+	if (ret != MT_SUCCESS) {
+		EMSG("reset TS buffer failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto close_window;
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	pcrPid = vidPid;
+	status = startAvPlayer(ts, ts->vidCodecType, vidPid, ts->audCodecType, audPid, pcrPid, syncRef);
+	if (status != NV_SPR_NO_ERROR) {
+		EMSG("start AV player failed");
+		goto close_window;
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	//temp mmz buffer to store raw input data
+	ts->tsIntBufferVir = (TUnsignedInt8 *)mt_unf_cipher_malloc(TS_INT_BUF_SIZE);
+	if (ts->tsIntBufferVir == NULL) {
+		status = NV_SPR_ERROR;
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		goto close_window;
+	}
+	ts->tsIntBufferPhy = vir2phy(ts->tsIntBufferVir);
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	//Raw-EMIs:4020,4021,4023
+	if (emi == NOCS_EMI_AES128_CBC_ZEROIV_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_AES128_CBC_PKCS7_PADDING
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_IDSA
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_ECB_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CBC_TAIL_CLEAR
+		|| emi == NOCS_EMI_MPEG_TS_DVB_AES128_CISSA_V1) {
+		//To store decrypted ts data for injecting
+		//ts->tsBufferSize = DEMUX_TS_PUT_SIZE + (0x4096);
+		ts->tsBufferSize = 0x40000; //64K aligned for SMP-ON
+		ts->tsBuffer = (TUnsignedInt8 *)mmz_malloc("ddr", ts->tsBufferSize);
+		ts->tsBufferPhy = vir2phy(ts->tsBuffer);
+		ts->tsDataSize = 0;
+		printf("%s %d \n",__FUNCTION__,__LINE__);
+		//mtSecSetProtectBuffer(ts->tsBufferPhy, ts->tsBufferSize, MB_OTT);
+		mtSecSetProtectBuffer((phys_addr_t)ts->tsBufferPhy, ts->tsBufferSize, MB_OTT_1);
+		printf("%s %d \n",__FUNCTION__,__LINE__);
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	MBInfo mb = {0};
+	getSprMBInfoByType(MB_AUD, &mb);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_AUD);
+	getSprMBInfoByType(MB_VID, &mb);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_VID);
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	WR_UNLOCK(&rwlock);
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+#ifdef FILE_DUMP_DEBUG
+	open_test_file();
+#endif
+
+	DMSG("====Replaying open success====");
+	return NV_SPR_NO_ERROR;
+
+close_window:
+	closeWindow(ts);
+close_avplayer:
+	closeAvPlayer(ts);
+destroy_ts_buffer:
+	CHECK_CALL_MT_FUNC(MT_UNF_DMX_DestroyTSBuffer, ts->tsBufHandle);
+	ts->tsBufHandle = MT_INVALID_HANDLE;
+detach_ts_port:
+	CHECK_CALL_MT_FUNC(MT_UNF_DMX_DetachTSPort, ts->playDmxId);
+	ts->playDmxId = DEMUX_INVALID_ID;
+delete_session:
+	delTransportSession(ts);
+error:
+	WR_UNLOCK(&rwlock);
+
+	return status;
+}
+
+#define MAX_MEM_BLOCKS  (50)//(24)
+struct SprMemInfo {
+	ulong addr;
+	mt_size_t size;
+    TBoolean smp; //FALSE:smp-off;TRUE:smp-on
+};
+
+struct SprMemCount {
+	TUnsignedInt32 totalBlocksInUse;
+	TUnsignedInt32 totalSizeInUse;
+	struct SprMemInfo sminfo[MAX_MEM_BLOCKS];
+};
+
+static struct SprMemCount gMemCnt = {0};
+
+#if 0 //unused
+static void dumpMemoryUsage(struct SprMemCount *mem)
+{
+	int i = 0;
+
+	printf("Total Blocks In Use:%d\n", mem->totalBlocksInUse);
+	printf("Total Size In Use:0x%x\n", mem->totalSizeInUse);
+	printf("Mem Chunk Info:\n");
+	printf("-----------------------------------------------------\n");
+	for (i = 0; i < MAX_MEM_BLOCKS; i++) {
+		if (mem->sminfo[i].size != 0) {
+			printf("[IDX:%d]addr:0x%lu,size:0x%lu,Protect:%s\n", i, mem->sminfo[i].addr, mem->sminfo[i].size, (mem->sminfo[i].smp == TRUE ? "Yes" : "No"));
+		}
+	}
+	printf("-----------------------------------------------------\n");
+}
+#endif
+
+static mt_s32 meminfo_push(void *addr, TUnsignedInt32 size, TBoolean smp)
+{
+	int i = 0;
+
+	//DMSG("push:0x%x(%x)", (mt_u32)addr, size);
+
+	RD_LOCK(&rwlock);
+	gMemCnt.totalBlocksInUse += 1;
+	gMemCnt.totalSizeInUse += size;
+
+	for (i = 0; i < MAX_MEM_BLOCKS; i++) {
+		if (gMemCnt.sminfo[i].size == 0) {
+			gMemCnt.sminfo[i].addr = (ulong)addr;
+			gMemCnt.sminfo[i].size = size;
+            gMemCnt.sminfo[i].smp = smp;
+
+			break;
+		}
+	}
+
+	if (i == MAX_MEM_BLOCKS) {
+		DMSG("Warning:too many blocks of memory are used!!!");
+	}
+	//dumpMemoryUsage(&gMemCnt);
+
+	RD_UNLOCK(&rwlock);
+
+	return 0;
+}
+
+static mt_s32 meminfo_pop(void *addr)
+{
+	int i = 0;
+	TUnsignedInt32 sizeOfAddr = 0;
+
+	//DMSG("pop:%p", addr);
+
+	RD_LOCK(&rwlock);
+	for (i = 0; i < MAX_MEM_BLOCKS; i++) {
+		if (addr == (void *)(gMemCnt.sminfo[i].addr)) {
+			sizeOfAddr = gMemCnt.sminfo[i].size;
+
+			//Clean the block
+			gMemCnt.sminfo[i].addr = 0;
+			gMemCnt.sminfo[i].size = 0;
+            gMemCnt.sminfo[i].smp = FALSE;
+			break;
+		}
+	}
+
+	if (i == MAX_MEM_BLOCKS) {
+		DMSG("NOTE:%p is not a SPR_MEM buffer", addr);
+	}
+
+	if (sizeOfAddr) {
+		gMemCnt.totalBlocksInUse -= 1;
+		gMemCnt.totalSizeInUse -= sizeOfAddr;
+	}
+	RD_UNLOCK(&rwlock);
+
+	return 0;
+}
+
+static void *mmz_malloc(const char *area, ulong size)
+{
+    void *vir_addr = NULL;
+    phys_addr_t phy_addr;
+
+    if (size == 0)
+        return NULL;
+
+	//DMSG("request size:%x", size);
+
+    phy_addr = (mt_u32)mt_mmz_new(size, 0, area, "spr_buf");
+    if (phy_addr == 0) {
+		EMSG("new mmz size:%lu failed", size);
+        return NULL;
+    }
+	//DMSG("New PhyAddr:%x,size:%x", phy_addr, size);
+
+    //map,but not cached
+    vir_addr = mt_mmz_map(phy_addr, 0);
+    if (vir_addr == NULL) {
+		EMSG("map mmz phy:%llu failed", phy_addr);
+        mt_mmz_delete(phy_addr);
+        return NULL;
+    }
+
+	//DMSG("PhyAddr->VirAddr:%x", vir_addr);
+    /* success,return the virtual address of the buffer */
+    return vir_addr;
+}
+
+static mt_s32 mmz_free(mt_void *p_vir)
+{
+    mt_s32 ret;
+    phys_addr_t phy_addr;
+    ulong phy_size;
+
+	//DMSG("VirAddr:%p", p_vir);
+
+    if (p_vir == NULL) {
+        EMSG("Can not free NULL pointer\n");
+        return -1;
+    }
+
+    ret = mt_mmz_get_phyaddr(p_vir, &phy_addr, &phy_size);
+    ret |= mt_mmz_unmap(p_vir);
+    ret |= mt_mmz_delete(phy_addr);
+    DMSG("VirAddr:%p  ret = %d ", p_vir, ret);
+    return ret;
+}
+
+
+void nvSprFreeMemory(void *pointer)
+{
+	mt_s32 ret;
+
+	DMSG("--TID:%d--", gettid());
+	//printf("Free:%p", pointer);
+
+	//meminfo_pop(pointer);
+	ret = mmz_free(pointer);
+	if (ret != MT_SUCCESS) {
+		EMSG("mmz free failed");
+	}
+	DMSG("Done");
+}
+
+TNvSprStatus nvSprOpenOttSession(TTransportSessionId tsid, TNvSprOttStreamType type)
+{
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	struct transportSession *ts = NULL;
+
+
+	TMSG("OTT session In tsid = %d \n", tsid);
+
+	#ifdef CLOSE_SECOND_TS
+	if(tsid == 2)
+	{
+		DMSG("OTT session fail tsid = 2\n");
+		return NV_SPR_NO_ERROR;
+	}
+	#endif
+
+	CHECK_TSID_VALIDITY(tsid);
+
+	if (type != RAW_SAMPLES) {
+		EMSG("Only support raw A/V sample, unsupport another type stream");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	WR_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+
+	ts = newTransportSession(tsid);
+	if (!ts) {
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+
+	 if( getOthersSessionOpenedFlg(tsid) == FALSE)
+       {
+		ts->bUseSubLayer = FALSE;
+		printf("%s %d nvSprOpenOttSession bUseSubLayer = FALSE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+
+	}
+	else
+	{
+		ts->bUseSubLayer = TRUE;
+		printf("%s %d nvSprOpenOttSession bUseSubLayer = TRUE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+	}
+
+	ts->sessionType = TRANSPORT_SESSION_TYPE_OTT;
+	ts->avPlayerStreamType = MT_UNF_AVPLAY_STREAM_TYPE_ES;
+
+	ts->tsBufHandle = MT_INVALID_HANDLE;
+	ts->tsBuffer = NULL;
+	ts->tsBufferSize = 0;
+	ts->tsDataSize = 0;
+	ts->tsIntBufferVir = NULL;
+
+	MT_UNF_AVPLAY_ATTR_S avPlayerAttr;
+	memset((void *)&avPlayerAttr, 0, sizeof(avPlayerAttr));
+
+	ret = MT_UNF_AVPLAY_GetDefaultConfig(&avPlayerAttr, ts->avPlayerStreamType);
+	if (ret != MT_SUCCESS) {
+		EMSG("get AV player attribute failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto delete_session;
+	}
+
+	avPlayerAttr.stStreamAttr.u32VidBufSize = (8*1024*1024);
+
+	ret = MT_UNF_AVPLAY_Create(&avPlayerAttr, &ts->avPlayer);
+	if (ret != MT_SUCCESS) {
+		EMSG("create AV player failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto delete_session;
+	}
+
+	DMSG("av player cerate success ts->avPlayer = %d", ts->avPlayer);
+
+	MT_UNF_SYNC_ATTR_S syncAttr;
+	memset((void *)&syncAttr, 0, sizeof(syncAttr));
+
+	ret = MT_UNF_AVPLAY_GetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_SYNC, &syncAttr);
+	if (ret != MT_SUCCESS) {
+		EMSG("get AV synchronization attribute failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto destroy_avplayer;
+	}
+
+	syncAttr.enSyncRef = MT_UNF_SYNC_REF_NONE;
+
+    ret = MT_UNF_AVPLAY_SetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_SYNC, &syncAttr);
+	if (ret != MT_SUCCESS) {
+		EMSG("set AV synchronization attribute failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto destroy_avplayer;
+	}
+
+	#if 1
+	//register Audio,Video Buffer
+	MBInfo mb = {0};
+	DMSG("set AUD MB");
+	getSprMBInfoByType(MB_AUD, &mb);
+	printf("%s %d  mb.start = 0x%lx mb.size = 0x%lx \n",__FUNCTION__,__LINE__,  mb.start, mb.size);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_AUD);
+	
+	
+
+	DMSG("set VID MB");
+	getSprMBInfoByType(MB_VID, &mb);
+	printf("%s %d  mb.start = 0x%lx mb.size = 0x%lx \n",__FUNCTION__,__LINE__,  mb.start, mb.size);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_VID);
+
+
+	//register ott buffer
+	DMSG("set OTT MB");
+	getSprMBInfoByType(MB_OTT, &mb);
+	printf("%s %d  mb.start = 0x%lx mb.size = 0x%lx \n",__FUNCTION__,__LINE__,  mb.start, mb.size);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_OTT);
+
+#if 0
+	getSprMBInfoByType(MB_VIDEO_ES, &mb);
+	mtSecSetProtectBuffer(mb.start, mb.size, MB_VIDEO_ES);
+#endif
+	#endif
+
+
+	//Video
+	ts->vesInjPointer = NULL;
+	ts->vesInjSize = 0;
+	//Audio
+	ts->aesInjPointer = NULL;
+	ts->aesInjSize = 0;
+
+	WR_UNLOCK(&rwlock);
+
+
+#ifdef FILE_DUMP_DEBUG
+	{
+		open_test_file();
+	}
+#endif
+
+	DMSG("OTT session Open success tsid = %d \n", tsid);
+	return NV_SPR_NO_ERROR;
+
+destroy_avplayer:
+	CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Destroy, ts->avPlayer);
+delete_session:
+	delTransportSession(ts);
+error:
+	WR_UNLOCK(&rwlock);
+
+	return status;
+}
+
+static void dumpVideoDecoderConfig(TNvSprVideoDecoderConfig *cfg)
+{
+	TUnsignedInt32 i;
+
+	DMSG("dump video decoder configuration:");
+
+	printf("codec: %s\n", cfg->codec);
+
+	if (cfg->cfgSize)
+		printf("configuration: %s\n", cfg->cfgData);
+
+	for (i = 0; i < cfg->cfgSize; i++) {
+		if (i && !(i % 8))
+			printf("\n");
+
+		printf("%02X ", cfg->cfgData[i]);
+	}
+
+	printf("\n=============================\n");
+}
+
+static TUnsignedInt8 *avcConfigurationBoxToAnnexB(TUnsignedInt8 *avcC, TUnsignedInt32 avcCSize,
+                                                  TUnsignedInt32 *extraDataSize)
+{
+#define AVC_ANNEXB_START_CODE_SIZE 4
+	const TUnsignedInt8 startCode[AVC_ANNEXB_START_CODE_SIZE] = {0x00, 0x00, 0x00, 0x01};
+	TUnsignedInt8 configurationVersion __attribute__ ((unused));
+	TUnsignedInt8 profileIndication __attribute__ ((unused));
+	TUnsignedInt8 profileCompatibility __attribute__ ((unused));
+	TUnsignedInt8 avcLevelIndication __attribute__ ((unused));
+	TUnsignedInt8 lengthSizeMinusOne __attribute__ ((unused));
+
+	TUnsignedInt8 numOfSequenceParameterSets; /* number of SPS NALUs */
+	TUnsignedInt16 sequenceParameterSetLength; /* SPS NALU length */
+	TUnsignedInt8 *sequenceParameterSetNALUnit; /* SPS NALU data */
+
+	TUnsignedInt8 numOfPictureParameterSets; /* number of PPS NALUs */
+	TUnsignedInt16 pictureParameterSetLength; /* PPS NALU length */
+	TUnsignedInt8 *pictureParameterSetNALUnit; /* PPS NALU data */
+
+	TUnsignedInt32 i, naluSize;
+	TUnsignedInt8 *p;
+	TUnsignedInt8 *extraData = NULL, *dst;
+	TUnsignedInt32 spsSize = 0, ppsSize = 0;
+
+	configurationVersion = avcC[0];
+
+	if (configurationVersion != 1) {
+		EMSG("Only support avc1, current version is %d", configurationVersion);
+		return NULL;
+	}
+
+	if (avcCSize < 7) {
+		EMSG("avcC %d too short", avcCSize);
+		return NULL;
+	}
+
+	profileIndication = avcC[1];
+	profileCompatibility = avcC[2];
+	avcLevelIndication = avcC[3];
+	lengthSizeMinusOne = (TUnsignedInt8)((avcC[4] & 0x3) + 1);
+
+	/* Decode sps from avcC */
+	numOfSequenceParameterSets = avcC[5] & 0x1F;
+	spsSize = (TUnsignedInt32)(numOfSequenceParameterSets * AVC_ANNEXB_START_CODE_SIZE);
+
+	for (i = 0, p = &avcC[6]; i < numOfSequenceParameterSets; i++) {
+		sequenceParameterSetLength = (TUnsignedInt16)((((TUnsignedInt16)(*p) << 8) & 0xFF00) |
+		                                              *(p + 1));
+		naluSize = (TUnsignedInt32)(sequenceParameterSetLength + 2);
+
+		if (naluSize > (avcCSize - (TUnsignedInt32)(p - avcC))) {
+			EMSG("avcC data size is no enmough");
+			return NULL;
+		}
+
+		spsSize += sequenceParameterSetLength;
+		p += naluSize;
+	}
+
+	/* Decode pps from avcC */
+	numOfPictureParameterSets = *p;
+	ppsSize = (TUnsignedInt32)(numOfPictureParameterSets * AVC_ANNEXB_START_CODE_SIZE);
+
+	for (i = 0, p++; i < numOfPictureParameterSets; i++) {
+		pictureParameterSetLength = (TUnsignedInt16)((((TUnsignedInt16)(*p) << 8) & 0xFF00) |
+		                                             *(p + 1));
+		naluSize = (TUnsignedInt32)(pictureParameterSetLength + 2);
+
+		if (naluSize > (avcCSize - (TUnsignedInt32)(p - avcC))) {
+			EMSG("avcC data size is no enmough");
+			return NULL;
+		}
+
+		ppsSize += pictureParameterSetLength;
+		p += naluSize;
+	}
+
+	*extraDataSize = spsSize + ppsSize;
+	extraData = malloc(*extraDataSize);
+	if (!extraData) {
+		EMSG("malloc extra data failed");
+		return NULL;
+	}
+
+	dst = extraData;
+
+	for (i = 0, p = &avcC[6]; i < numOfSequenceParameterSets; i++) {
+		sequenceParameterSetLength = (TUnsignedInt16)((((TUnsignedInt16)(*p) << 8) & 0xFF00) |
+		                                              *(p + 1));
+		sequenceParameterSetNALUnit = p + 2;
+		naluSize = (TUnsignedInt32)(sequenceParameterSetLength + 2);
+
+		memcpy((void *)dst, (const void *)startCode, AVC_ANNEXB_START_CODE_SIZE);
+		dst += AVC_ANNEXB_START_CODE_SIZE;
+
+		memcpy((void *)dst, (const void *)sequenceParameterSetNALUnit,
+		       sequenceParameterSetLength);
+		dst += sequenceParameterSetLength;
+
+		p += naluSize;
+	}
+
+	for (i = 0, p++; i < numOfPictureParameterSets; i++) {
+		pictureParameterSetLength = (TUnsignedInt16)((((TUnsignedInt16)(*p) << 8) & 0xFF00) |
+		                                             *(p + 1));
+		pictureParameterSetNALUnit = p + 2;
+		naluSize = (TUnsignedInt32)(pictureParameterSetLength + 2);
+
+		memcpy((void *)dst, (const void *)startCode, AVC_ANNEXB_START_CODE_SIZE);
+		dst += AVC_ANNEXB_START_CODE_SIZE;
+
+		memcpy((void *)dst, (const void *)pictureParameterSetNALUnit,
+		       pictureParameterSetLength);
+		dst += pictureParameterSetLength;
+
+		p += naluSize;
+	}
+
+	return extraData;
+}
+
+
+//ott video init
+TNvSprStatus nvSprInitVideoDecode(TTransportSessionId tsid, TNvSprVideoDecoderConfig *cfg, TBoolean smp)
+{
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	struct transportSession *ts;
+
+	CHECK_TSID_VALIDITY(tsid);
+
+	UNUSED(smp);
+
+	printf("nvSprInitVideoDecode tsid =%d \n", tsid);
+
+
+	#ifdef CLOSE_SECOND_TS
+	if( tsid == 2 )
+	{
+		printf("nvSprInitVideoDecode tsid == 2 return\n");
+		return NV_SPR_NO_ERROR;
+	}
+	#endif
+
+	if (!cfg) {
+		EMSG("the video configuration buffer is invalid");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	WR_LOCK(&rwlock);
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	ts = getTransportSessionById(tsid);
+	if (!ts) {
+		EMSG("the transport session identified by this id(%d) isn't existing", tsid);
+
+		status = NV_SPR_ERROR_BAD_PARAM;
+		goto error;
+	}
+
+	dumpVideoDecoderConfig(cfg);
+
+       ts->vidExtraData = NULL;
+       ts->vidExtraDataSize = 0;
+	DMSG("%s %d cfg->codec = %s\n",__FUNCTION__,__LINE__, (const char *)(cfg->codec) );
+	if (!strcmp("avc1", (const char *)(cfg->codec))) {
+		ts->vidCodecType = MT_UNF_VCODEC_TYPE_H264;
+	} 	
+	else if (!strcmp("hev1", (const char *)(cfg->codec))) {
+		ts->vidCodecType = MT_UNF_VCODEC_TYPE_HEVC;
+	}
+	else
+	{
+		ts->vidCodecType = MT_UNF_VCODEC_TYPE_MPEG2;
+	}
+
+
+
+#if 0 //start when injecting data starts
+	ret = MT_UNF_AVPLAY_Start(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID, MT_NULL);
+	if (ret != MT_SUCCESS) {
+		EMSG("start video failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto close_window;
+	}
+#endif
+
+	WR_UNLOCK(&rwlock);
+
+	printf("ott video init success ! tsid = %d \n", tsid);
+
+	return NV_SPR_NO_ERROR;
+
+close_window:
+	closeWindow(ts);
+close_channel:
+	CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_ChnClose, ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID);
+	ts->doesVidChanOpen = FALSE;
+error:
+	WR_UNLOCK(&rwlock);
+
+	return status;
+}
+
+static void dumpAudioDecoderConfig(TNvSprAudioDecoderConfig *cfg)
+{
+	TUnsignedInt32 i;
+
+	DMSG("dump audio decoder configuration:");
+
+	printf("codec: %s\n", cfg->codec);
+	printf("channelCount: %d\n", cfg->channelCount);
+	printf("sampleSize: %d\n", cfg->sampleSize);
+	printf("sampleRate: %d\n", cfg->sampleRate);
+
+	if (cfg->cfgSize)
+		printf("configuration: %s\n", cfg->cfgData);
+
+	for (i = 0; i < cfg->cfgSize; i++) {
+		if (i && !(i % 8))
+			printf("\n");
+
+		printf("%02X ", cfg->cfgData[i]);
+	}
+
+	printf("\n=============================\n");
+}
+
+#if 1
+static TNvSprStatus setupAacAdtsHeader(TUnsignedInt8 header[],
+                                     TUnsignedInt32 channelCount, TUnsignedInt32 sampleRate)
+{
+	TUnsignedInt8 i;
+	const TUnsignedInt32 aacSampleRate[16] = {
+		96000, 88200, 64000, 48000, 44100, 32000,
+		24000, 22050, 16000, 12000, 11025, 8000, 7350
+	};
+
+	const TUnsignedInt8 aacAdtsHeader[AAC_ADTS_HEADER_SIZE] = {
+		0xFF, 0xF1, 0x40, 0x00, 0x00, 0x1F, 0xFC
+	};
+
+	for (i = 0; i < 16; i++) {
+		if (sampleRate == aacSampleRate[i])
+			break;
+	}
+
+	if (i >= 16) {
+		EMSG("the AAC audio sample rate(%d) is invalid", sampleRate);
+		return NV_SPR_ERROR;
+	}
+
+	memcpy((void *)header, aacAdtsHeader, AAC_ADTS_HEADER_SIZE);
+
+	header[2] |= (TUnsignedInt8)((i & 0xF) << 2);
+	if (channelCount > 3)
+		header[2] |= (TUnsignedInt8)(channelCount >> 2);
+
+	header[3] |= (TUnsignedInt8)(channelCount << 6);
+
+	return NV_SPR_NO_ERROR;
+}
+#else
+static TNvSprStatus setupAacAdtsHeader(TUnsignedInt8 header[],
+                                     TUnsignedInt32 channelCount, TUnsignedInt32 sampleRate)
+{
+
+
+	/*const TUnsignedInt8 aacAdtsHeader[AAC_ADTS_HEADER_SIZE] = {
+		0xFF, 0xF1, 0x40, 0x00, 0x00, 0x1F, 0xFC
+	};*/
+	
+	const TUnsignedInt8 aacAdtsHeader[AAC_ADTS_HEADER_SIZE] = {
+		0xFF, 0xF1, 0x4D, 0xC0, 0x05, 0xDF, 0xFC
+	};
+
+	const TUnsignedInt8 aacAdtsHeader[AAC_ADTS_HEADER_SIZE] = {
+		0xFF, 0xF1, 0x4D, 0xC0, 0x03, 0xFF, 0xFC
+	};
+		
+	memcpy((void *)header, aacAdtsHeader, AAC_ADTS_HEADER_SIZE);
+
+	
+
+	return NV_SPR_NO_ERROR;
+}
+#endif
+
+TNvSprStatus nvSprInitAudioDecode(TTransportSessionId tsid, TNvSprAudioDecoderConfig *cfg, TBoolean smp)
+{
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_ERROR;
+	struct transportSession *ts;	
+	
+	printf("nvSprInitAudioDecode audio tsid = %d  \n", tsid);
+		
+	if(tsid >= 100)
+        tsid /= 100;
+	
+	#ifdef CLOSE_SECOND_TS
+	if( tsid == 2 )
+	{
+		printf("nvSprInitAudioDecode tsid == 2 return\n");
+		return NV_SPR_NO_ERROR;
+	}
+	#endif
+
+	UNUSED(smp);
+	CHECK_TSID_VALIDITY(tsid);
+
+	if (!cfg) {
+		EMSG("the video configuration buffer is invalid");
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	WR_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+
+	ts = getTransportSessionById(tsid);
+	if (!ts) {
+		EMSG("the transport session identified by this id(%d) isn't existing", tsid);
+
+		status = NV_SPR_ERROR_BAD_PARAM;
+		goto error;
+	}
+
+	if( ts->bUseSubLayer == FALSE )
+	{
+
+		ts->doesAudChanOpen = TRUE;
+		printf("%s %d  bUseSubLayer = FALSE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+
+	}
+	else
+	{
+		printf("%s %d  bUseSubLayer = TRUE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+		WR_UNLOCK(&rwlock);
+		return NV_SPR_NO_ERROR;
+	}
+
+
+	cfg->channelCount = 1;
+	cfg->sampleRate = 44100;//48000;//44100
+	dumpAudioDecoderConfig(cfg);
+	DMSG(" audio codec = %s  \n", (const char *)(cfg->codec));
+	if (!strcmp("mp4a", (const char *)(cfg->codec))) {
+		#if 0
+		ts->audCodecType = HA_AUDIO_ID_AAC;
+
+		ts->aacAdtsHeader = (TUnsignedInt8 *)mt_unf_cipher_malloc(AAC_ADTS_HEADER_SIZE);
+		if (ts->aacAdtsHeader == NULL) {
+			EMSG("allocate for aacAdtsHeader failed");
+				printf("%s %d \n",__FUNCTION__,__LINE__);
+
+			goto error;
+		}
+		status = setupAacAdtsHeader(ts->aacAdtsHeader, cfg->channelCount, cfg->sampleRate);
+		if (status != NV_SPR_NO_ERROR)
+		{
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+			goto error;
+		}
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		memcpy((void *)ts->aacAdtsHeaderBak, (const void *)ts->aacAdtsHeader, AAC_ADTS_HEADER_SIZE);
+		#else
+		ts->audCodecType = HA_AUDIO_ID_AAC;//HA_AUDIO_ID_MP3;
+		#endif
+
+	} else
+	{
+		ts->audCodecType = HA_AUDIO_ID_AAC;
+	}
+
+	//hex_dump("adts header", ts->aacAdtsHeader, AAC_ADTS_HEADER_SIZE);
+
+	ret = MT_UNF_AVPLAY_ChnOpen(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_AUD, MT_NULL);
+	if (ret != MT_SUCCESS) {
+		EMSG("open audio channel failed, return error = 0x%x", ret);
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+		status = NV_SPR_ERROR;
+		goto error;
+	}
+	DMSG("AVPLAY_ChnOpen(AUD) success");
+
+	ts->doesAudChanOpen = TRUE;
+			printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	/* clear buffers before starting play */
+//    ret = MT_UNF_AVPLAY_Reset(ts->avPlayer, MT_NULL);
+	if (ret != MT_SUCCESS) {
+		EMSG("reset avplay failed, return error = 0x%x", ret);
+		goto close_channel;
+	}
+
+	
+	status = openAudio(ts, ts->audCodecType);
+	if (status != NV_SPR_NO_ERROR) {
+		EMSG("open audio player failed");
+		goto close_channel;
+	}
+	
+	printf("%s %d \n",__FUNCTION__,__LINE__);
+
+	WR_UNLOCK(&rwlock);
+
+	DMSG("nvSprInitAudioDecode success");
+	return NV_SPR_NO_ERROR;
+
+close_channel:
+	CHECK_CALL_MT_FUNC(MT_UNF_AVPLAY_Destroy, ts->avPlayer);
+	ts->doesAudChanOpen = FALSE;
+error:
+	WR_UNLOCK(&rwlock);
+
+	//printf("A %d_%d\n",tsid, status);
+	return status;
+}
+static mt_s32 checkInjPointer(TUnsignedInt8 *p, TUnsignedInt32 size)
+{
+	int i = 0;
+    struct SprMemInfo *info = NULL;
+
+	for (i = 0; i < MAX_MEM_BLOCKS; i++) {
+		info = &(gMemCnt.sminfo[i]);
+		if (info->addr <= (ulong)p
+			&& (ulong)p <= (info->addr + info->size)) {
+			//DMSG("data(%p) in Block%d,base:0x%x, size:0x%x", data, i, info->addr, info->size);
+			break;
+		}
+	}
+	if (i == MAX_MEM_BLOCKS) {
+		EMSG("Error: InjPointer(%p) is not in Mem-Array", p);
+		return MT_FAILURE;
+	}
+
+	for (i = 0; i < MAX_MEM_BLOCKS; i++) {
+		info = &(gMemCnt.sminfo[i]);
+		if (info->addr <= (ulong)(p + size)
+			&& (ulong)(p + size) <= (info->addr + info->size)) {
+			//DMSG("data(%p) in Block%d,base:0x%x, size:0x%x", data, i, info->addr, info->size);
+			break;
+		}
+	}
+	if (i == MAX_MEM_BLOCKS) {
+		EMSG("Error: InjPointer(%p) is not in Mem-Array after add %x", p, size);
+		return MT_FAILURE;
+	}
+
+	return MT_SUCCESS;
+}
+
+#if 0 //unused
+static TBoolean reachEndOfBlock(TUnsignedInt8 *data, TUnsignedInt32 size)
+{
+	int i = 0;
+    struct SprMemInfo *info = NULL;
+
+	for (i = 0; i < MAX_MEM_BLOCKS; i++) {
+		info = &(gMemCnt.sminfo[i]);
+		if (info->addr <= (ulong)data && (ulong)data <= (info->addr + info->size)) {
+			break;
+		}
+	}
+
+	if (info != NULL) {
+		if ((ulong)(data + size) == (info->addr + info->size)) {
+			//last fragment of this block
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	} else {
+		//This is impossible case, data is always inside one of the sminfo[]
+		return FALSE;
+	}
+}
+#endif
+
+#if 0 //unused
+static mt_s32 findCurrentInjPointer(struct transportSession *ts, TUnsignedInt8 *data, TUnsignedInt32 size, TBoolean isVideoPointer)
+{
+    struct SprMemInfo *info = NULL;
+    int i = 0;
+	mt_u8 *esInjPointer = NULL;
+
+	if (isVideoPointer) {
+		esInjPointer = ts->vesInjPointer;
+	} else {
+		esInjPointer = ts->aesInjPointer;
+	}
+
+    if (NULL == esInjPointer) {
+        esInjPointer = data;
+		//DMSG("This init status of esInjPointer:0x%p", data);
+    } else {
+        for (i = 0; i < MAX_MEM_BLOCKS; i++) {
+            info = &(gMemCnt.sminfo[i]);
+            if (info->addr <= (ulong)data
+                    && (ulong)data <= (info->addr + info->size)) {
+				//DMSG("data(%p) in Block%d,base:0x%x, size:0x%x", data, i, info->addr, info->size);
+                break;
+            }
+        }
+		if (i == MAX_MEM_BLOCKS) {
+			EMSG("Error: data(%p) is not in Mem-Array", data);
+			return MT_FAILURE;
+		}
+
+        for (i = 0; i < MAX_MEM_BLOCKS; i++) {
+            info = &(gMemCnt.sminfo[i]);
+            if (info->addr <= (ulong)esInjPointer
+                    && (ulong)esInjPointer <= (info->addr + info->size)) {
+                break;
+            }
+        }
+		if (i == MAX_MEM_BLOCKS) {
+			//DMSG("Error: esInjPointer(%p) is not in Mem-Array, reach end of this block", esInjPointer);
+		}
+
+        //esInjPointer is always inside sminfo[i]
+        //check if 'data' is inside this sminfo. if no, means a new Block is in.
+        if (info->addr <= (ulong)data && (ulong)data <= (info->addr + info->size)) {
+            //Do nothing ?
+			//DMSG("input data(%p) and esInjPointer(%p) are in the same buffer[%x, %x]", data, esInjPointer, info->addr, (info->addr + info->size));
+        } else {
+            esInjPointer = data;
+			if (isVideoPointer) {
+				//DMSG("input data is new address, esInjPointer=data");
+			}
+        }
+    }
+
+	if (isVideoPointer) {
+		ts->vesInjPointer = esInjPointer;
+	} else {
+		ts->aesInjPointer = esInjPointer;
+		//DMSG("[TID:%d]Got aesInjPointer:%p, In Data:%p", gettid(), ts->aesInjPointer, data);
+	}
+
+	return MT_SUCCESS;
+}
+#endif
+static pthread_mutex_t   g_vdecMutex = PTHREAD_MUTEX_INITIALIZER;
+
+TNvSprStatus nvSprVideoDecode(TTransportSessionId tsid, TUnsignedInt32 size, TUnsignedInt8 *data)
+{
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	MT_UNF_STREAM_BUF_S esBuf;
+	TUnsignedInt32 requestSize;
+	TUnsignedInt32 putSize;
+	struct transportSession *ts;
+	MT_UNF_AVPLAY_PUTBUFEX_OPT_S putOpt = {0};
+	mt_u8 *dataPhy = vir2phy(data); //physical address of input data
+	mt_u32 dataOffset = 0;
+
+	//printf("nvSprVideoDecode tsid =%d \n", tsid);
+
+
+	#ifdef CLOSE_SECOND_TS
+	if( tsid == 2 )
+	{
+		//printf("nvSprVideoDecode tsid == 2 return \n");
+		mmz_free(data);
+		return NV_SPR_NO_ERROR;
+	}
+	#endif
+
+		#if 0//def FILE_DUMP_VIDEO
+			printf("write data = %x size=%d into test file...\n", data,size);
+			write_test_file(gVfp, (TUnsignedInt8 *)(data), size);
+		return;
+		#endif
+
+	CHECK_TSID_VALIDITY(tsid);
+
+
+	if (size > 0 && !data) {
+		EMSG("the video ES buffer is invalid");
+		mmz_free(data);
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	RD_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto end;
+	}
+
+	ts = getTransportSessionById(tsid);
+
+//	TMSG("video decode start...data addr:%p, in size:%d tsid = %d  ts->avPlayer = %d \n", data, size, tsid, ts->avPlayer);
+
+	if (!ts) {
+		EMSG("the transport session identified by this id(%d) isn't existing", tsid);
+
+		status = NV_SPR_ERROR_BAD_PARAM;
+		goto end;
+	}
+
+	if (ts->isClosing) {
+		DMSG("Session is now closing, don't inject data anymore");
+		goto end;//This session is in closing, do not inject data anymore.
+	}
+
+//	TMSG("ts->videoDecodeStart = %d ", ts->videoDecodeStart);
+
+	if (ts->videoDecodeStart == FALSE) {
+//mzhu
+		MT_UNF_AVPLAY_OPEN_OPT_S avPlayerOpenOpt;
+		memset((void *)&avPlayerOpenOpt, 0, sizeof(avPlayerOpenOpt));
+		TMSG("%s %d  ts->vidCodecType = %d \n",__FUNCTION__,__LINE__, ts->vidCodecType);
+
+		if (ts->vidCodecType == MT_UNF_VCODEC_TYPE_MVC) {
+			avPlayerOpenOpt.enCapLevel = MT_UNF_VCODEC_CAP_LEVEL_FULLHD;
+			avPlayerOpenOpt.enDecType = MT_UNF_VCODEC_DEC_TYPE_BUTT;
+			avPlayerOpenOpt.enProtocolLevel = MT_UNF_VCODEC_PRTCL_LEVEL_MVC;
+		} else {
+			//avPlayerOpenOpt.enCapLevel = MT_UNF_VCODEC_CAP_LEVEL_FULLHD;
+			//avPlayerOpenOpt.enDecType = MT_UNF_VCODEC_DEC_TYPE_NORMAL;
+			//avPlayerOpenOpt.enProtocolLevel = MT_UNF_VCODEC_PRTCL_LEVEL_H264;
+			
+			avPlayerOpenOpt.enCapLevel      = MT_UNF_VCODEC_CAP_LEVEL_4096x2160;
+	             avPlayerOpenOpt.enDecType       = MT_UNF_VCODEC_DEC_TYPE_BUTT;
+	             avPlayerOpenOpt.enProtocolLevel = MT_UNF_VCODEC_PRTCL_LEVEL_BUTT;
+			DMSG("Video Codec Type:%d", ts->vidCodecType);
+		}
+		
+		(void)pthread_mutex_lock(&g_vdecMutex);
+		TMSG(" ChnOpen start ... \n");
+
+		ret = MT_UNF_AVPLAY_ChnOpen(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID, &avPlayerOpenOpt);
+		if (ret != MT_SUCCESS) {
+			EMSG("open video channel failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+			(void)pthread_mutex_unlock(&g_vdecMutex);
+			goto end;
+		}
+		TMSG(" ChnOpen end ... \n");
+
+		ts->doesVidChanOpen = TRUE;
+
+		status = openWindow(ts);
+		if (status != NV_SPR_NO_ERROR) {
+			EMSG("open window failed");
+			(void)pthread_mutex_unlock(&g_vdecMutex);
+			goto end;
+		}
+
+		MT_UNF_VCODEC_ATTR_S vidCodecAttr;
+		memset((void *)&vidCodecAttr, 0, sizeof(vidCodecAttr));
+
+		ret = MT_UNF_AVPLAY_GetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_VDEC, &vidCodecAttr);
+		if (ret != MT_SUCCESS) {
+			EMSG("get video decoder attribute failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+					(void)pthread_mutex_unlock(&g_vdecMutex);
+			goto end;
+		}
+
+	    vidCodecAttr.enType = ts->vidCodecType;
+	    vidCodecAttr.enMode = MT_UNF_VCODEC_MODE_NORMAL;
+		vidCodecAttr.u32ErrCover = 100;
+		vidCodecAttr.u32ErrCover = 70;
+		vidCodecAttr.u32Priority = 3;
+		//vidCodecAttr.u32UseDescInfoFlag = 1;
+		vidCodecAttr.u32UseDescInfoFlag = 0;
+		vidCodecAttr.enUnBlank = MT_UNF_VCODEC_UNBLANK_STABLE;
+		//vidCodecAttr.enUnBlank = MT_UNF_VCODEC_UNBLANK_FAST;
+
+		//vidCodecAttr.u32UseDescInfoFlag = 1;     
+		//vidCodecAttr.bForceDisableTimeout = 1;
+		      
+	    ret = MT_UNF_AVPLAY_SetAttr(ts->avPlayer, MT_UNF_AVPLAY_ATTR_ID_VDEC, &vidCodecAttr);
+		if (ret != MT_SUCCESS) {
+			EMSG("set video decoder attribute failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+					(void)pthread_mutex_unlock(&g_vdecMutex);
+			goto end;
+		}
+
+	
+		//DMSG("Video decode starts....");
+		ret = MT_UNF_AVPLAY_Start(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_VID, MT_NULL);
+		if (ret != MT_SUCCESS) {
+			EMSG("start video failed, return error = 0x%x", ret);
+			status = NV_SPR_ERROR;
+			(void)pthread_mutex_unlock(&g_vdecMutex);
+			goto end;
+		}
+		ts->videoDecodeStart = TRUE;
+		(void)pthread_mutex_unlock(&g_vdecMutex);
+
+		TMSG(" video start success! \n");
+	}
+
+
+    requestSize = size;
+	do {
+
+		mt_u32 getBufCount = 0;
+		do {
+			ret = MT_UNF_AVPLAY_GetBuf(ts->avPlayer, MT_UNF_AVPLAY_BUF_ID_ES_VID, requestSize,
+			                           &esBuf, 0);
+			if ((ret == MT_SUCCESS) &&
+			    esBuf.pu8Data &&
+			    (esBuf.u32Size > 0) &&
+				(esBuf.u32Size <= requestSize)) {
+				//printf("requestSize:%x(vir:%x,phy:%x)\n", esBuf.u32Size, esBuf.pu8Data, esBuf.u32PhyData);
+				break;
+			}
+
+			MT_USLEEP(1000 * 10);
+			getBufCount++;
+			if (getBufCount > 200) {
+				printf("Waiting video buffer too long, reset the buffer, and try again tsid = %d \n", tsid);
+				getBufCount = 0;
+				ret = MT_UNF_AVPLAY_Flush(ts->avPlayer);
+			}
+		} while (1);
+
+		DMSG("requestSize:%d, return size:%d", requestSize, esBuf.u32Size);
+		putSize = esBuf.u32Size;
+
+#if 1
+		#if 1
+		if( ts->bUseSubLayer )
+		{
+			   if( dmacpy(MT_EDMA_CH_3,(mt_u8 *)(esBuf.u32PhyData), (const mt_u8 *)(dataPhy + dataOffset), esBuf.u32Size)!=MT_SUCCESS )// smp on noly can use MT_EDMA_CH_1
+			   {
+			   	 printf("dmacpy MT_EDMA_CH_3 fail!  \n");
+			   }
+
+			  // printf("dmacpy MT_EDMA_CH_3 ok!  \n");
+		}
+		else
+		{
+			   
+			   if( dmacpy(MT_EDMA_CH_1,(mt_u8 *)(esBuf.u32PhyData), (const mt_u8 *)(dataPhy + dataOffset), esBuf.u32Size)!=MT_SUCCESS )// smp on noly can use MT_EDMA_CH_1
+			   {
+			   	 printf("dmacpy MT_EDMA_CH_1 fail!  \n");
+			   }
+
+                       // printf("dmacpy MT_EDMA_CH_1 ok!  \n");
+
+		}
+		#else
+		if( (tsid % 2) ==0 )
+		{
+
+			dmacpy(MT_EDMA_CH_1,
+			   (mt_u8 *)(esBuf.u32PhyData),
+			   (const mt_u8 *)(dataPhy + dataOffset),
+			   esBuf.u32Size);// smp on noly can use MT_EDMA_CH_1
+
+		}
+		else
+		{
+
+			dmacpy(MT_EDMA_CH_3,
+			   (mt_u8 *)(esBuf.u32PhyData),
+			   (const mt_u8 *)(dataPhy + dataOffset),
+			   esBuf.u32Size);
+
+		}
+		#endif
+#endif
+
+
+
+			   #if 0 //only for debug
+			   void *p = NULL;
+
+			   p = mmz_malloc("ddr", esBuf.u32Size);
+	
+		          if( dmacpy(MT_EDMA_CH_3,(mt_u8 *)vir2phy(p), (const mt_u8 *)(dataPhy + dataOffset), esBuf.u32Size)!=MT_SUCCESS )// smp on noly can use MT_EDMA_CH_1
+			   {
+			   	 printf("dmacpy MT_EDMA_CH_3 fail!  \n");
+			   }
+ 
+			printf("write data = %x size=%d into test file...\n", p,esBuf.u32Size);
+			write_test_file(gVfp, (TUnsignedInt8 *)(p), esBuf.u32Size);
+			hex_dump("video data:", p, 16);
+
+			mmz_free(p);
+
+			#endif
+	
+		
+
+		if (putSize < requestSize) {
+			putOpt.bEndOfFrm = MT_FALSE;
+			putOpt.u32FrameFinsh = 0;
+			requestSize -= putSize;
+			dataOffset += putSize;
+		       DMSG("putSize < requestSize ");
+		} else {
+			putOpt.bEndOfFrm = MT_TRUE;
+			putOpt.u32FrameFinsh = 1;
+			requestSize = 0;
+			dataOffset = 0;
+			 DMSG("putSize >= requestSize ");
+		}
+		putOpt.bContinue = MT_TRUE;
+		putOpt.u32PtsValide = 1;
+		putOpt.u32EosFlag = 0;
+		DMSG("--TID:%d-- put size:%x(vir:%x,phy:%x)", gettid(), esBuf.u32Size, esBuf.pu8Data, esBuf.u32PhyData);
+
+		//ret = MT_UNF_AVPLAY_PutBuf64(ts->avPlayer, MT_UNF_AVPLAY_BUF_ID_ES_VID, esBuf.u32Size, MT_INVALID_PTS64, &putOpt);
+		//ret = MT_UNF_AVPLAY_PutBuf64(ts->avPlayer, MT_UNF_AVPLAY_BUF_ID_ES_VID, esBuf.u32Size, 0, &putOpt);
+		ret = MT_UNF_AVPLAY_PutBuf(ts->avPlayer, MT_UNF_AVPLAY_BUF_ID_ES_VID, esBuf.u32Size, 0);
+		if (ret != MT_SUCCESS) {
+			EMSG("put video ES data to buffer failed, return error = 0x%x", ret);
+
+			status = NV_SPR_ERROR;
+			goto end;
+		}
+
+		DMSG("--TID:%d-- size remained:%x", gettid(), requestSize);
+
+		//system("cat /proc/msp/vdec00");
+		//system("cat /proc/media-mem");
+
+	} while (requestSize);
+
+	//get decoder status
+	if (ts->isVideoPlaying == FALSE) {
+		MT_UNF_AVPLAY_STATUS_INFO_S statusInfo;
+		ret = MT_UNF_AVPLAY_GetStatusInfo(ts->avPlayer, &statusInfo);
+		if (ret != MT_SUCCESS) {
+			EMSG("Get AVPLAY Status failed");
+		}
+		DMSG("DecodedFrameCount:%d", statusInfo.u32VidFrameCount);
+		if (statusInfo.u32VidFrameCount > 1) {
+			ts->isVideoPlaying = TRUE;
+		}
+	}
+
+	status = NV_SPR_NO_ERROR;
+		
+	//printf("video decode success tsid = %d\n",  tsid);
+
+end:
+	mmz_free(data);
+	//printf("mmz_free data \n");
+	RD_UNLOCK(&rwlock);
+	if(status)
+	printf("[err] V %d_%d\n",tsid, status);
+
+	return status;
+}
+
+TNvSprStatus nvSprAudioDecode(TTransportSessionId tsid, TUnsignedInt32 size, TUnsignedInt8 *data)
+{
+	
+	mt_s32 ret;
+	TNvSprStatus status = NV_SPR_NO_ERROR;
+	MT_UNF_STREAM_BUF_S esBuf;
+	mt_u8 *esDataPhy = NULL;
+	mt_u8 *esDataPhy2 = NULL;
+	mt_u32 audioFakePts = 0;
+	struct transportSession *ts;
+	TUnsignedInt32 aacDataBlocks = size / 1024;
+	TUnsignedInt32 aacFrameSize = AAC_ADTS_HEADER_SIZE + size; //header+put_size
+	mt_u32 requestSize = 0;
+
+	
+	if(tsid >= 100)
+        tsid /= 100;
+
+	#ifdef CLOSE_SECOND_TS
+	printf("nvSprAudioDecode tsid == 2 return\n");
+	mmz_free(data);
+	return NV_SPR_NO_ERROR;
+	#endif
+
+	CHECK_TSID_VALIDITY(tsid);
+
+	//printf("nvSprAudioDecode tsid = %d\n", tsid);
+
+	DMSG("[TID:%d]audio decode start...data addr:%p, in size:%d", gettid(), data, size);
+
+	if (size > 0 && !data) {
+		EMSG("the audio ES buffer is invalid");
+		mmz_free(data);
+		return NV_SPR_ERROR_BAD_PARAM;
+	}
+
+	RD_LOCK(&rwlock);
+
+	if (!isPlatformInitialized) {
+		EMSG("the platform has not been initialized");
+
+		status = NV_SPR_ERROR;
+		goto end;
+	}
+
+	ts = getTransportSessionById(tsid);
+	if (!ts) {
+		EMSG("the transport session identified by this id(%d) isn't existing", tsid);
+
+		status = NV_SPR_ERROR_BAD_PARAM;
+		goto end;
+	}
+
+	if( ts->bUseSubLayer == FALSE )
+	{
+
+		//printf("%s %d  bUseSubLayer = FALSE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+
+	}
+	else
+	{
+		//printf("%s %d  bUseSubLayer = TRUE tsid = %d\n",__FUNCTION__,__LINE__,  ts->tsid);
+		mmz_free(data);
+		RD_UNLOCK(&rwlock);
+		return NV_SPR_NO_ERROR;
+	}
+
+	if (ts->isClosing) {
+		DMSG("Session is now closing, don't inject data anymore");
+		goto end;//This session is in closing, do not inject data anymore.
+	}
+
+	if (ts->audioDecodeStart == FALSE) {
+		ret = MT_UNF_AVPLAY_Start(ts->avPlayer, MT_UNF_AVPLAY_MEDIA_CHAN_AUD, MT_NULL);
+		if (ret != MT_SUCCESS) {
+			EMSG("start audio failed, return error = 0x%x", ret);
+			status = NV_SPR_ERROR;
+			goto end;
+		}
+		ts->audioDecodeStart = TRUE;
+	}
+
+	if (ts->isVideoPlaying == FALSE) {
+		//DMSG("Waiting video......");
+		goto end;
+	}
+
+#ifdef FILE_DUMP_AUDIO //--dump payload only
+    {
+	
+        write_test_file(gAfp, (mt_u8 *)(data), size);
+    }
+#endif
+
+	ts->aesInjPointer = data;
+	ts->aesInjSize += size;
+	requestSize = ts->aesInjSize;
+
+	mt_u32 getBufCount = 0;
+	do {
+		//DMSG("Waiting Get ES Buffer, reqSize:%d...", requestSize);
+		ret = MT_UNF_AVPLAY_GetBuf(ts->avPlayer, MT_UNF_AVPLAY_BUF_ID_ES_AUD, requestSize, &esBuf, 0);
+
+		//DMSG("ret=%x, size:%d, size2:%d", ret, esBuf.u32Size, esBuf.u32Size2);
+		//esBuf.u32Size2 = 0;
+		if ((ret == MT_SUCCESS) &&
+			esBuf.pu8Data &&
+			(esBuf.u32Size > 0) &&
+			((esBuf.u32Size + esBuf.u32Size2) == requestSize)) {
+
+			//DMSG("Got AUD ES Buffer");
+			break;
+		}
+
+		MT_USLEEP(1000 * 10);
+		getBufCount++;
+		if (getBufCount > 20) {
+			printf("Waiting audio buffer too long, reset the buffer, and try again tsid = %d\n", tsid );
+			getBufCount = 0;
+			ret = MT_UNF_AVPLAY_Flush(ts->avPlayer);
+		}
+	} while (1);
+
+	esDataPhy =  esBuf.u32PhyData;//vir2phy(esBuf.pu8Data);//这里地址转行失败
+	//printf(" esDataPhy = %p  esBuf.u32PhyData = %p  esBuf.pu8Data = %p -----------------\n", esDataPhy, esBuf.u32PhyData, esBuf.pu8Data);
+	if (esBuf.pu8Data2 != NULL) {
+		esDataPhy2 = esBuf.u32PhyData2;//vir2phy(esBuf.pu8Data2);
+		printf("Need injecting part2, addr:%p, size=%d, size2=%d  --------------------------------------------------\n", esDataPhy2, esBuf.u32Size, esBuf.u32Size2);
+	}
+
+	//Debug
+	//checkInjPointer(ts->aesInjPointer, ts->aesInjSize);
+
+#if 1 //TODO:
+	if (esBuf.u32Size > 0) {
+		//DMSG("dmacopy %d bytes from %p to %p", esBuf.u32Size, (const mt_u8 *)vir2phy(ts->aesInjPointer), (mt_u8 *)(esDataPhy));
+		dmacpy(MT_EDMA_CH_0, (mt_u8 *)(esDataPhy), (const mt_u8 *)vir2phy(ts->aesInjPointer), esBuf.u32Size);
+		//memcpy((mt_u8 *)(esBuf.pu8Data), ts->aesInjPointer, esBuf.u32Size);
+
+		/*if (esBuf.u32Size2 > 0) {
+			//DMSG("[Total:%d]%d bytes copy done, esDataPhy2 still has %d bytes to copy", requestSize, esBuf.u32Size, esBuf.u32Size2);
+		}*/
+	}
+
+	if (esDataPhy2 != NULL) {
+		dmacpy(MT_EDMA_CH_0, (mt_u8 *)(esDataPhy2), (const mt_u8 *)(vir2phy(ts->aesInjPointer) + esBuf.u32Size), esBuf.u32Size2);
+		//DMSG("dmacpy %d bytes into esDataPhy2(%x)", esBuf.u32Size2, (mt_u32)esDataPhy2);
+	}
+
+	//jump to next slice
+	ts->aesInjPointer += ts->aesInjSize;
+	ts->aesInjSize = 0;
+#else
+	memcpy((void *)(esBuf.pu8Data), (const void *)data, esBuf.u32Size);
+	ts->aesInjPointer += ts->aesInjSize;
+	ts->aesInjSize = 0;
+#endif
+
+	MT_UNF_AVPLAY_PUTBUFEX_OPT_S putOpt = {0};
+	putOpt.bEndOfFrm = MT_TRUE;
+	putOpt.bContinue = MT_TRUE;
+	putOpt.u32PtsValide = 1;
+	putOpt.u32FrameFinsh = 1;
+	putOpt.u32EosFlag = 0;
+	//DMSG("--TID:%d-- audioDecode PutBuf, putsize:%d", gettid(), requestSize);
+	//ret = MT_UNF_AVPLAY_PutBuf(ts->avPlayer, MT_UNF_AVPLAY_BUF_ID_ES_AUD, requestSize, (171 * audioFakePts++));
+	ret = MT_UNF_AVPLAY_PutBuf64(ts->avPlayer, MT_UNF_AVPLAY_BUF_ID_ES_AUD, requestSize, (171 * audioFakePts++), &putOpt);
+	//ret = MT_UNF_AVPLAY_PutBuf64(ts->avPlayer, MT_UNF_AVPLAY_BUF_ID_ES_AUD, requestSize, (171 * audioFakePts++), NULL);
+	if (ret != MT_SUCCESS) {
+		EMSG("put audio ES data to buffer failed, return error = 0x%x", ret);
+
+		status = NV_SPR_ERROR;
+		goto end;
+	}
+
+	DMSG("--TID:%d-- audioDecode inject ok, address:%x, size:%x", gettid(), esDataPhy, requestSize);
+
+	status = NV_SPR_NO_ERROR;
+end:
+	RD_UNLOCK(&rwlock);
+	mmz_free(data);
+
+	if(status)
+	printf("[err] A %d_%d\n",tsid, status);
+		
+	return status;
+}
+
+
+void nvSprShowOverlay(const char *filename)
+{
+	//DMSG("It's unnecessary to implementation");
+}
+
+void nvSprHideOverlay(void)
+{
+	//DMSG("It's unnecessary to implementation");
+}
+
+void nvSprUseSecVersion(TNvSprSecVersion version)
+{
+	//DMSG("It's unnecessary to implementation");
+}
+
+void nvSprSetDisplayMode(TNvSprDisplayMode mode)
+{
+	DMSG("Montage Symphony4 only support full screen mode. Don't support multi-process use case");
+	DMSG("The displayMode is:%d", mode);
+}
+
+TNvSprStatus nvSprSetHdcp(TTransportSessionId tsid, TUnsignedInt8 hdcp)
+{
+	mt_s32 ret = MT_SUCCESS;
+
+	DMSG("SessionID:%d, hdcp level:%d", tsid, hdcp);
+
+#if 0
+	DMSG("=============Do Nothing Test===============");
+	return NV_SPR_NO_ERROR;
+#else
+	DMSG("=============set HDCP===============");
+	ret = mt_hdmi_setHdcp(hdcp);
+
+	if (ret == MT_SUCCESS)
+		return NV_SPR_NO_ERROR;
+	else
+		return NV_SPR_ERROR;
+#endif
+}
+
+TNvSprStatus nvSprSetCappingResolution(TTransportSessionId tsid, TUnsignedInt8 capping)
+{
+	//DMSG("this is tricky function::tsid:%d, capping:%d", tsid, capping);
+	return NV_SPR_NO_ERROR;
+}
+
+#ifdef FILE_DUMP_DEBUG
+static void open_test_file(void)
+{
+
+#ifdef FILE_DUMP_VIDEO
+	gVfp = fopen(test_file_name, "wb");
+	if (gVfp != NULL)
+		DMSG("open %s for write", test_file_name);
+	else
+		DMSG("open %s failed", test_file_name);
+#endif
+
+#ifdef FILE_DUMP_AUDIO
+	gAfp = fopen(test_audio_file_name, "wb");
+	if (gAfp != NULL)
+		DMSG("open %s for write", test_audio_file_name);
+	else
+		DMSG("open %s failed", test_audio_file_name);
+#endif
+
+	gtsfp = fopen(ts_test_file_name, "wb");
+
+
+}
+
+static void close_test_file(void)
+{
+#ifdef FILE_DUMP_VIDEO
+	if(gVfp!=NULL)
+	{
+		fclose(gVfp);
+		gVfp = NULL;
+	}
+#endif
+#ifdef FILE_DUMP_AUDIO
+	if(gAfp !=NULL)
+	{
+		fclose(gAfp);
+		gAfp = NULL;
+	}
+#endif
+	DMSG("test file closed");
+}
+static void write_test_file(FILE *fp, unsigned char *pData, unsigned int len)
+{
+	int wrinte_len = 0;
+	if (fp != NULL)
+	{
+		wrinte_len = fwrite(pData, 1, len, fp);
+		TMSG(" file = %s write_test_file = %s  pData = %x len= %d  Data[0] = 0x%x wrinte_len = %d ", fp,ts_test_file_name, pData, len, pData[0], wrinte_len);
+	}
+}
+#endif
+
+static TUnsignedInt32 pkcs7_padding_data_length(TUnsignedInt8 *data, TUnsignedInt32 size, TUnsignedInt32 modulus)
+{
+	TUnsignedInt8 padding_value;
+	TUnsignedInt8 count = 1;
+
+	/*
+	 * Only applied to TS-Pack
+	 */
+	if (0x47 != data[0])
+		return size; //Do nothing
+
+	if (size % modulus != 0 || size < modulus) {
+		return 0;
+	}
+
+	padding_value = data[size - 1];
+	if (padding_value < 1 || padding_value > modulus) {
+		return size;
+	}
+	/* data must be at least padding_value + 1 in size */
+	if (size < padding_value + 1) {
+		return 0;
+	}
+
+	size--;
+	for (; count < padding_value; count++) {
+		size--;
+		if (data[size] != padding_value) {
+			return 0;
+		}
+	}
+
+	return size;
+}
+
+TBoolean nvSprGetVideoSmp()
+{
+	return MT_TRUE;
+}
+
+TBoolean nvSprGetAudioSmp()
+{
+	return MT_TRUE;
+}
+
+
+
+/**
+ * @brief Allocate memory from a general-purpose memory area.
+ *
+ * This is used for OTT stream processing. It is only used to allocate non-protected
+ * buffer when smp is activated.
+ *
+ * Buffer allocated by this function will be used in SEC <em>processOpaqueData</em>
+ * as the input buffer
+ * 
+ * @param[in] size
+ *  Size in bytes of the buffer to be allocated
+ * @param[in] smp
+ *  always as false, i.e. non-protected buffer.
+ * @return
+ *  Pointer to the buffer allocated; or NULL if allocation failed.
+ */
+void *nvSprAllocateMemory(TUnsignedInt32 size, TBoolean smp)
+#if 1
+{
+	void *p = NULL;
+
+	//DMSG("--TID:%d--", gettid());
+
+	TMSG("allocate un-protect buffer, size:%x smp = %d", size, smp);
+	p = mmz_malloc("ddr", size);
+
+	if (p != NULL) {
+		TMSG("allocate mmz buffer  size:%x, adr:%x ,addrPhy:%p", size, p, vir2phy(p));
+        //meminfo_push(p, size, smp);
+	} else {
+		EMSG("No mmz memory for allocate, request size:%x, smp flag:%d", size, smp);
+	}
+
+	//DMSG("Done,addr:%p", p);
+	return p;
+}
+#else
+{
+	void *p = NULL;
+
+	//DMSG("--TID:%d--", gettid());
+
+	if (smp) {
+		//DMSG("allocate protect buffer, size:%x", size);
+		/*
+		 * re-adjust Memory layout, borrow 'pvr0' as ott PB
+		 */
+		p = mmz_malloc("pvr0", size);
+	} else {
+		//DMSG("allocate un-protect buffer, size:%x", size);
+		p = mmz_malloc("ddr", size);
+	}
+
+	if (p != NULL) {
+		//DMSG("allocate mmz buffer size:%x, addrPhy:%p", size, vir2phy(p));
+        meminfo_push(p, size, smp);
+	} else {
+		EMSG("No mmz memory for allocate, request size:%x, smp flag:%d", size, smp);
+	}
+
+	//DMSG("Done,addr:%p", p);
+	return p;
+}
+#endif
+
+
+void* nvSprAllocateVideoMemory(
+  TUnsignedInt32 size,
+  TBoolean       smp
+)
+{
+	void *p = NULL;
+
+	//DMSG("--TID:%d--", gettid());
+
+//	TMSG("allocate video buffer, size:%x smp = %d", size, smp);
+	/*
+	 * re-adjust Memory layout, borrow 'pvr0' as ott PB
+	 */
+
+	if(smp)
+	{
+		p = mmz_malloc("pvr0", size);// m2m output adrr 236M 0xEC00000 OTT
+	}
+	else
+	{
+		p = mmz_malloc("ddr", size);
+	}
+
+	if (p != NULL) {
+		//printf("allocate video mmz buffer size:%x, adr:%p addrPhy:%p", size, p, vir2phy(p));
+		//meminfo_push(p, size, smp);
+	} else {
+		EMSG("No mmz memory for allocate, request size:%x, smp flag:%d", size, smp);
+		return NULL;
+	}
+
+	//printf("Done,addr:%p", p);
+	return p;
+}
+
+
+void* nvSprAllocateAudioMemory(
+  TUnsignedInt32 size,
+  TBoolean       smp
+)
+{
+	void *p = NULL;
+
+	//DMSG("--TID:%d--", gettid());
+
+//	TMSG("allocate  audio buffer, size:%x smp = %d", size, smp);
+	
+	/*
+	 * re-adjust Memory layout, borrow 'pvr0' as ott PB
+	 */
+	//p = mmz_malloc("pcm", size);
+	
+	if(smp)
+	{
+		p = mmz_malloc("pvr0", size);// m2m output adrr 236M 0xEC00000 OTT
+	}
+	else
+	{
+		p = mmz_malloc("ddr", size);
+	}
+
+	if (p != NULL) {
+		//printf("allocate audio mmz buffer size:%x, addr:%p addrPhy:%p", size, p, vir2phy(p));
+		//meminfo_push(p, size, smp);
+	} else {
+		EMSG("No mmz memory for allocate, request size:%x, smp flag:%d", size, smp);
+		return NULL;
+	}
+
+	//printf("Done,addr:%p", p);
+	return p;
+}
+
+void nvSprReboot()
+{
+	//printf("%s %d \n",__FUNCTION__,__LINE__);
+}
+
+#if 0
+
+TSecStatus secGetChipsetRevision(const TChar** ppxChipsetRevision)
+{
+    TUnsignedInt32 data = 0;
+    printf("%s %d  ppxChipsetRevision = %x\n",__FUNCTION__,__LINE__, ppxChipsetRevision);
+
+    if (ppxChipsetRevision == NULL)
+        return SEC_ERROR;
+
+
+    mt_sys_write_register(SEC_R_CHIP_ID_RDEN, 0xffff);
+
+    //must use phisical address
+    mt_sys_read_register(SEC_R_CHIP_ID, &data);
+
+    data = data & 0xffff;
+    if (data == 0xA000) {
+        *ppxChipsetRevision = "A0";
+    } else if (data == 0xA001) {
+        *ppxChipsetRevision = "A1";
+    } else if (data == 0xA003) {
+        *ppxChipsetRevision = "A3";
+    }  else if (data == 0xB000){
+        //TODO:
+        *ppxChipsetRevision = "A1";//only for test modify by dzb
+    }
+	
+    printf("%s %d   ppxChipsetRevision = %x\n",__FUNCTION__,__LINE__, *ppxChipsetRevision);
+
+    return SEC_NO_ERROR;
+}
+
+#define OTP_CHIP_INFOR_1      (0xBF313FC4)
+#define OTP_PACKAGEINFO_OFFSET  (28)
+#define OTP_SPIDRAM_OFFSET  (24)
+#define OTP_CAVENDOR_OFFSET  (18)
+#define OTP_CAVERSION_OFFSET  (14)
+#define OTP_DRMINFO_OFFSET  (10)
+#define OTP_IPLICENSE_OFFSET  (6)
+
+static TSecStatus secGetChipsetExtension(const TChar** ppxChipsetExtension)
+{
+    unsigned int chip_infor;
+    static unsigned char p_ch[20];
+    unsigned char temp0;
+    unsigned char package_infor[16] = {'L', 'T', 'N', 'M', 'B', 'C', 'P'};
+	//unsigned char drm_size[16] = {'0', '1', '2', '3', 'C', 'L', '4', 'M', '5', 'N'};
+	//unsigned char drm_infor[16] = {'0', 'P', 'W', 'M'};
+	//unsigned char ip_license[16] = {0x0, 0x1, 0x2, 'E', 0x4, 'F', 0x6, 'D', 'X', 'U', 'W', 'T', 0xc, 'M', 'V', 'O',};
+
+    if (ppxChipsetExtension == NULL) {
+	 printf("%s %d   \n",__FUNCTION__,__LINE__);
+
+        return SEC_ERROR;
+    }
+
+    memset(p_ch, 0x0, sizeof(p_ch));
+    if (mt_otp_read_byte((OTP_CHIP_INFOR_1 & 0xFFFF), OTP_NUIDL_SIZE, (MT_U8 *)&chip_infor) != MT_SUCCESS) {
+	 printf("%s %d   \n",__FUNCTION__,__LINE__);
+
+        return SEC_ERROR;
+    }
+
+	//SECAPI_INFO("chip_infor = 0x%x \n", chip_infor);
+
+    temp0 = (chip_infor >> OTP_PACKAGEINFO_OFFSET) & 0xF;
+    p_ch[0] = package_infor[temp0];
+
+    p_ch[1] = 'x';
+
+    temp0 = (chip_infor >> OTP_CAVENDOR_OFFSET) & 0x3F;
+    if(temp0 == 0x1) {
+        p_ch[2] = 'G';
+    } else {
+        //it must be  Nagra project!
+        printf("[error]%s %d   \n",__FUNCTION__,__LINE__);
+        //return SEC_ERROR;//only for test modify by dzb
+    }
+
+    temp0 = (chip_infor >> OTP_CAVERSION_OFFSET) & 0xF;
+    p_ch[3] = '0' + temp0;
+
+    p_ch[4] = 'x';
+    p_ch[5] = 'x';
+
+	p_ch[6] = '\0';
+
+    printf(" p_ch = %s \n",p_ch );
+
+    //only for test added by dzb
+    p_ch[0] = 'L';
+    p_ch[1] = 'x';
+    p_ch[2] = 'G';
+    p_ch[3] = '0';
+    p_ch[4] = 'x';
+    p_ch[5] = 'x';
+    p_ch[6] = '\0';
+    *ppxChipsetExtension = (const TChar *)p_ch;
+
+    return SEC_NO_ERROR;
+}
+#endif
+
+
+

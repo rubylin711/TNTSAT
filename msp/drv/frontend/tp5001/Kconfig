@@ -1,0 +1,6 @@
+menuconfig MT_FRONTEND_DMD_TP5001
+	bool "TP5001"
+	default n
+	depends on MT_FRONTEND
+	help
+	  TelePath Frontend TP5001 Driver

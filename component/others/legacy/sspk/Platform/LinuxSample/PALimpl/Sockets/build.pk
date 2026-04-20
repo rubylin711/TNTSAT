@@ -1,0 +1,26 @@
+#*****************************************************************
+#
+# Copyright (C) Microsoft Corporation. All rights reserved.
+#
+#*****************************************************************
+
+MSPK_TARGETMODULE = Platform
+MSPK_TARGETNAME=Sockets
+MSPK_TARGETPATH=Platform/$(MSPK_PLATFORM)/PALimpl/$(MSPK_TARGETNAME)
+
+
+MSPK_CDEFINES=				\
+
+
+MSPK_DBG_CDEFINES=			\
+
+
+MSPK_SOURCES=				\
+	pkSockets.c			\
+	pkDnsCache.c			\
+
+MSPK_INCLUDES=				\
+	$(MSPK_PAL_INCLUDES);		\
+
+IN_PAL_IMPL=1
+

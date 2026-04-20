@@ -1,0 +1,92 @@
+diff --git a/14.set_env_gperftools.mk b/14.set_env_gperftools.mk
+index 887753e..399e36f 100644
+--- a/14.set_env_gperftools.mk
++++ b/14.set_env_gperftools.mk
+@@ -12,22 +12,22 @@ else ifeq ($(CONFIG_MT_OPTIMIZE_O2),y)
+ CFLAGS += -O2
+ endif
+ 
+ .PHONY: all install uninstall clean distclean
+ 
+ CPPFLAGS = -I$(BUILDROOT_SYSROOT_USR_INC_DIR)
+ CFLAGS += $(CPPFLAGS)
+ ifeq ($(CONFIG_MT_GPERFTOOLS_HEAP_PROF),y)
+ CFLAGS += -DTCMALLOC_SMALL_BUT_SLOW
+ endif
+-LDFLAGS = -L$(BUILDROOT_SYSROOT_USR_LIB_DIR) -Wl,-rpath-link=$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+-LIBS = -L$(BUILDROOT_SYSROOT_USR_LIB_DIR)
++LDFLAGS = -L$(BUILDROOT_SYSROOT_USR_LIB_DIR) -Wl,-rpath-link=$(BUILDROOT_SYSROOT_USR_LIB_DIR) -lpthread
++LIBS = -L$(BUILDROOT_SYSROOT_USR_LIB_DIR) -lpthread
+ LD_LIBRARY_PATH = $(BUILDROOT_SYSROOT_USR_LIB_DIR)
+ PKG_CONFIG_PATH = $(BUILDROOT_SYSROOT_USR_LIB_PKGCONFIG_DIR)
+ PKG_CONFIG_LIBDIR = $(PKG_CONFIG_PATH)
+ PKG_CONFIG_SYSROOT_DIR = $(BUILDROOT_SYSROOT_DIR)
+ CXXFLAGS = $(CFLAGS)
+ 
+ export CPPFLAGS CFLAGS LDFLAGS CXXFLAGS LIBS LD_LIBRARY_PATH PKG_CONFIG_PATH PKG_CONFIG_LIBDIR PKG_CONFIG_SYSROOT_DIR
+ export AR AS CPP LD CXX CC RANLIB NM STRIP OBJCOPY READELF OBJDUMP
+ 
+ 
+diff --git a/gperftools-gperftools-2.10/src/tcmalloc.cc b/gperftools-gperftools-2.10/src/tcmalloc.cc
+index b9c5408..71b7716 100644
+--- a/gperftools-gperftools-2.10/src/tcmalloc.cc
++++ b/gperftools-gperftools-2.10/src/tcmalloc.cc
+@@ -1109,20 +1109,34 @@ size_t nallocx(size_t size, int flags)
+ {
+   return nallocx_slow(size, flags);
+ }
+ #endif
+ 
+ 
+ size_t TCMallocImplementation::GetEstimatedAllocatedSize(size_t size) {
+   return tc_nallocx(size, 0);
+ }
+ 
++#include <pthread.h>
++#include <sys/prctl.h>
++static pthread_t mt_bgt;
++static void *mt_bg_thread(void *arg)
++{
++  prctl(PR_SET_NAME, "mt_bg_thread");
++  sleep(3);
++  while (1) {
++    usleep(100000);
++    MallocExtension::instance()->ReleaseFreeMemory();
++  }
++  return NULL;
++}
++
+ // The constructor allocates an object to ensure that initialization
+ // runs before main(), and therefore we do not have a chance to become
+ // multi-threaded before initialization.  We also create the TSD key
+ // here.  Presumably by the time this constructor runs, glibc is in
+ // good enough shape to handle pthread_key_create().
+ //
+ // The constructor also takes the opportunity to tell STL to use
+ // tcmalloc.  We want to do this early, before construct time, so
+ // all user STL allocations go through tcmalloc (which works really
+ // well for STL).
+@@ -1139,20 +1153,23 @@ TCMallocGuard::TCMallocGuard() {
+     // management.  We register our extension if we're the winner.
+ #ifdef TCMALLOC_USING_DEBUGALLOCATION
+     // Let debugallocation register its extension.
+ #else
+     if (RunningOnValgrind()) {
+       // Let Valgrind uses its own malloc (so don't register our extension).
+     } else {
+       MallocExtension::Register(new TCMallocImplementation);
+     }
+ #endif
++
++    pthread_create(&mt_bgt, NULL, mt_bg_thread, NULL);
++    pthread_detach(mt_bgt);
+   }
+ }
+ 
+ TCMallocGuard::~TCMallocGuard() {
+   if (--tcmallocguard_refcount == 0) {
+     const char* env = NULL;
+     if (!RunningOnValgrind()) {
+       // Valgrind uses it's own malloc so we cannot do MALLOCSTATS
+       env = getenv("MALLOCSTATS");
+     }

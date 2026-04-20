@@ -1,0 +1,22 @@
+_parse_data: CODE, 485 0 217
+_sym4_cec_read: CODE, 89 0 60
+_cec_send_cmd_to_wake_tv: CODE, 310 0 56
+_sys_init: CODE, 1450 0 32
+_ISR: CODE, 1358 0 92
+_send_cmd: CODE, 829 0 42
+_pt6393_init: CODE, 714 0 115
+_sym4_cec_setup: CODE, 15 0 52
+_clock_advance_pt6393: CODE, 67 0 22
+_spi_fp_is_rxd_fifo_empty: CODE, 1145 0 8
+_main: CODE, 1258 0 100
+_aomcu_delay: CODE, 871 0 39
+_wake_up_pt6393: CODE, 149 0 104
+___lwdiv: CODE, 424 0 42
+_standby: CODE, 253 0 57
+_led_test: CODE, 910 0 64
+_spi_fp_is_trans_complete: CODE, 1138 0 7
+_spi_fp_is_txd_fifo_full: CODE, 974 0 15
+_read_key: CODE, 989 0 149
+_msdelay: CODE, 366 0 33
+___wmul: CODE, 399 0 25
+Total: 1331

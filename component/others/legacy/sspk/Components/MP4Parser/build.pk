@@ -1,0 +1,26 @@
+#*****************************************************************
+#
+# Copyright (C) Microsoft Corporation. All rights reserved.
+#
+#*****************************************************************
+
+MSPK_TARGETMODULE = Components
+MSPK_TARGETNAME = MP4Parser
+MSPK_TARGETPATH = Components/MP4Parser
+
+MSPK_CDEFINES = \
+	-DMSPK_USING_STD_TEMPLATE_LIBS \
+	
+MSPK_DBG_CDEFINES = \
+
+MSPK_SOURCES = \
+	MP4Atom.cpp \
+	MP4Feed.cpp \
+	MP4Info.cpp \
+	MP4Parser.cpp \
+
+MSPK_INCLUDES = \
+	$(MSPK_PAL_INCLUDES); \
+	$(MSPK_ROOT)/Components/inc; \
+	$(MSPK_ROOT)/Components/Utilities; \
+

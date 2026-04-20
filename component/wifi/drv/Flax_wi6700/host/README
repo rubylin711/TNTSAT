@@ -1,0 +1,10 @@
+[The command]
+
+(1) build dirver (kernel module)
+sudo ./build_driver.sh
+
+(2) install driver
+sudo ./insert_driver.sh
+
+(3) run the wpa_supplicant (Note: please modify the wpa.conf for wifi connection setting)
+sudo ./wpa_sh.sh

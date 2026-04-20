@@ -1,0 +1,6 @@
+menuconfig MT_FRONTEND_DMD_RS6060
+	bool "RS6060"
+	default y
+	depends on MT_FRONTEND
+	help
+	  Montage Frontend RS6060 Driver

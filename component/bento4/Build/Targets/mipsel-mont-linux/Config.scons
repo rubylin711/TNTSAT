@@ -1,0 +1,9 @@
+LoadTool('gcc-generic', env, gcc_cross_prefix='/usr/local/crosstool-ng/gcc-9.3-glibc-2.28-mipsel-linux-gnu-rm2.0/bin/mipsel-linux-gnu',
+          gcc_extra_options='-EL -msoft-float')
+env.AppendUnique(CPPDEFINES = [('AP4_PLATFORM_BYTE_ORDER', 'AP4_PLATFORM_BYTE_ORDER_LITTLE_ENDIAN')])
+env.AppendUnique(CXXFLAGS = ['-EL'])
+env.AppendUnique(CXXFLAGS = ['-msoft-float'])
+env.AppendUnique(CXXFLAGS = ['-fPIC', '-I../output/mips_output/drm'])
+env.AppendUnique(LINKFLAGS = ['-EL'])
+env.AppendUnique(LINKFLAGS = ['-msoft-float'])
+env.AppendUnique(LINKFLAGS = ['-fPIC'])

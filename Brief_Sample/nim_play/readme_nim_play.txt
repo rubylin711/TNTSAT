@@ -1,0 +1,53 @@
+﻿1. 整体介绍
+该sample包含两个基本文件
+sample_nim_play.c
+该文件主要实现DVB-C、DVB-T、DVB-S、J83B的Tuner锁频搜台播放跨频点切换台
+Makefile
+该文件为编译所用到的makefile
+
+2. 编译
+在文件所在目录下执行make进行编译
+make
+
+3. 使用
+接上天线
+拷贝库/linux/pub/shared_lib_striped到u盘
+拷贝/linux/pub/bin/sample_nim_play到u盘，u盘接上单板
+执行以下指令：
+mount /dev/sda1 /mnt/
+export LD_LIBRARY_PATH=/mnt/shared_lib_striped/:/usr/local/lib
+cd /mnt/
+./nim_play -c 314 6875 64 -j 474 5361 256 -s 3840 27500 1 0 2 -o 3840 27500 1 0 2 -t 585 8 //-f 频率 -s 符号率 -p QAM
+
+Usage:
+nim_play
+    -c: input dvbc info(freq symbol_rate qam)
+    -j: input j83b info(freq symbol_rate qam)
+    -s: input dvbs_in info(freq symbol_rate 22k polar sig_type)
+    -o: input dvbs_out info(freq symbol_rate 22k polar sig_type)
+    -t: input dvbt info(freq band_width)
+    -q: Exit the background
+example:
+    nim_play -c dvbc_info -j j83b_info -s dvbs_in_info -o dvbs_out_info -t dvbt_info
+    nim_play -c 314 6875 64 -j 474 5361 256 -s 3840 27500 1 0 2 -o 3840 27500 1 0 2 -t 585 8
+
+4.流程介绍
+  1)  mt_sys_init()          //系统初始化
+  2)  MTADP_Fe_Init()        //初始化tuner
+  3)  MTADP_Fe_Connect()     //dvbc锁频
+  4)  MTADP_HDMI_Init()      //HDMI初始化
+  5)  MTADP_Disp_Init()      //显示初始化
+  6)  MTADP_VO_Init()        //vo设备的初始化
+  7)  MTADP_Snd_Init()       //声音设备初始化
+  8)  DVB_DmxInitAndSearch() //Demux初始化并检索TS中的PMT和PAT表
+  9)  DVB_AvplayInit()       //音视频播器放初始化
+  10) DVB_StarToPlay()       //开始播放
+  11) DVB_StopToPlay()       //停止播放
+  12) DVB_AvplayDeInit()     //音视频播放器去初始化
+  13) DVB_DmxDeInit()        //dmx去初始化
+  14) MTADP_Snd_DeInit()     //音响设备去初始化
+  15) MTADP_VO_DeInit()      //vo设备的去初始化
+  16) MTADP_Disp_DeInit()    //显示去初始化
+  17) MTADP_HDMI_DeInit()    //HDMI去初始化
+  18) MTADP_Fe_DeInit()      //Tuner去初始化
+  19) mt_sys_deinit()        //系统去初始化

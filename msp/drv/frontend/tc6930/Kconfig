@@ -1,0 +1,8 @@
+
+config MT_FRONTEND_DMD_TENOR
+	bool "TENOR"
+	default y
+	depends on MT_FRONTEND
+	help
+	  Montage Frontend TENOR(TC6920/TC6930/TC6960) Driver
+

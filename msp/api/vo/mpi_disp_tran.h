@@ -1,0 +1,75 @@
+/* Copyright (c) 2015 Montage Technology Group Limited and its affiliated companies         */
+/********************************************************************************************
+  File Name     : mt_mpi_disp_tran.h
+  Version       : Initial Draft
+  Author        : Montage multimedia software group
+  Created       : 2015/12/25
+  Description   :
+  History       :
+  1.Date        : 2015/12/25
+    Author      :
+    Modification:
+
+*********************************************************************************************/
+
+
+#ifndef __MPI_DISP_TRAN_H__
+#define __MPI_DISP_TRAN_H__
+
+#include "mt_type.h"
+#include "mt_common.h"
+#include "mt_unf_common.h"
+#include "mt_unf_disp.h"
+#include "mt_unf_vo.h"
+
+#include "mt_drv_video.h"
+#include "mt_drv_disp.h"
+#include "mt_drv_win.h"
+
+#ifdef __cplusplus
+#if __cplusplus
+extern "C"
+{
+#endif
+#endif
+
+mt_s32 Transfer_DispID(MT_UNF_DISP_E *pU, MT_DRV_DISPLAY_E *pM, MT_BOOL bu2m);
+mt_s32 Transfer_DispOffset(MT_UNF_DISP_OFFSET_S *pU, MT_DRV_DISP_OFFSET_S *pM, MT_BOOL bu2m);
+mt_s32 Transfer_LayerID(MT_UNF_DISP_LAYER_E *pU, MT_DRV_DISP_LAYER_E *pM, MT_BOOL bu2m);
+mt_s32 Transfer_EncFmt(MT_UNF_ENC_FMT_E *pU, MT_DRV_DISP_FMT_E *pM, MT_BOOL bu2m);
+mt_s32 Transfer_AspectRatio(MT_UNF_DISP_ASPECT_RATIO_S *pU, mt_u32 *pH, mt_u32 *pV, MT_BOOL bu2m);
+mt_s32 Transfer_Timing(MT_UNF_DISP_TIMING_S *pU, MT_DRV_DISP_TIMING_S *pM, MT_BOOL bu2m);
+mt_s32 Transfer_BGColor(MT_UNF_DISP_BG_COLOR_S *pU, MT_DRV_DISP_COLOR_S *pM, MT_BOOL bu2m);
+mt_s32 Transfer_SdEncPqPara(MT_UNF_SD_ENC_PQ_PARA_S **pU, DISP_SD_ENC_PQ_PARA_S **pM, MT_BOOL bu2m);
+
+mt_s32 Transfer_VideoFormat(MT_UNF_VIDEO_FORMAT_E  *pU, MT_DRV_PIX_FORMAT_E *pM, MT_BOOL bu2m);
+mt_s32 Transfe_ARConvert(MT_UNF_VO_ASPECT_CVRS_E  *pU, MT_DRV_ASP_RAT_MODE_E *pM, MT_BOOL bu2m);
+mt_s32 Transfe_ZOrder(MT_LAYER_ZORDER_ABS_E *pU, MT_DRV_DISP_ZORDER_ABS_E *pM, MT_BOOL bu2m);
+mt_s32 Transfe_SwitchMode(MT_UNF_WINDOW_FREEZE_MODE_E *pU, MT_DRV_WIN_SWITCH_E *pM, MT_BOOL bu2m);
+mt_s32 Transfer_Disp3DMode(MT_UNF_DISP_3D_E *pU, MT_DRV_DISP_STEREO_MODE_E *pM, MT_BOOL bu2m);
+mt_s32 Transfe_Rotate(MT_UNF_VO_ROTATION_E *pU, MT_DRV_ROT_ANGLE_E *pM, MT_BOOL bu2m);
+
+mt_s32 Transfer_Frame(MT_UNF_VIDEO_FRAME_INFO_S  *pU, MT_DRV_VIDEO_FRAME_S *pM, MT_BOOL bu2m);
+mt_s32 Transfer_BufferPool(MT_UNF_BUFFER_ATTR_S *pU, MT_DRV_VIDEO_BUFFER_POOL_S*pM, MT_BOOL bu2m);
+mt_s32 Transfer_CastCfg(MT_UNF_DISP_CAST_ATTR_S  *pU, MT_DRV_DISP_CAST_CFG_S *pM, MT_BOOL bu2m);
+
+mt_s32 Transfer_Intf(MT_UNF_DISP_INTF_S *pU, MT_DRV_DISP_INTF_S *pM, MT_BOOL bu2m);
+
+mt_s32 Transfer_VbiCfg(MT_UNF_DISP_VBI_CFG_S *pU, MT_DRV_DISP_VBI_CFG_S *pM, MT_BOOL bu2m);
+mt_s32 Transfer_VbiData(MT_UNF_DISP_VBI_DATA_S *pU, MT_DRV_DISP_VBI_DATA_S *pM, MT_BOOL bu2m);
+mt_s32 Transfer_DispPPMode(MT_UNF_DISP_PP_E *pU, MT_DRV_DISP_PPMODE_E *pM, MT_BOOL bu2m);
+
+mt_s32 Transfer_CgmsCfg(const MT_UNF_DISP_CGMS_CFG_S  *pU, MT_DRV_DISP_CGMSA_CFG_S *pM, MT_BOOL bu2m);
+mt_s32 Transfer_DispTvCap(MT_UNF_DISP_HDMI_MODE_E *pU, MT_DRV_DISP_HDMI_MODE_E *pM, MT_BOOL bu2m);
+
+mt_s32 Transfer_Wss(MT_UNF_DISP_WSS_DATA_S *pU, MT_DRV_DISP_WSS_DATA_S *pM, MT_BOOL bu2m);
+mt_s32 Transfer_DumpScaler(MT_UNF_DISP_DUMP_SCALER_PARA_S *pU, MT_DRV_DISP_DUMP_SCALER_PARA_S *pM, MT_BOOL bu2m);
+
+#ifdef __cplusplus
+#if __cplusplus
+}
+#endif
+#endif
+
+#endif
+

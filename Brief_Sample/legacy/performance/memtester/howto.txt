@@ -1,0 +1,14 @@
+memtester 30M 5 > mem.log
+
+先用free看看剩余多少内存
+30M 5的意思是分配30M内存来测试，总共测试5次
+
+一直跑不限制次数
+memtester 30M > mem.log
+
+
+https://blog.51cto.com/u_14900374/2533353
+指定具体物理地址，需要先在cmdline或dts里将其预留出来
+
+https://zhuanlan.zhihu.com/p/467970439?utm_medium=social&utm_oi=27638299099136
+香山RISC-V也是使用的memtester来测试DDR稳定性的

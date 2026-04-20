@@ -1,0 +1,103 @@
+include ${SDK_DIR}/build/script/base.mk
+
+.PHONY: all install clean purge
+
+#-----------------------------------------------------------
+# Montage-LZ cross toolchains
+#-----------------------------------------------------------
+#export CROSS_COMPILE		?= /usr/local/codesourcery/mips-4.3/bin/mips-linux-gnu-
+#export TOOLCHAIN_PATH	?=/usr/local/linaro/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin
+#export TOOLCHAIN_LIBGCC	?=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/8.3.0
+#export CROSS_COMPILE		?= $(TOOLCHAIN_PATH)/arm-linux-gnueabihf-
+#GCC					?= $(CROSS_COMPILE)gcc
+#AR					?= $(CROSS_COMPILE)ar
+#CFLAGS          	?= -Os -g -rdynamic -funwind-tables -fomit-frame-pointer -fno-common -fPIC -fno-strict-aliasing -Wall -ffunction-sections -fdata-sections 
+CFLAGS				+= -fPIC
+#ARFLAGS         	?= rcs
+
+#CFG_MT_CFLAGS		?= -march=armv7-a -mtune=cortex-a7 -mabi=aapcs-linux -mfloat-abi=hard -mfpu=neon-vfpv4 -mthumb -mthumb-interwork
+
+export LOCAL_ROOT_DIR		:= $(shell pwd)
+
+MT_BUILD_DIR        := $(LOCAL_ROOT_DIR)/build
+
+
+NOCSAPI_VERSION		:= NOCSAPIs_PKG_EXT-04.13.01
+
+MT_CERT_MODULE		:= cert
+
+MT_IMPL_LIB_TARGET_NAME ?= libmt_nocsapi_impl.a
+MT_IMPL_SO_TARGET_NAME ?= libmt_nocsapi_impl.so
+MT_LIB_TARGET      ?= $(MT_BUILD_DIR)/$(MT_IMPL_LIB_TARGET_NAME) $(MT_BUILD_DIR)/$(MT_IMPL_SO_TARGET_NAME)
+
+
+#export MT_KERNEL_DIR		:= $(SDK_DIR)/out/general/kernel/linux-4.4.122
+
+MT_INC_DIR=${BUILDROOT_SYSROOT_USR_INC_MT_DIR}
+#MT_LIB_DIR=${SDK_DIR}/mt_lib
+#MT_DRV_INC_DIR=${MT_INC_DIR}/drv
+#MT_TEE_INC_DIR=${MT_INC_DIR}/tee
+NOCSAPI_DIR=${SDK_DIR}/nagra_modules/MT_NOCSAPIs
+NOCSAPI_INC_DIR=${NOCSAPI_DIR}/NOCSAPIs/${NOCSAPI_VERSION}/inc
+MT_NOCSAPI_INC_DIR=${NOCSAPI_DIR}/inc
+
+
+MT_CC_Get_objs ?= \
+  $(addprefix $(MT_BUILD_DIR)/,$(addsuffix .o,$(basename $(notdir $1))))
+
+MT_CC_INC_DIRS += $(MT_INC_DIR) \
+				  $(NOCSAPI_INC_DIR) \
+				  $(LOCAL_ROOT_DIR)/inc \
+				  $(LOCAL_ROOT_DIR)/src/
+
+MT_COMPILER_INCS = $(addprefix -I, $(MT_CC_INC_DIRS))
+
+#Inherit SDK flags
+CFLAGS += $(CFG_MT_CFLAGS)
+
+#------------------------------------------------------------
+# Setup obj files
+#------------------------------------------------------------
+MT_SRCS += \
+		   src/ca_cert_impl.c \
+		   src/ca_sec_impl.c \
+		   src/mt_misc.c \
+		   src/nocs_csd_impl.c \
+		   src/mt_sec_ext.c
+
+#-----------------------------------------------------------
+# Extra apis
+#-----------------------------------------------------------
+#MT_SRCS += \
+
+
+MT_IMPL_LIB_OBJ_FILES = $(call MT_CC_Get_objs, $(MT_SRCS))
+
+all: $(MT_BUILD_DIR) $(MT_LIB_TARGET)
+
+$(MT_BUILD_DIR):
+	echo ${SDK_DIR}
+	-@if [ ! -d $@ ]; then mkdir -p $@; fi
+
+$(MT_BUILD_DIR)/%.o: src/%.c
+	@$(CC) $(MT_COMPILER_INCS) -c -o $@ $< $(CFLAGS)
+	@echo cc $<
+
+$(MT_BUILD_DIR)/$(MT_IMPL_LIB_TARGET_NAME) : $(MT_IMPL_LIB_OBJ_FILES)
+	@$(AR) $(ARFLAGS) $@ $(MT_IMPL_LIB_OBJ_FILES)
+
+$(MT_BUILD_DIR)/$(MT_IMPL_SO_TARGET_NAME) : $(MT_IMPL_LIB_OBJ_FILES)
+	@$(CC) -shared -o $@ $(MT_IMPL_LIB_OBJ_FILES)
+
+
+#------------------------------------------------------------
+# Phony Rules
+#------------------------------------------------------------
+#install:
+	@cp -f $(MT_BUILD_DIR)/$(MT_IMPL_LIB_TARGET_NAME) $(SHARED_LIB_DIR)
+	@cp -f $(MT_BUILD_DIR)/$(MT_IMPL_SO_TARGET_NAME) $(SHARED_LIB_DIR)
+
+clean:
+	-@rm -rf $(MT_BUILD_DIR)/*
+	@#make -C src/drivers/cert clean
+

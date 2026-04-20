@@ -1,0 +1,53 @@
+
+menuconfig MT_FRONTEND_DMD_CS8K_CABLE
+	bool "CS8000_Cable"
+	default y
+	depends on MT_FRONTEND && MT_CHIP_SYMPHONY1
+	help
+	  Montage Frontend CS8000 Cable Driver
+
+if MT_FRONTEND_DMD_CS8K_CABLE
+
+config MT_FRONTEND_DMD_CS8K_CABLE_TN_TC2800
+	bool "TC2800 Tuner"
+	default y
+	help
+	  Montage TC2800 Tuner
+
+config MT_FRONTEND_DMD_CS8K_CABLE_TN_TC3800
+	bool "TC3800 Tuner"
+	default y
+	help
+	  Montage TC3800 Tuner
+
+config MT_FRONTEND_DMD_CS8K_CABLE_TN_TC6800
+	bool "TC6800 Tuner"
+	default y
+	help
+	  Montage TC6800 Tuner
+
+config MT_FRONTEND_DMD_CS8K_CABLE_TN_TDA18250
+	bool "TDA18250 Tuner"
+	default y
+	help
+	  Montage TDA18250 Tuner
+
+config MT_FRONTEND_DMD_CS8K_CABLE_TN_R836
+	bool "R836 Tuner"
+	default y
+	help
+	  Montage R836 Tuner
+
+config MT_FRONTEND_DMD_CS8K_CABLE_TN_MXL203
+	bool "MXL203 Tuner"
+	default y
+	help
+	  Montage MXL203 Tuner
+
+config MT_FRONTEND_DMD_CS8K_CABLE_TN_MXL608
+	bool "MXL608 Tuner"
+	default y
+	help
+	  Montage MXL608 Tuner
+
+endif #MT_FRONTEND_DMD_CS8K_CABLE

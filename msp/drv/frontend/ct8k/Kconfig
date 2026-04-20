@@ -1,0 +1,58 @@
+menuconfig MT_FRONTEND_DMD_CT8K
+	bool "CT8000"
+	default y
+	depends on MT_FRONTEND && MT_CHIP_SYMPHONY2
+	help
+	  Montage Frontend CT8000 Driver
+
+if MT_FRONTEND_DMD_CT8K
+
+config MT_FRONTEND_DMD_CT8K_TN_TS2022
+	bool "TS2022 Tuner"
+	default y
+	help
+	  Montage TS2022 Tuner
+
+config MT_FRONTEND_DMD_CT8K_TN_TS6011
+	bool "TS6011 Tuner"
+	default y
+	help
+	  Montage TS6011 Tuner
+
+config MT_FRONTEND_DMD_CT8K_TN_RDA5815M
+	bool "RDA5815M Tuner"
+	default y
+	help
+	  RDA 5815M Tuner
+
+config MT_FRONTEND_DMD_CT8K_TN_MXL601
+	bool "MXL601 Tuner"
+	default y
+	help
+	  MaxLinear MxL601 Tuner
+
+config MT_FRONTEND_DMD_CT8K_TN_MXL603
+	bool "MXL603 Tuner"
+	default y
+	help
+	  MaxLinear MxL603 Tuner
+
+config MT_FRONTEND_DMD_CT8K_TN_RDA5815S
+	bool "RDA5815S Tuner"
+	default y
+	help
+	  RDA 5815S Tuner
+
+config MT_FRONTEND_DMD_CT8K_TN_TC3800
+	bool "TC3800 Tuner"
+	default y
+	help
+	  Montage TC3800 Tuner
+
+config MT_FRONTEND_DMD_CT8K_TN_TC6800
+	bool "TC6800 Tuner"
+	default y
+	help
+	  Montage TC6800 Tuner
+
+endif #MT_FRONTEND_DMD_CT8K

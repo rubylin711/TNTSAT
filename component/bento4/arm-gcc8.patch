@@ -1,0 +1,43 @@
+diff --git a/opensource/bento4/Build/Targets/any-gnu-gcc/Local.mak b/opensource/bento4/Build/Targets/any-gnu-gcc/Local.mak
+index c1f1e64..c233a27 100755
+--- a/opensource/bento4/Build/Targets/any-gnu-gcc/Local.mak
++++ b/opensource/bento4/Build/Targets/any-gnu-gcc/Local.mak
+@@ -15,7 +15,7 @@ ROOT   = ../../../..
+ #    tools
+ #######################################################################
+ # how to make dependencies
+-AUTODEP_CPP = $(GCC_CROSS_PREFIX)gcc -EL  -MM
++AUTODEP_CPP = $(GCC_CROSS_PREFIX)gcc -MM
+ 
+ # how to make a library
+ MAKELIB = $(GCC_CROSS_PREFIX)ar rs
+@@ -27,10 +27,10 @@ RANLIB = $(GCC_CROSS_PREFIX)ranlib
+ STRIP = $(GCC_CROSS_PREFIX)strip
+ 
+ # how to compile source code
+-COMPILE_CPP  = $(GCC_CROSS_PREFIX)g++  -EL  
++COMPILE_CPP  = $(GCC_CROSS_PREFIX)g++
+ 
+ # how to link object files
+-LINK_CPP = $(GCC_CROSS_PREFIX)g++  -EL  -L.
++LINK_CPP = $(GCC_CROSS_PREFIX)g++ -L.
+ 
+ # optimization flags
+ OPTIMIZE_CPP = -O3 -ffunction-sections -fdata-sections
+diff --git a/opensource/bento4/Build/Tools/SCons/gcc-generic.py b/opensource/bento4/Build/Tools/SCons/gcc-generic.py
+index 989a441..8392eef 100755
+--- a/opensource/bento4/Build/Tools/SCons/gcc-generic.py
++++ b/opensource/bento4/Build/Tools/SCons/gcc-generic.py
+@@ -30,9 +30,9 @@ def generate(env, gcc_cross_prefix=None, gcc_strict=True, gcc_stop_on_warning=Tr
+         if use_gcc_cross_prefix_for_ar:
+             env['AR']     = gcc_cross_prefix+'-ar'
+             env['RANLIB'] = gcc_cross_prefix+'-ranlib'
+-        env['CC']     = gcc_cross_prefix+'-gcc -EL'
+-        env['CXX']    = gcc_cross_prefix+'-g++  -EL'
+-        env['LINK']   = gcc_cross_prefix+'-g++  -EL'
++        env['CC']     = gcc_cross_prefix+'-gcc'
++        env['CXX']    = gcc_cross_prefix+'-g++'
++        env['LINK']   = gcc_cross_prefix+'-g++'
+     else:
+         env['CC']  = os.getenv('CC')  or env['CC']
+         env['CXX'] = os.getenv('CXX') or env['CXX']

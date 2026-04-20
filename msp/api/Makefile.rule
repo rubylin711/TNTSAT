@@ -1,0 +1,168 @@
+ifneq ($(HEADER_FILES),)
+ifeq ($(INCLUDE_PARENT_DIR),y)
+HEADER_FILES:=$(subst $(CURDIR)/,,$(HEADER_FILES))
+endif
+endif
+
+OBJS_REAL = $(call out_objs,$(OBJS))
+OBJS_REAL_STATIC = $(foreach x,$(OBJS_REAL),$(subst $(DIR_REAL),$(DIR_REAL)/$(STATIC_OBJ_DIR),$(x)))
+OBJS_REAL_SHARED = $(foreach x,$(OBJS_REAL),$(subst $(DIR_REAL),$(DIR_REAL)/$(SHARED_OBJ_DIR),$(x)))
+DEPENDS_STATIC = $(OBJS_REAL_STATIC:.o=.d)
+DEPENDS_SHARED = $(OBJS_REAL_SHARED:.o=.d)
+
+ifeq ($(FORCE_CFLAGS),)
+CFLAGS = $(CFG_MT_CFLAGS) $(EXTRA_CFLAGS) $(INCLUDE_PATH)
+else
+CFLAGS = $(FORCE_CFLAGS) $(EXTRA_CFLAGS) $(INCLUDE_PATH)
+endif
+CXXFLAGS = $(CFLAGS)
+
+.PHONY: all clean install uninstall all_objs_phony distclean prepare build_objs
+
+all: prepare
+	$(AT)$(MAKE) -f $(CURRENT_MAKEFILES) -r build_objs
+
+build_objs: $(OBJS_REAL_STATIC) $(OBJS_REAL_SHARED)
+
+clean:
+	$(AT)rm -rf $(DIR_REAL)
+ifneq ($(CLEAN_EXTRA),)
+	$(AT)rm -f $(CLEAN_EXTRA)
+endif
+
+distclean:
+
+install:
+ifneq ($(HEADER_FILES),)
+	$(AT)mkdir -p ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR)
+ifeq ($(INCLUDE_PARENT_DIR),y)
+	cp -arf --parents $(HEADER_FILES) ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR)
+else
+	cp -arf $(HEADER_FILES) ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR)
+endif
+endif
+ifneq ($(INSTALL_EXTRA_SCRIPT),)
+	mkdir -p ${BIN_DIR}
+	cp -af $(INSTALL_EXTRA_SCRIPT) ${BIN_DIR}/
+endif
+ifneq ($(INSTALL_EXTRA_RESOURCE),)
+	cp -af $(INSTALL_EXTRA_RESOURCE) ${RESOURCE_DIR}/
+endif
+
+uninstall:
+ifneq ($(HEADER_FILES),)
+ifeq ($(INCLUDE_PARENT_DIR),y)
+	$(foreach file, $(HEADER_FILES), $(AT)rm -rf $(INCLUDE_DIR)/$(HEADER_FILES_INSTALL_SUBDIR)/$(file))
+else
+	$(foreach file, $(HEADER_FILES), $(AT)rm -rf $(INCLUDE_DIR)/$(HEADER_FILES_INSTALL_SUBDIR)/$(notdir $(file)))
+endif
+ifneq ($(HEADER_FILES_INSTALL_SUBDIR),)
+	$(AT)if [ "`find ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR) -type f`" = "" -a "`find ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR) -type l`" = "" ]; then \
+		rm -rf ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR); \
+	fi
+endif
+endif
+ifneq ($(INSTALL_EXTRA_SCRIPT),)
+	$(AT)$(foreach install_extra, $(notdir $(INSTALL_EXTRA_SCRIPT)), rm -f $(BIN_DIR)/$(install_extra))
+endif
+ifneq ($(INSTALL_EXTRA_RESOURCE),)
+	$(AT)$(foreach install_extra, $(notdir $(INSTALL_EXTRA_RESOURCE)), rm -f $(RESOURCE_DIR)/$(install_extra))
+endif
+
+
+ALL_STATIC_OBJS:=$(OBJS_REAL_STATIC)
+ALL_SHARED_OBJS:=$(OBJS_REAL_SHARED)
+all_objs_phony:
+	$(AT)echo "ALL_STATIC_OBJS+=$(ALL_STATIC_OBJS)" >> $(ALL_STATIC_OBJS_NOTE)
+	$(AT)echo "ALL_SHARED_OBJS+=$(ALL_SHARED_OBJS)" >> $(ALL_SHARED_OBJS_NOTE)
+
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.c
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CC) $(CFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CC) $(CFLAGS) $(MT_STATIC_LIB_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.cpp
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_STATIC_LIB_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.cxx
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_STATIC_LIB_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.cc
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_STATIC_LIB_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.S
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CC) $(CFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+
+$(DIR_REAL)/$(SHARED_OBJ_DIR)/%.o: %.c
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CC) $(CFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CC) $(CFLAGS) $(MT_SHARED_LIB_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(SHARED_OBJ_DIR)/%.o: %.cpp
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_SHARED_LIB_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(SHARED_OBJ_DIR)/%.o: %.cxx
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_SHARED_LIB_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(SHARED_OBJ_DIR)/%.o: %.cc
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_SHARED_LIB_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(SHARED_OBJ_DIR)/%.o: %.S
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(AT)$(CC) $(CFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),uninstall)
+ifneq ($(MAKECMDGOALS),distclean)
+sinclude $(DEPENDS_STATIC)
+sinclude $(DEPENDS_SHARED)
+endif
+endif
+endif

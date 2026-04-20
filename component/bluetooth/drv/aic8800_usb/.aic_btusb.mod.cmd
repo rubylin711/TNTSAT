@@ -1,0 +1,1 @@
+savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/aic8800_usb/aic_btusb.mod := printf '%s\n'   aic_btusb.o | awk '!x[$$0]++ { print("/home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/aic8800_usb/"$$0) }' > /home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/aic8800_usb/aic_btusb.mod

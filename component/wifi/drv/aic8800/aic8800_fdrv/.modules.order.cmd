@@ -1,0 +1,1 @@
+savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/aic8800/aic8800_fdrv/modules.order := {   echo /home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/aic8800/aic8800_fdrv/aic8800_fdrv.o; :; } > /home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/aic8800/aic8800_fdrv/modules.order

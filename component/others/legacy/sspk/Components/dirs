@@ -1,0 +1,11 @@
+dirs = \
+  Decoder \
+  DRM \
+  MBR \
+  MP4Parser \
+  Receiver \
+  Renderer \
+  Socket \
+  Streamer \
+  Transport \
+  Utilities \

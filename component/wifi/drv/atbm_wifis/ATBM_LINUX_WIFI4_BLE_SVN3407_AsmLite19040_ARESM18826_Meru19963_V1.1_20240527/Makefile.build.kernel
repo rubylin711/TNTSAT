@@ -1,0 +1,14 @@
+include ${SDK_DIR}/build/script/base.mk
+#############################################################################
+#               Makefile For Kernel
+############################################################################
+
+
+ifeq ($(CONFIG_ATBM_APOLLO),)
+CONFIG_ATBM_APOLLO=m
+endif
+
+$(warning "============>kernel_version:$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)")
+obj-$(CONFIG_ATBM_APOLLO) += hal_apollo/
+
+

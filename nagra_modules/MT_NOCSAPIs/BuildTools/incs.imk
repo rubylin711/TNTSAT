@@ -1,0 +1,38 @@
+#
+# Source compilation mandatory include pathes
+#
+#  This file contains all include pathes required for well compiling
+#  C-files associated to this module
+#
+#  PS: This file was automatically generated. Do not edit it by hand
+#
+
+#---------------------------------------------------------------------------
+# NOCS APIs are required by RPCserver compiling.
+# copy NOCS APIs from Testharness package into $(NHT_ROOT)
+#---------------------------------------------------------------------------
+MT_CC_INC_DIRS += \
+    $(MT_ROOT)/MT_NOCSAPIs/NOCSAPIs/NOCSAPIs_PKG_EXT-04.13.01/inc
+
+#---------------------------------------------------------------------------
+# EAPI headers
+#---------------------------------------------------------------------------
+#MT_CC_INC_DIRS += \
+#    $(MT_ROOT)/EAPI/inc
+
+
+#---------------------------------------------------------------------------
+# Montage-LZ implementation headers
+#---------------------------------------------------------------------------
+MT_CC_INC_DIRS += \
+    $(MT_ROOT)/MT_NOCSAPIs/inc
+
+#---------------------------------------------------------------------------
+# Montage-LZ driver headers
+#---------------------------------------------------------------------------
+MT_CC_INC_DIRS += \
+    $(MT_ROOT)/../../pub/inc \
+    $(MT_ROOT)/../../common/inc \
+    $(MT_ROOT)/../../msp/inc \
+    $(MT_ROOT)/../../msp/drv/inc	\
+	$(MT_ROOT)/../../msp/api/inc/

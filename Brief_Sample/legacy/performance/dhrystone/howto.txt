@@ -1,0 +1,6 @@
+./dhrystone
+Please give the number of runs through the benchmark: 10000000
+
+or
+
+dhrystone < dhrystone-count.txt

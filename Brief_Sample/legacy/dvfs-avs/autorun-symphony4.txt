@@ -1,0 +1,7 @@
+sh echo 1200000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+sh benchmark.sh high one &
+mt_tuner -o .dirlock 538 6875
+mt_av_dvb -o .init 0 4113 0 4352 3 6 0 0 0 0 1 0 4097
+
+
+

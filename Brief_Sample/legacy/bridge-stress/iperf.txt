@@ -1,0 +1,21 @@
+pc工具路径
+D:\tool\iperf-2.0.9-win64
+
+板子
+/root/iperf -s
+pc
+iperf.exe -c 10.48.147.40 -i 1 -t 259200
+
+pc
+iperf.exe -s -p 20000
+板子
+/root/iperf -c 10.48.144.6 -i 1 -t 259200 -p 20000
+
+
+
+
+
+
+
+
+

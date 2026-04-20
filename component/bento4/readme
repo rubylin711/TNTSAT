@@ -1,0 +1,21 @@
+wget http://prdownloads.sourceforge.net/scons/scons-2.2.0.tar.gz .
+
+tar zxvf scons-2.2.0.tar.gz
+
+cd scons-2.2.0
+
+python setup.py install
+
+normally, scons will be installed into ${PYTHON_INSTALL_DIR}/bin
+
+
+
+
+
+
+scons -u target=mipsel-mont-linux build_config=Release
+
+cd ${SDK_DIR}
+git apply opensource/bento4/arm-gcc8.patch
+cd opensource/bento4
+scons -u target=arm-mont-linux build_config=Release

@@ -1,0 +1,40 @@
+menuconfig MT_FRONTEND_DMD_DS6103
+	bool "DS6103"
+	default n
+	depends on MT_FRONTEND
+	help
+	  Montage Frontend DS6103 Driver
+
+if MT_FRONTEND_DMD_DS6103
+
+config MT_FRONTEND_DMD_DS6103_TN_TS6011
+	bool "TS6011 Tuner"
+	default y
+	help
+	  Montage TS6011 Tuner
+
+config MT_FRONTEND_DMD_DS6103_TN_RDA5815S
+	bool "RDA5815S Tuner"
+	default n
+	help
+	  Montage RDA5815S Tuner
+
+config MT_FRONTEND_DMD_DS6103_TN_RDA5815M
+	bool "RDA5815M Tuner"
+	default n
+	help
+	  Montage RDA5815M Tuner
+
+config MT_FRONTEND_DMD_DS6103_TN_AV2012
+	bool "AV2012 Tuner"
+	default n
+	help
+	  AV2012 Tuner
+
+config MT_FRONTEND_DMD_DS6103_TN_AV2018
+	bool "AV2018 Tuner"
+	default n
+	help
+	  AV2018 Tuner
+
+endif #MT_FRONTEND_DMD_DS6103

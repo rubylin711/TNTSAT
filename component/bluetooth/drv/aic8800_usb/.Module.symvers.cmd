@@ -1,0 +1,1 @@
+savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/aic8800_usb/Module.symvers :=  scripts/mod/modpost -M        -o /home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/aic8800_usb/Module.symvers -T /home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/aic8800_usb/modules.order -i Module.symvers -e 

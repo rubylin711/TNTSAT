@@ -1,0 +1,10 @@
+sprintf(buffer,"**System used for compilation:\n");
+output_string(buffer);
+sprintf(buffer,"**Linux rubylin-nb 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu J\n");
+output_string(buffer);
+sprintf(buffer,"**C compiler: /usr/local/linaro/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc\n");
+output_string(buffer);
+sprintf(buffer,"**libc: static\n");
+output_string(buffer);
+sprintf(buffer,"**Date of compilation: Wed Apr 15 11:20:02 CST 2026\n");
+output_string(buffer);

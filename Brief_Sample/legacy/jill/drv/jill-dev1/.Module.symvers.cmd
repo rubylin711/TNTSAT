@@ -1,0 +1,1 @@
+savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/jill/drv/jill-dev1/Module.symvers :=  scripts/mod/modpost -M        -o /home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/jill/drv/jill-dev1/Module.symvers -T /home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/jill/drv/jill-dev1/modules.order -i Module.symvers -e 

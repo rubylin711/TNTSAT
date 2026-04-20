@@ -1,0 +1,42 @@
+#*****************************************************************
+#
+# Copyright (C) Microsoft Corporation. All rights reserved.
+#
+#*****************************************************************
+
+MSPK_TARGETMODULE = Platform
+MSPK_TARGETNAME=DecoderHal
+MSPK_TARGETPATH=Platform/$(MSPK_PLATFORM)/HALimpl/Decoder
+
+
+ifeq ($(CFG_MT_CHIP),symphony1)
+MSPK_CDEFINES= -DCONFIG_MT_CHIP_SYMPHONY1
+else ifeq ($(CFG_MT_CHIP),symphony4)
+MSPK_CDEFINES= -DCONFIG_MT_CHIP_SYMPHONY4
+else ifeq ($(CFG_MT_CHIP),symphony2)
+$(error please compile me with symphony1 or symphony4)
+endif
+
+
+
+MSPK_DBG_CDEFINES= \
+
+
+MSPK_SOURCES= \
+	IPTVDecoderHal.cpp \
+
+
+MSPK_INCLUDES= \
+	$(MSPK_PAL_INCLUDES); \
+	$(SSPK_TOP_DIR)/../../kware/libmonplayer/include/; \
+	$(SSPK_TOP_DIR)/../../kware/libmonplayer/osal/; \
+	$(SSPK_TOP_DIR)/../../msp/inc/; \
+	$(SSPK_TOP_DIR)/../../msp/drv/inc/; \
+	$(SSPK_TOP_DIR)/../../common/drv/inc/; \
+	$(SSPK_TOP_DIR)/../../pub/inc/; \
+	$(SSPK_TOP_DIR)/../../common/inc/; \
+	$(MSPK_PLATFORM_PATH)/PALimpl/include; \
+	
+
+# not IN_PAL_IMPL because HALs are C++
+

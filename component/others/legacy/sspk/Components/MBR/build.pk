@@ -1,0 +1,45 @@
+#*****************************************************************
+#
+# Copyright (C) Microsoft Corporation. All rights reserved.
+#
+#*****************************************************************
+
+MSPK_TARGETMODULE = Components
+MSPK_TARGETNAME = MBR
+MSPK_TARGETPATH = Components/MBR
+
+MSPK_CDEFINES = \
+	-DMSPK_USING_STD_TEMPLATE_LIBS \
+
+MSPK_DBG_CDEFINES = \
+
+MSPK_SOURCES = \
+	CChunkBuffer.cpp \
+	CChunkManifest.cpp \
+	CMediaStreamDescription.cpp \
+	CManifest.cpp \
+	CManifestStream.cpp \
+	CManifestChunk.cpp \
+	Heuristics.cpp \
+	ManifestParser.cpp \
+	CManifestTrack.cpp \
+	CManifestUrlServices.cpp \
+	CFragmentDownloader.cpp \
+	CFragmentFetcher.cpp \
+	StreamTypeTraits.cpp \
+	CMbrConfiguration.cpp \
+
+MSPK_INCLUDES = \
+	$(MSPK_PAL_INCLUDES); \
+	$(MSPK_ROOT)/inc; \
+	$(MSPK_ROOT)/Components/inc; \
+	$(MSPK_ROOT)/Components/Utilities; \
+	$(MSPK_ROOT)/Components/Decoder; \
+	$(MSPK_ROOT)/Components/DRM; \
+	$(MSPK_ROOT)/Components/MP4Parser; \
+	$(MSPK_ROOT)/Components/Receiver; \
+	$(MSPK_ROOT)/Components/Renderer; \
+	$(MSPK_ROOT)/Components/Streamer; \
+	$(MSPK_ROOT)/Components/Transport; \
+	$(MSPK_ROOT)/Components/Socket; \
+

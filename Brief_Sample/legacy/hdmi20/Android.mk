@@ -1,0 +1,32 @@
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+#include ${SDK_DIR}/Android.def
+
+LOCAL_MODULE := mtplayer
+ALL_DEFAULT_INSTALLED_MODULES += $(LOCAL_MODULE)
+
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_CFLAGS := $(CFG_MT_CFLAGS) $(CFG_MT_BOARD_CONFIGS)
+LOCAL_CFLAGS += -DLOG_TAG=\"$(LOCAL_MODULE)\"
+
+LOCAL_SRC_FILES := player.c
+
+LOCAL_C_INCLUDES := $(COMMON_UNF_INCLUDE)
+LOCAL_C_INCLUDES += $(COMMON_DRV_INCLUDE)
+LOCAL_C_INCLUDES += $(COMMON_API_INCLUDE)
+LOCAL_C_INCLUDES += $(MSP_UNF_INCLUDE)
+LOCAL_C_INCLUDES += $(MSP_DRV_INCLUDE)
+LOCAL_C_INCLUDES += $(MSP_API_INCLUDE)
+LOCAL_C_INCLUDES += $(SAMPLE_DIR)/common
+LOCAL_C_INCLUDES += $(COMPONENT_DIR)/ha_codec/include
+LIBPLAYER_INCDIR= vendor/montage/sdk/linux/kware/libmonplayer/moplayer/include
+LOCAL_CFLAGS += -D__LINUX__
+LOCAL_C_INCLUDES +=$(LIBPLAYER_INCDIR)
+LOCAL_SHARED_LIBRARIES := liblog libmonPlayer libcutils libdl libm \
+                          libmt_common libmt_msp 
+				  
+#$(warning $(LOCAL_C_INCLUDES))
+
+include $(BUILD_EXECUTABLE)

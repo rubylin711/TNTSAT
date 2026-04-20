@@ -1,0 +1,10 @@
+menu "Montage Common"
+
+config MT_COMMON
+	bool "Common Driver"
+	default y
+	depends on MT_CHIP_COMMON
+	help
+	  Montage Common Driver
+
+endmenu

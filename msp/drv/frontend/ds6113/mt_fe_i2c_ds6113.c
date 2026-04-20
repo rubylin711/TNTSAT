@@ -1,0 +1,881 @@
+/********************************************************************************************/
+/* Copyright (c) 2023 Montage Technology Group Limited and its affiliated companies         */
+/* Montage Proprietary and Confidential                                                     */
+/* Montage Technology (Shanghai) Co., Ltd.                                                  */
+/********************************************************************************************/
+/****************************************************************************
+* MONTAGE PROPRIETARY AND CONFIDENTIAL
+* Montage Technology (Shanghai) Inc.
+* All Rights Reserved
+* --------------------------------------------------------------------------
+*
+* File:				mt_fe_i2c.c
+*
+* Current version:	1.00.00
+*
+* Description:		Define all i2c function for FE module.
+*
+* Log:	Description			Version		Date		Author
+*		---------------------------------------------------------------------
+*		Create				1.00.00		2010.09.15	YZ.Huang
+*		Modify				1.00.00		2010.09.15	YZ.Huang
+****************************************************************************/
+#include <linux/delay.h>
+#include <linux/kernel.h>
+#include <linux/slab.h>
+#include <linux/i2c.h>
+#include <linux/mutex.h>
+#include <linux/io.h>
+
+#include "port_ds6113.h"
+
+#include "mt_fe_def_ds6113.h"
+#include "mt_fe_i2c_ds6113.h"
+
+#include "mt_fe_tn_montage_ts6011.h"
+
+#if defined(CONFIG_MT_CHIP_SYMPHONY1) || defined(CONFIG_MT_CHIP_SYMPHONY2) || defined(CONFIG_MT_CHIP_SYMPHONY4)  || defined(CONFIG_MT_CHIP_SYMPHONY6)
+#include "mt_mach/symphony_regs.h"
+#include "mt_mach/symphony_io.h"
+#endif
+
+
+
+extern int g_i2c_ds6113;
+
+
+static MT_FE_RET _mt_fe_i2c_write(U8 dev_addr, U8 *w_buf, U16 w_byte)
+{
+	struct mt_i2c_msg mt_msg = {0,};
+	struct i2c_msg *msg = &mt_msg.msg;
+	struct i2c_adapter *i2c = NULL;
+	int ret = 0;
+
+	i2c = i2c_get_adapter(g_i2c_ds6113);
+	msg->addr = dev_addr;
+	msg->flags = I2C_M_TEN | I2C_M_SALVE_TYPE;
+	msg->buf = w_buf;
+	msg->len = w_byte;
+	mt_msg.rlen = 0;
+	mt_msg.wlen = w_byte;
+	mt_msg.slave_type = I2C_SLAVE_DEV_SOC_EXTER;
+	ret = i2c_transfer(i2c, msg, 1);
+	if (ret < 0)
+	{
+		//printk("_mt_fe_i2c_write() failed, dev_addr = 0x%02x, ret %d\n", dev_addr, ret);
+		return MtFeErr_I2cErr;
+	}
+
+	return MtFeErr_Ok;
+}
+
+static MT_FE_RET _mt_fe_i2c_read(U8 dev_addr, U8 *w_buf, U16 w_byte, U8 *r_buf, U16 r_byte)
+{
+	// 8 bit Register Read Protocol:
+	// +------+-+-----+-+-+----------+-+
+	// |MASTER|S|SADDR|W|  |RegAddr   |
+	// +------+-+-----+-+-+-----------+-+
+	// |SLAVE |                          |A|               |A| |
+	// +------+-+-----+-+-+-----------+-+
+	// +------+-+-----+-+-+-----+--+-+
+	// |MASTER|S|SADDR|R| |     |MN|P|
+	// +------+-+-----+-+-+-----+--+-+
+	// |SLAVE |         |A|Data |  | |
+	// +------+---------+-+-----+--+-+
+	// Legends: SADDR(I2c slave address), S(Start condition), MA(Master Ack), MN(Master NACK),
+	// P(Stop condition)
+	struct mt_i2c_msg mt_msg = {0,};
+	struct i2c_msg *msg = &mt_msg.msg;
+	struct i2c_adapter *i2c = NULL;
+	int ret = 0;
+	U8 buffer[32];
+
+	//*r_buf = *w_buf;
+	memcpy(buffer, w_buf, w_byte);
+
+	i2c = i2c_get_adapter(g_i2c_ds6113);
+	//printk("[%s ] line:%d i2c_bus 0x%08x\n", __func__, __LINE__, i2c);
+	msg->addr = dev_addr;
+	msg->flags = I2C_M_STD_RD | I2C_M_SALVE_TYPE;
+	//msg->buf = r_buf;
+	msg->buf = buffer;
+	msg->len = r_byte;
+	mt_msg.rlen = r_byte;
+	mt_msg.wlen = w_byte;
+	mt_msg.slave_type = I2C_SLAVE_DEV_SOC_EXTER;
+	ret = i2c_transfer(i2c, msg, 1);
+	if (ret < 0)
+	{
+		//printk("_mt_fe_i2c_read() failed, dev_addr = 0x%02x, ret %d\n", dev_addr, ret);
+		return MtFeErr_I2cErr;
+	}
+
+	memcpy(r_buf, buffer, r_byte);
+
+	return MtFeErr_Ok;
+}
+
+
+void _mt_sleep_ds6113(U32 ms)
+{
+	/*
+		TODO:
+			Delay ms.
+	*/
+
+	if (ms < 10)
+	{
+		usleep_range(ms * 1000, ms * 1000 + 500);
+	}
+	else
+	{
+		msleep(ms);
+	}
+}
+
+void _mt_delayus_ds6113(U32 us)
+{
+	usleep_range(us / 100 * 100 + 50, us / 100 * 100 + 100);
+}
+
+MT_FE_RET _mt_fe_write32_ds6113(U32 reg_addr, U32 reg_data)
+{
+	HAL_PUT_U32((volatile u32 *)SYMPHONY_IO_VA(reg_addr), reg_data);
+
+	return MtFeErr_Ok;
+}
+
+MT_FE_RET _mt_fe_read32_ds6113(U32 reg_addr, U32 *p_data)
+{
+	*p_data = HAL_GET_U32((volatile u32 *)SYMPHONY_IO_VA(reg_addr));
+
+	return MtFeErr_Ok;
+}
+
+/*****************************************************************
+** Function: _mt_fe_dmd_set_reg
+**
+**
+** Description:	write data to demod register
+**
+**
+** Inputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	reg_index		U8			register index
+**	data			U8			value to write
+**
+**
+** Outputs:
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_dmd_set_reg_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_index, U8 data)
+{
+	/*
+		TODO:
+			Obtain the i2c mutex
+	*/
+
+
+
+	/*
+		TODO:
+			write data to demodulator register
+	*/
+
+	MT_FE_RET ret;
+	U8 buf[2];
+
+	buf[0] = reg_index;
+	buf[1] = data;
+
+	//printk("[%s ] line:%d\n", __func__, __LINE__);
+
+	ret = _mt_fe_i2c_write(handle->demod_dev_addr, buf, (U16)2);
+
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "MT:  _mt_fe_dmd_set_reg_ds6113() dev_addr = 0x%02x, reg 0x%02x - data 0x%02x FAILED!\n", handle->demod_dev_addr, reg_index, data);
+		return MtFeErr_I2cErr;
+	}
+
+	//printk(KERN_ERR "%s[%d] ---- reg_index = 0x%02x, reg_data = 0x%02x\n", __FUNCTION__, __LINE__, reg_index, data);
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+
+
+	return MtFeErr_Ok;
+}
+
+
+/*****************************************************************
+** Function: _mt_fe_dmd_get_reg
+**
+**
+** Description:	read data from demod register
+**
+**
+** Inputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	reg_index		U8			register index
+**
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	p_buf			U8*			register data
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_dmd_get_reg_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_index, U8 *p_buf)
+{
+	/*
+		TODO:
+			Obtain the i2c mutex
+	*/
+
+
+
+	/*
+		TODO:
+			read demodulator register value
+	*/
+
+
+	MT_FE_RET ret;
+	U8 temp[2] = {0, 0};
+
+	//printk("[%s ] line:%d\n", __func__, __LINE__);
+
+	temp[0] = (U8)reg_index;
+	ret = _mt_fe_i2c_read(handle->demod_dev_addr, temp, (U16)(1), p_buf, (U16)(1));
+
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "MT:	_mt_fe_dmd_get_reg_ds6113() dev_addr = 0x%02x, reg 0x%02x FAILED!\n", handle->demod_dev_addr, reg_index);
+		return MtFeErr_I2cErr;
+	}
+
+	//printk(KERN_ERR "%s[%d] ---- reg_index = 0x%02x, reg_data = 0x%02x\n", __FUNCTION__, __LINE__, reg_index, p_buf[0]);
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+
+	return MtFeErr_Ok;
+}
+
+/*****************************************************************
+** Function: _mt_fe_id_set_reg
+**
+**
+** Description:	write data to indirect register
+**
+**
+** Inputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	reg_index		U8			register index
+**	data			U8			value to write
+**
+**
+** Outputs:
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_id_set_reg_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_addr, U8 reg_index, U8 data)
+{
+	U8 ind_addr = 0x0A, ind_data = 0x0B;
+	MT_FE_RET ret;
+
+	if ((reg_addr == 0x0A) || (reg_addr == 0x0B))
+	{
+		ind_addr = 0x0A;
+		ind_data = 0x0B;
+	}
+	else if ((reg_addr == 0x57) || (reg_addr == 0x56))
+	{
+		ind_addr = 0x57;
+		ind_data = 0x56;
+
+		reg_index <<= 4;
+	}
+
+	ret = handle->dmd_set_reg(handle, ind_addr, reg_index);
+	if (ret != MtFeErr_Ok)
+		return ret;
+
+	ret = handle->dmd_set_reg(handle, ind_data, data);
+	if (ret != MtFeErr_Ok)
+		return ret;
+
+	return MtFeErr_Ok;
+}
+
+/*****************************************************************
+** Function: _mt_fe_id_get_reg
+**
+**
+** Description:	get data from indirect registers
+**
+**
+** Inputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	register		U8			register address
+**
+**
+** Outputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	p_buf			U8*			register data
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_id_get_reg_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_addr, U8 reg_index, U8 *p_buf)
+{
+	U8 ind_addr = 0x0A, ind_data = 0x0B;
+	MT_FE_RET ret;
+
+	if ((reg_addr == 0x0A) || (reg_addr == 0x0B))
+	{
+		ind_addr = 0x0A;
+		ind_data = 0x0B;
+	}
+	else if ((reg_addr == 0x57) || (reg_addr == 0x56))
+	{
+		ind_addr = 0x57;
+		ind_data = 0x56;
+
+		reg_index <<= 4;
+	}
+
+	ret = handle->dmd_set_reg(handle, ind_addr, reg_index);
+	if (ret != MtFeErr_Ok)
+		return ret;
+
+	ret = handle->dmd_get_reg(handle, ind_data, p_buf);
+	if (ret != MtFeErr_Ok)
+		return ret;
+
+	return MtFeErr_Ok;
+}
+
+
+/*****************************************************************
+** Function: _mt_fe_it_set_reg
+**
+**
+** Description:	write data to tuner register
+**
+**
+** Inputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	reg_index		U8			register index
+**	data			U8			value to write
+**
+**
+** Outputs:
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_it_set_reg_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_index, U8 data)
+{
+	U8 tmp;
+	MT_FE_RET ret;
+	U8 buf[2];
+
+	/*
+		TODO:
+			Obtain the i2c mutex
+	*/
+
+	/*open I2C repeater*/
+	/*Do not care to close the I2C repeater, it will close by itself*/
+	handle->dmd_get_reg(handle, 0x04, &tmp);
+	tmp &= ~0x10;
+	handle->dmd_set_reg(handle, 0x04, tmp);
+
+	ret = handle->dmd_set_reg(handle, 0x03, 0x11);
+	if (ret != MtFeErr_Ok)
+		return ret;
+
+
+	/*Do not sleep any time after I2C repeater is opened.*/
+	/*please set tuner register at once.*/
+
+
+	/*
+		TODO:
+			write value to internal register
+	*/
+
+	buf[0] = reg_index;
+	buf[1] = data;
+
+	//printk("[%s ] line:%d\n", __func__, __LINE__);
+
+	ret = _mt_fe_i2c_write(handle->it_dev_addr, buf, (U16)2);
+
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "MT:  _mt_fe_it_set_reg_ds6113() dev_addr = 0x%02x, reg 0x%02x - data 0x%02x FAILED!\n", handle->it_dev_addr, reg_index, data);
+		return MtFeErr_I2cErr;
+	}
+
+
+	tmp |= 0x10;
+	handle->dmd_set_reg(handle, 0x04, tmp);
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+
+	return MtFeErr_Ok;
+}
+
+
+/*****************************************************************
+** Function: _mt_fe_it_get_reg
+**
+**
+** Description:	get tuner register data
+**
+**
+** Inputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	register		U8			register address
+**
+**
+** Outputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	p_buf			U8*			register data
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_it_get_reg_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_index, U8 *p_buf)
+{
+	U8 tmp;
+	MT_FE_RET ret;
+	U8 temp[2] = {0, 0};
+
+	/*open I2C repeater*/
+	/*Do not care to close the I2C repeater, it will close by itself*/
+	//_mt_fe_dmd_get_reg(handle, 0x03, &val);
+	handle->dmd_get_reg(handle, 0x04, &tmp);
+	tmp &= ~0x10;
+	handle->dmd_set_reg(handle, 0x04, tmp);
+
+	ret = handle->dmd_set_reg(handle, 0x03, 0x12);
+	if (ret != MtFeErr_Ok)
+		return ret;
+
+	/*Do not sleep any time after I2C repeater is opened.*/
+	/*please read tuner register at once.*/
+
+
+	/*
+		TODO:
+			read internal register value
+	*/
+
+	temp[0] = (U8)reg_index;
+	ret = _mt_fe_i2c_read(handle->it_dev_addr, temp, (U16)(1), p_buf, (U16)(1));
+
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "MT:	_mt_fe_it_get_reg_ds6113() dev_addr = 0x%02x, reg 0x%02x FAILED!\n", handle->it_dev_addr, reg_index);
+		return MtFeErr_I2cErr;
+	}
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+	tmp |= 0x10;
+	handle->dmd_set_reg(handle, 0x04, tmp);
+
+	return MtFeErr_Ok;
+}
+
+/*****************************************************************
+** Function: _mt_fe_tn_set_reg
+**
+**
+** Description:	write data to tuner register
+**
+**
+** Inputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	reg_index		U8			register index
+**	data			U8			value to write
+**
+**
+** Outputs:
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_tn_set_reg_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_index, U8 data)
+{
+	MT_FE_RET ret = MtFeErr_Ok;
+	U8 buf[2];
+
+
+	/*
+		TODO:
+			Obtain the i2c mutex
+	*/
+
+
+	/*open I2C repeater*/
+	/*Do not care to close the I2C repeater, it will close by itself*/
+//	val = 0x11;
+	ret = _mt_fe_dmd_set_reg_ds6113(handle, 0x03, 0x10);
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "%s[%d] ---- Enable I2C repeater failed!\n", __FUNCTION__, __LINE__);
+		return ret;
+	}
+
+
+	/*Do not sleep any time after I2C repeater is opened.*/
+	/*please set tuner register at once.*/
+
+
+	/*
+		TODO:
+			write value to tuner register
+	*/
+
+
+	buf[0] = reg_index;
+	buf[1] = data;
+
+	//printk("[%s ] line:%d\n", __func__, __LINE__);
+
+	ret = _mt_fe_i2c_write(handle->tuner_cfg.tuner_dev_addr, buf, (U16)2);
+
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "MT:  _mt_fe_tn_set_reg_ds6113() dev_addr = 0x%02x, reg 0x%02x - data 0x%02x FAILED!\n", handle->tuner_cfg.tuner_dev_addr, reg_index, data);
+		return MtFeErr_I2cErr;
+	}
+		//close i2c repeater
+	ret = _mt_fe_dmd_set_reg_ds6113(handle, 0x03, 0x00);
+
+	//printk(KERN_ERR "%s[%d] ---- reg_index = 0x%02x, reg_data = 0x%02x\n", __FUNCTION__, __LINE__, reg_index, data);
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+
+
+	return MtFeErr_Ok;
+}
+
+
+/*****************************************************************
+** Function: _mt_fe_tn_get_reg
+**
+**
+** Description:	get tuner register data
+**
+**
+** Inputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	register		U8			register address
+**
+**
+** Outputs:
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	p_buf			U8*			register data
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_tn_get_reg_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_index, U8 *p_buf)
+{
+	MT_FE_RET ret;
+	U8  val=0;
+	U8 temp[2] = {0, 0};
+
+	/*
+		TODO:
+			Obtain the i2c mutex
+	*/
+
+
+	/*open I2C repeater*/
+	/*Do not care to close the I2C repeater, it will close by itself*/
+	val = 0x12;
+		// IMPORTANT:
+		// This value can be 0x11 or 0x12.
+		// It depends on the sum of I2C_STOP flags in a whole I2CRead operation flow.
+		// 0x11 means there's only ONE I2C_STOP flag.
+		// 0x12 means there're two I2C_STOP flags.
+		// Please refer to the application notes for detail descriptions
+	ret = _mt_fe_dmd_set_reg_ds6113(handle, 0x03, val);
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "%s[%d] ---- Enable I2C repeater failed!\n", __FUNCTION__, __LINE__);
+		return ret;
+	}
+
+	/*Do not sleep any time after I2C repeater is opened.*/
+	/*please read tuner register at once.*/
+
+
+	/*
+		TODO:
+			read tuner register value
+	*/
+
+
+	//printk("[%s ] line:%d\n", __func__, __LINE__);
+
+	temp[0] = (U8)reg_index;
+	ret = _mt_fe_i2c_read(handle->tuner_cfg.tuner_dev_addr, temp, (U16)(1), p_buf, (U16)(1));
+
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "MT:	_mt_fe_tn_get_reg_ds6113() dev_addr = 0x%02x, reg 0x%02x FAILED!\n", handle->tuner_cfg.tuner_dev_addr, reg_index);
+		return MtFeErr_I2cErr;
+	}
+
+	//printk(KERN_ERR "%s[%d] ---- reg_index = 0x%02x, reg_data = 0x%02x\n", __FUNCTION__, __LINE__, reg_index, p_buf[0]);
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+
+	return MtFeErr_Ok;
+}
+
+MT_FE_RET _mt_fe_tn_read_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_index, U8 *p_buf, U16 n_byte)
+{
+	U8	ret;
+
+	/*
+		TODO:
+			Obtain the i2c mutex
+	*/
+
+
+	/*open I2C repeater*/
+	/*Do not care to close the I2C repeater, it will close by itself*/
+//	val = 0x11;
+	ret = _mt_fe_dmd_set_reg_ds6113(handle, 0x03, 0x10);
+	if (ret != MtFeErr_Ok)
+		return ret;
+
+	/*Do not sleep any time after I2C repeater is opened.*/
+	/*please write N bytes to register at once.*/
+
+
+	/*
+		TODO:
+			read N bytes to tuner
+	*/
+	//close i2c repeater
+	ret = _mt_fe_dmd_set_reg_ds6113(handle, 0x03, 0x00);
+
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+
+
+	return MtFeErr_Ok;
+}
+
+
+MT_FE_RET _mt_fe_tn_write_ds6113(MT_FE_DS6113_Device_Handle handle, U8 *p_buf, U16 n_byte)
+{
+	U8	ret;
+
+	/*
+		TODO:
+			Obtain the i2c mutex
+	*/
+
+
+	/*open I2C repeater*/
+	/*Do not care to close the I2C repeater, it will close by itself*/
+//	val = 0x11;
+	ret = _mt_fe_dmd_set_reg_ds6113(handle, 0x03, 0x10);
+	if (ret != MtFeErr_Ok)
+		return ret;
+
+	/*Do not sleep any time after I2C repeater is opened.*/
+	/*please write N bytes to register at once.*/
+
+
+	/*
+		TODO:
+			write N bytes to tuner
+	*/
+	//close i2c repeater
+	ret = _mt_fe_dmd_set_reg_ds6113(handle, 0x03, 0x00);
+
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+
+
+	return MtFeErr_Ok;
+}
+
+
+/*****************************************************************
+** Function: _mt_fe_iic_write
+**
+**
+** Description:	write n bytes via iic to device
+**
+**
+** Inputs:
+**
+**
+**	Parameter		Type		Description
+**	----------------------------------------------------------
+**	p_buf			U8*			pointer of the tuner data
+**	n_byte			U16			the data length
+**
+**
+** Outputs:		none
+**
+**
+**
+*****************************************************************/
+MT_FE_RET _mt_fe_write_fw_ds6113(MT_FE_DS6113_Device_Handle handle, U8 reg_index, U8 *p_buf, U16 n_byte)
+{
+
+	/*
+		TODO:
+			Obtain the i2c mutex
+	*/
+	MT_FE_RET ret;
+	U8 buf[130];
+	int i = 0;
+
+	buf[0] = reg_index;
+
+	for (i = 0; i < n_byte; i ++)
+	{
+		buf[i + 1] = p_buf[i];
+	}
+
+
+
+	/*
+		TODO:
+			write n bytes to demodulator
+	*/
+
+
+	//printk("[%s ] line:%d\n", __func__, __LINE__);
+
+	ret = _mt_fe_i2c_write(handle->demod_dev_addr, buf, (U16)(n_byte + 1));
+
+	if (ret != MtFeErr_Ok)
+	{
+		printk(KERN_ERR "MT:  _mt_fe_write_fw_ds6113() dev_addr = 0x%02x, reg 0x%02x FAILED!\n", handle->demod_dev_addr, reg_index);
+		return MtFeErr_I2cErr;
+	}
+
+
+	/*
+		TODO:
+			Release the i2c mutex
+	*/
+
+	return MtFeErr_Ok;
+}
+
+
+
+MT_FE_DS6113_Device_Handle ds6113_handle;
+
+S32 _mt_fe_tn_get_reg_ts6011_ds6113(MT_FE_Tuner_Handle_TS6011 handle, U8 reg_addr, U8 *reg_data)
+{
+	MT_FE_RET ret = MtFeErr_Ok;
+
+	ds6113_handle->tn_get_reg(ds6113_handle, reg_addr, reg_data);
+
+	return (ret == MtFeErr_Ok) ? 0 : -1;
+}
+
+S32 _mt_fe_tn_set_reg_ts6011_ds6113(MT_FE_Tuner_Handle_TS6011 handle, U8 reg_addr, U8 reg_data)
+{
+	MT_FE_RET ret = MtFeErr_Ok;
+
+	ds6113_handle->tn_set_reg(ds6113_handle, reg_addr, reg_data);
+
+	return (ret == MtFeErr_Ok) ? 0 : -1;
+}
+
+S32 _mt_fe_tn_set_reg_bit_ts6011_ds6113(MT_FE_Tuner_Handle_TS6011 handle, U8 reg_addr, U8 data, U8 high_bit, U8 low_bit)
+{
+	U8 tmp = 0, value = 0;
+
+	if(high_bit < low_bit)
+	{
+		tmp = high_bit;
+		high_bit = low_bit;
+		low_bit = tmp;
+	}
+
+	data <<= (7 + low_bit - high_bit);
+	data &= 0xFF;
+	data >>= (7 - high_bit);
+	data &= 0xFF;
+
+	tmp = 0xFF;
+	tmp <<= (7 + low_bit - high_bit);
+	tmp &= 0xFF;
+	tmp >>= (7 - high_bit);
+	tmp &= 0xFF;
+
+	_mt_fe_tn_get_reg_ts6011_ds6113(handle, reg_addr, &value);
+	value &= ~tmp;
+	value |= data;
+	_mt_fe_tn_set_reg_ts6011_ds6113(handle, reg_addr, value);
+
+	return 0;
+}
+

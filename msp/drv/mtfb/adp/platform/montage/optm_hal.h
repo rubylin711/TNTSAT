@@ -1,0 +1,10424 @@
+/********************************************************************************************/
+/* Montage Technology (Shanghai) Co., Ltd.                                                  */
+/* Montage Proprietary and Confidential                                                     */
+/* Copyright (c) 2014 Montage Technology Group Limited and its affiliated companies         */
+/********************************************************************************************/
+#ifndef _DISP_AP_ARIA_REG_H
+#define _DISP_AP_ARIA_REG_H
+
+#include "mt_type.h"
+
+#ifndef HI_BUILD_IN_BOOT
+#include <linux/kernel.h>
+#endif
+
+extern ulong  mt_get_display_base(void);
+
+/*!
+  comments
+  */
+//#define REG_ARIA_DISP_BASE_PHY 0xffd20000
+  
+//#define REG_ARIA_DISP_BASE_VIRT 0xf8d20000
+//#define REG_ARIA_DISP_BASE (REG_ARIA_DISP_BASE_VIRT)
+
+extern mt_u32 p_optm_addr;
+
+/*!
+  ARIA_DISP registers
+  */
+#define    REG_ARIA_DISP_VIDEO_CTRL_1          (p_optm_addr+0x0000)
+#define    REG_ARIA_DISP_VIDEO_CTRL_2          (p_optm_addr+0x0004)
+#define    REG_ARIA_DISP_VIDEO_INPUT_FRAME_SIZE (p_optm_addr+0x0008)
+#define    REG_ARIA_DISP_VIDEO_CROP_EN         (p_optm_addr+0x000c)
+#define    REG_ARIA_DISP_VIDEO_CROP_PIXEL      (p_optm_addr+0x0010)
+#define    REG_ARIA_DISP_VIDEO_CROP_LINE       (p_optm_addr+0x0014)
+#define    REG_ARIA_DISP_VIDEO_PIX_ALIGN_CTRL  (p_optm_addr+0x0018)
+#define    REG_ARIA_DISP_VIDEO_DATA_ENDIAN_CTRL (p_optm_addr+0x001c)
+#define    REG_ARIA_DISP_VIDEO_BURST_INFO_1    (p_optm_addr+0x0024)
+#define    REG_ARIA_DISP_VIDEO_BURST_INFO_2    (p_optm_addr+0x0028)
+#define    REG_ARIA_DISP_VIDEO_LINE_RD_CNT_MAX (p_optm_addr+0x002c)
+#define    REG_ARIA_DISP_VIDEO_HALF_SCALE_CTRL (p_optm_addr+0x0030)
+#define    REG_ARIA_DISP_VIDEO_HF_PHASE        (p_optm_addr+0x0034)
+#define    REG_ARIA_DISP_VIDEO_SCALE_INIT_PHASE_OFFSET (p_optm_addr+0x0038)
+#define    REG_ARIA_DISP_VIDEO_SCALE_HD_RATIO  (p_optm_addr+0x0080)
+#define    REG_ARIA_DISP_VIDEO_SCALE_HD_INIT_RATIO (p_optm_addr+0x0084)
+#define    REG_ARIA_DISP_VIDEO_HD_WINDOW_X     (p_optm_addr+0x0088)
+#define    REG_ARIA_DISP_VIDEO_HD_WINDOW_Y     (p_optm_addr+0x008c)
+#define    REG_ARIA_DISP_VIDEO_HD_WINDOW_CUT   (p_optm_addr+0x0090)
+#define    REG_ARIA_DISP_VIDEO_SCALE_SD_RATIO  (p_optm_addr+0x0094)
+#define    REG_ARIA_DISP_VIDEO_SCALE_SD_INIT_RATIO (p_optm_addr+0x0098)
+#define    REG_ARIA_DISP_VIDEO_SD_WINDOW_X     (p_optm_addr+0x009c)
+#define    REG_ARIA_DISP_VIDEO_SD_WINDOW_Y     (p_optm_addr+0x00a0)
+#define    REG_ARIA_DISP_VIDEO_SD_WINDOW_CUT   (p_optm_addr+0x00a4)
+#define    REG_ARIA_DISP_SD_VIDEO_PATH_CTRL    (p_optm_addr+0x00a8)
+#define    REG_ARIA_DISP_HD_LUMA_VF_COEFF_ADDR (p_optm_addr+0x00c0)
+#define    REG_ARIA_DISP_HD_LUMA_HF_COEFF_ADDR (p_optm_addr+0x00c4)
+#define    REG_ARIA_DISP_HD_CHROMA_HF_COEFF_ADDR (p_optm_addr+0x00c8)
+#define    REG_ARIA_DISP_SD_LUMA_VF_COEFF_ADDR (p_optm_addr+0x00cc)
+#define    REG_ARIA_DISP_SD_LUMA_HF_COEFF_ADDR (p_optm_addr+0x00d0)
+#define    REG_ARIA_DISP_SD_CHROMA_HF_COEFF_ADDR (p_optm_addr+0x00d4)
+#define    REG_ARIA_DISP_VIDEO_DCE_MAP_ADDR    (p_optm_addr+0x00d8)
+#define    REG_ARIA_DISP_HISTO_INFO_ADDR_0     (p_optm_addr+0x00dc)
+#define    REG_ARIA_DISP_HISTO_INFO_ADDR_2     (p_optm_addr+0x00e0)
+#define    REG_ARIA_DISP_CHROMA_UPSCALE_CTRL   (p_optm_addr+0x0100)
+#define    REG_ARIA_DISP_CHROMA_COEF_0         (p_optm_addr+0x0104)
+#define    REG_ARIA_DISP_CHROMA_COEF_1         (p_optm_addr+0x0108)
+#define    REG_ARIA_DISP_CHROMA_COEF_2         (p_optm_addr+0x010c)
+#define    REG_ARIA_DISP_CHROMA_COEF_3         (p_optm_addr+0x0110)
+#define    REG_ARIA_DISP_COLOR_ENHANCE_CTRL    (p_optm_addr+0x0114)
+#define    REG_ARIA_DISP_VIDEO_DCE_CONFIG      (p_optm_addr+0x0120)
+#define    REG_ARIA_DISP_VIDEO_HORF_CONFIG     (p_optm_addr+0x0124)
+#define    REG_ARIA_DISP_HD_VIDEO_POST_CONFIG  (p_optm_addr+0x0128)
+#define    REG_ARIA_DISP_SD_VIDEO_POST_CONFIG  (p_optm_addr+0x012c)
+#define    REG_ARIA_DISP_HD_VIDEO_EFFECT_COEF  (p_optm_addr+0x0130)
+#define    REG_ARIA_DISP_HD_VIDEO_HUE_ADJUST   (p_optm_addr+0x0134)
+#define    REG_ARIA_DISP_SD_VIDEO_DROP_LINE    (p_optm_addr+0x0138)
+#define    REG_ARIA_DISP_VIDEO_SCALAR_BUF_FULL_THR (p_optm_addr+0x0140)
+#define    REG_ARIA_DISP_VIDEO_SCALAR_OUTBUF_FULL_THR (p_optm_addr+0x0144)
+#define    REG_ARIA_DISP_AXI_CMD_REQ_FIFO_THR  (p_optm_addr+0x0148)
+#define    REG_ARIA_DISP_ACCESS_FIFO_LO_HI_THR (p_optm_addr+0x014c)
+#define    REG_ARIA_DISP_ACCESS_FIFO_REQ_THR   (p_optm_addr+0x0150)
+#define    REG_ARIA_DISP_ASYM_FIFO_THR         (p_optm_addr+0x0154)
+#define    REG_ARIA_DISP_VIDEO_HD_LINE_CNT     (p_optm_addr+0x0158)
+#define    REG_ARIA_DISP_VIDEO_SD_LINE_CNT     (p_optm_addr+0x015c)
+#define    REG_ARIA_DISP_VIDEO_LINE_PROC_STATUS (p_optm_addr+0x0160)
+#define    REG_ARIA_DISP_ALISING_PROB_REG1     (p_optm_addr+0x0164)
+#define    REG_ARIA_DISP_ALISING_PROB_REG2     (p_optm_addr+0x0168)
+#define    REG_ARIA_DISP_ALISING_PROB_REG3     (p_optm_addr+0x016c)
+#define    REG_ARIA_DISP_ALISING_PROB_REG4     (p_optm_addr+0x0170)
+#define    REG_ARIA_DISP_DI_CTRL               (p_optm_addr+0x0180)
+#define    REG_ARIA_DISP_DI_PAUSE_EN           (p_optm_addr+0x0184)
+#define    REG_ARIA_DISP_DI_OPER_MODE          (p_optm_addr+0x0188)
+#define    REG_ARIA_DISP_DI_P_OR_N_PAIR        (p_optm_addr+0x018c)
+#define    REG_ARIA_DISP_DI_PARA               (p_optm_addr+0x0190)
+#define    REG_ARIA_DISP_DI_CHROMA_PARA        (p_optm_addr+0x0194)
+#define    REG_ARIA_DISP_DI_ALPHA_PARA         (p_optm_addr+0x0198)
+#define    REG_ARIA_DISP_DI_MOTION_CTRL_1      (p_optm_addr+0x019c)
+#define    REG_ARIA_DISP_DI_MOTION_CTRL_2      (p_optm_addr+0x01a0)
+#define    REG_ARIA_DISP_DI_MOTION_CTRL_3      (p_optm_addr+0x01a4)
+#define    REG_ARIA_DISP_DI_MOTION_CTRL_4      (p_optm_addr+0x01a8)
+#define    REG_ARIA_DISP_DI_ACC_ODD_RESULT     (p_optm_addr+0x01ac)
+#define    REG_ARIA_DISP_DI_ACC_EVEN_RESULT    (p_optm_addr+0x01b0)
+#define    REG_ARIA_DISP_DI_FIELDS_FLAG        (p_optm_addr+0x01b4)
+#define    REG_ARIA_DISP_DI_HEVC_FLAG          (p_optm_addr+0x01b8)
+#define    REG_ARIA_DISP_NONE_DI_PROGRESSIVE_FLAG (p_optm_addr+0x01c0)
+#define    REG_ARIA_DISP_NONE_DI_FIELDS_FLAG   (p_optm_addr+0x01c4)
+#define    REG_ARIA_DISP_NONE_DI_HEVC_FLAG     (p_optm_addr+0x01c8)
+#define    REG_ARIA_DISP_NONE_DI_PROGRESSIVE_FLAG_2ND (p_optm_addr+0x01cc)
+#define    REG_ARIA_DISP_NONE_DI_FIELDS_FLAG_2ND (p_optm_addr+0x01d0)
+#define    REG_ARIA_DISP_NONE_DI_HEVC_FLAG_2ND (p_optm_addr+0x01d4)
+#define    REG_ARIA_DISP_MOTION_PRE_ADDR_0     (p_optm_addr+0x01e0)
+#define    REG_ARIA_DISP_MOTION_CUR_ADDR_0     (p_optm_addr+0x01e4)
+#define    REG_ARIA_DISP_MOTION_PRE_ADDR_2     (p_optm_addr+0x01e8)
+#define    REG_ARIA_DISP_MOTION_CUR_ADDR_2     (p_optm_addr+0x01ec)
+#define    REG_ARIA_DISP_LUMA_PRE_ADDR_0       (p_optm_addr+0x0200)
+#define    REG_ARIA_DISP_LUMA_TOP_CUR_ADDR_0   (p_optm_addr+0x0204)
+#define    REG_ARIA_DISP_LUMA_BOT_CUR_ADDR_0   (p_optm_addr+0x0208)
+#define    REG_ARIA_DISP_LUMA_NXT_ADDR_0       (p_optm_addr+0x020c)
+#define    REG_ARIA_DISP_LUMA_TOP_CUR_ADDR_2ND_0 (p_optm_addr+0x0210)
+#define    REG_ARIA_DISP_LUMA_BOT_CUR_ADDR_2ND_0 (p_optm_addr+0x0214)
+#define    REG_ARIA_DISP_LUMA_PRE_ADDR_2       (p_optm_addr+0x0220)
+#define    REG_ARIA_DISP_LUMA_TOP_CUR_ADDR_2   (p_optm_addr+0x0224)
+#define    REG_ARIA_DISP_LUMA_BOT_CUR_ADDR_2   (p_optm_addr+0x0228)
+#define    REG_ARIA_DISP_LUMA_NXT_ADDR_2       (p_optm_addr+0x022c)
+#define    REG_ARIA_DISP_LUMA_TOP_CUR_ADDR_2ND_2 (p_optm_addr+0x0230)
+#define    REG_ARIA_DISP_LUMA_BOT_CUR_ADDR_2ND_2 (p_optm_addr+0x0234)
+#define    REG_ARIA_DISP_CHROMA_PPRE_ADDR_0    (p_optm_addr+0x0240)
+#define    REG_ARIA_DISP_CHROMA_PRE_ADDR_0     (p_optm_addr+0x0244)
+#define    REG_ARIA_DISP_CHROMA_TOP_CUR_ADDR_0 (p_optm_addr+0x0248)
+#define    REG_ARIA_DISP_CHROMA_BOT_CUR_ADDR_0 (p_optm_addr+0x024c)
+#define    REG_ARIA_DISP_CHROMA_NXT_ADDR_0     (p_optm_addr+0x0250)
+#define    REG_ARIA_DISP_CHROMA_TOP_CUR_ADDR_2ND_0 (p_optm_addr+0x0254)
+#define    REG_ARIA_DISP_CHROMA_BOT_CUR_ADDR_2ND_0 (p_optm_addr+0x0258)
+#define    REG_ARIA_DISP_CHROMA_PPRE_ADDR_2    (p_optm_addr+0x0260)
+#define    REG_ARIA_DISP_CHROMA_PRE_ADDR_2     (p_optm_addr+0x0264)
+#define    REG_ARIA_DISP_CHROMA_TOP_CUR_ADDR_2 (p_optm_addr+0x0268)
+#define    REG_ARIA_DISP_CHROMA_BOT_CUR_ADDR_2 (p_optm_addr+0x026c)
+#define    REG_ARIA_DISP_CHROMA_NXT_ADDR_2     (p_optm_addr+0x0270)
+#define    REG_ARIA_DISP_CHROMA_TOP_CUR_ADDR_2ND_2 (p_optm_addr+0x0274)
+#define    REG_ARIA_DISP_CHROMA_BOT_CUR_ADDR_2ND_2 (p_optm_addr+0x0278)
+#define    REG_ARIA_DISP_DOWN_SCALE_CTRL       (p_optm_addr+0x0280)
+#define    REG_ARIA_DISP_DOWN_SCALE_OUT_SIZE   (p_optm_addr+0x0284)
+#define    REG_ARIA_DISP_DOWN_SCALE_WR_STRIDE  (p_optm_addr+0x0288)
+#define    REG_ARIA_DISP_DOWN_SCALE_LUMA_WR_ADDR_0 (p_optm_addr+0x028c)
+#define    REG_ARIA_DISP_DOWN_SCALE_CBCR_WR_ADDR_0 (p_optm_addr+0x0290)
+#define    REG_ARIA_DISP_DOWN_SCALE_LUMA_WR_ADDR_2 (p_optm_addr+0x0294)
+#define    REG_ARIA_DISP_DOWN_SCALE_CBCR_WR_ADDR_2 (p_optm_addr+0x0298)
+#define    REG_ARIA_DISP_DOWN_SCALE_CTRL_2ND   (p_optm_addr+0x02a0)
+#define    REG_ARIA_DISP_DOWN_SCALE_OUT_SIZE_2ND (p_optm_addr+0x02a4)
+#define    REG_ARIA_DISP_DOWN_SCALE_WR_STRIDE_2ND (p_optm_addr+0x02a8)
+#define    REG_ARIA_DISP_DOWN_SCALE_LUMA_WR_ADDR_0_2ND (p_optm_addr+0x02ac)
+#define    REG_ARIA_DISP_DOWN_SCALE_CBCR_WR_ADDR_0_2ND (p_optm_addr+0x02b0)
+#define    REG_ARIA_DISP_DOWN_SCALE_LUMA_WR_ADDR_2_2ND (p_optm_addr+0x02b4)
+#define    REG_ARIA_DISP_DOWN_SCALE_CBCR_WR_ADDR_2_2ND (p_optm_addr+0x02b8)
+#define    REG_ARIA_DISP_DOWN_SCALE_DATA_ENDIAN_CTRL (p_optm_addr+0x02bc)
+#define    REG_ARIA_DISP_HD_CSC_CTRL           (p_optm_addr+0x02c0)
+#define    REG_ARIA_DISP_HD_CSC_COEF_1         (p_optm_addr+0x02c4)
+#define    REG_ARIA_DISP_HD_CSC_COEF_2         (p_optm_addr+0x02c8)
+#define    REG_ARIA_DISP_HD_CSC_COEF_3         (p_optm_addr+0x02cc)
+#define    REG_ARIA_DISP_HD_CSC_COEF_4         (p_optm_addr+0x02d0)
+#define    REG_ARIA_DISP_HD_CSC_COEF_5         (p_optm_addr+0x02d4)
+#define    REG_ARIA_DISP_TILE_PARA             (p_optm_addr+0x02e0)
+#define    REG_ARIA_DISP_TILE_ROWJUMP_00       (p_optm_addr+0x02e4)
+#define    REG_ARIA_DISP_TILE_ROWJUMP_01       (p_optm_addr+0x02e8)
+#define    REG_ARIA_DISP_TILE_ROWJUMP_10       (p_optm_addr+0x02ec)
+#define    REG_ARIA_DISP_TILE_ROWJUMP_11       (p_optm_addr+0x02f0)
+#define    REG_ARIA_DISP_DENOISE_CTRL          (p_optm_addr+0x0324)
+#define    REG_ARIA_DISP_DENOISE_PARA_1        (p_optm_addr+0x0328)
+#define    REG_ARIA_DISP_DENOISE_PARA_2        (p_optm_addr+0x032c)
+#define    REG_ARIA_DISP_DENOISE_PARA_3        (p_optm_addr+0x0330)
+#define    REG_ARIA_DISP_BACKGROUND_COLOR      (p_optm_addr+0x0340)
+#define    REG_ARIA_DISP_HDENC_TEST_CMD        (p_optm_addr+0x0360)
+#define    REG_ARIA_DISP_HDENC_TEST_DATA       (p_optm_addr+0x0364)
+#define    REG_ARIA_DISP_VIDEO_AXI_MONITOR_CLR (p_optm_addr+0x03c0)
+#define    REG_ARIA_DISP_VIDEO_READ_CMD_LATENCY_CNT_MAX (p_optm_addr+0x03c4)
+#define    REG_ARIA_DISP_VIDEO_READ_CMD_LATENCY_CNT_SUM (p_optm_addr+0x03c8)
+#define    REG_ARIA_DISP_VIDEO_READ_CMD_REQ_CNT_SUM (p_optm_addr+0x03cc)
+#define    REG_ARIA_DISP_VIDEO_READ_DATA_LATENCY_CNT_MAX (p_optm_addr+0x03d0)
+#define    REG_ARIA_DISP_VIDEO_READ_DATA_LATENCY_CNT_SUM (p_optm_addr+0x03d4)
+#define    REG_ARIA_DISP_VIDEO_READ_DATA_REQ_CNT_SUM (p_optm_addr+0x03d8)
+#define    REG_ARIA_DISP_MOTION_WRITE_CMD_LATENCY_CNT_MAX (p_optm_addr+0x03e0)
+#define    REG_ARIA_DISP_MOTION_WRITE_CMD_LATENCY_CNT_SUM (p_optm_addr+0x03e4)
+#define    REG_ARIA_DISP_MOTION_WRITE_CMD_REQ_CNT_SUM (p_optm_addr+0x03e8)
+#define    REG_ARIA_DISP_MOTION_WRITE_DATA_LATENCY_CNT_MAX (p_optm_addr+0x03ec)
+#define    REG_ARIA_DISP_MOTION_WRITE_DATA_LATENCY_CNT_SUM (p_optm_addr+0x03f0)
+#define    REG_ARIA_DISP_MOTION_WRITE_DATA_REQ_CNT_SUM (p_optm_addr+0x03f4)
+#define    REG_ARIA_DISP_OSDL_OSD0_CMD         (p_optm_addr+0x2000)
+#define    REG_ARIA_DISP_OSDL_OSD1_CMD         (p_optm_addr+0x2004)
+#define    REG_ARIA_DISP_OSDL_SUB_CMD          (p_optm_addr+0x2008)
+#define    REG_ARIA_DISP_OSDL_CMD              (p_optm_addr+0x200c)
+#define    REG_ARIA_DISP_OSDL_OSD0_INI_ADDR    (p_optm_addr+0x2010)
+#define    REG_ARIA_DISP_OSDL_OSD1_INI_ADDR    (p_optm_addr+0x2014)
+#define    REG_ARIA_DISP_OSDL_SUB_INI_ADDR     (p_optm_addr+0x2018)
+#define    REG_ARIA_DISP_OSDL_FF_THRESHOLD     (p_optm_addr+0x201c)
+#define    REG_ARIA_DISP_OSDL_RGB2Y_COEFF      (p_optm_addr+0x2020)
+#define    REG_ARIA_DISP_OSDL_RGB2CB_COEFF     (p_optm_addr+0x2024)
+#define    REG_ARIA_DISP_OSDL_RGB2CR_COEFF     (p_optm_addr+0x2028)
+#define    REG_ARIA_DISP_OSDL_Y_OFFSET         (p_optm_addr+0x202c)
+#define    REG_ARIA_DISP_OSDL_CBCR_OFFSET      (p_optm_addr+0x2030)
+#define    REG_ARIA_DISP_OSDL_OSD0_DEBUG       (p_optm_addr+0x2034)
+#define    REG_ARIA_DISP_OSDL_OSD1_DEBUG       (p_optm_addr+0x2038)
+#define    REG_ARIA_DISP_OSDL_SUB_DEBUG        (p_optm_addr+0x203c)
+#define    REG_ARIA_DISP_OSDL_CMD_ACK_LATENCY  (p_optm_addr+0x2040)
+#define    REG_ARIA_DISP_OSDL_CMD_DAT_LATENCY  (p_optm_addr+0x2044)
+#define    REG_ARIA_DISP_OSDL_DATLAST_LATENCY  (p_optm_addr+0x2048)
+#define    REG_ARIA_DISP_OSDM_CMD              (p_optm_addr+0x2060)
+#define    REG_ARIA_DISP_OSDM_THRESHOLD        (p_optm_addr+0x2064)
+#define    REG_ARIA_DISP_OSDM_OSD0_CKEY        (p_optm_addr+0x2068)
+#define    REG_ARIA_DISP_OSDM_OSD1_CKEY        (p_optm_addr+0x206c)
+#define    REG_ARIA_DISP_OSDS_CMD              (p_optm_addr+0x2080)
+#define    REG_ARIA_DISP_OSDS_HSIZE            (p_optm_addr+0x2090)
+#define    REG_ARIA_DISP_OSDS_HRATIO           (p_optm_addr+0x2094)
+#define    REG_ARIA_DISP_OSDS_HF_COEFF_ADDR    (p_optm_addr+0x2098)
+#define    REG_ARIA_DISP_OSDS_VSIZE            (p_optm_addr+0x20a0)
+#define    REG_ARIA_DISP_OSDS_VRATIO           (p_optm_addr+0x20a4)
+#define    REG_ARIA_DISP_OSDS_VF_COEFF_ADDR    (p_optm_addr+0x20a8)
+#define    REG_ARIA_DISP_OSDS_V_START_LINE     (p_optm_addr+0x20ac)
+#define    REG_ARIA_DISP_OSDS_V_START_FRA      (p_optm_addr+0x20b0)
+#define    REG_ARIA_DISP_OSDS_V_TAP            (p_optm_addr+0x20b4)
+#define    REG_ARIA_DISP_OSDD_OSD0_CMD         (p_optm_addr+0x20c0)
+#define    REG_ARIA_DISP_OSDD_OSD0_LENGTH_A    (p_optm_addr+0x20c4)
+#define    REG_ARIA_DISP_OSDD_OSD0_LENGTH_R    (p_optm_addr+0x20c8)
+#define    REG_ARIA_DISP_OSDD_OSD0_LENGTH_G    (p_optm_addr+0x20cc)
+#define    REG_ARIA_DISP_OSDD_OSD0_LENGTH_B    (p_optm_addr+0x20d0)
+#define    REG_ARIA_DISP_OSDD_OSD0_ADDR_A      (p_optm_addr+0x20d4)
+#define    REG_ARIA_DISP_OSDD_OSD0_ADDR_R      (p_optm_addr+0x20d8)
+#define    REG_ARIA_DISP_OSDD_OSD0_ADDR_G      (p_optm_addr+0x20dc)
+#define    REG_ARIA_DISP_OSDD_OSD0_ADDR_B      (p_optm_addr+0x20e0)
+#define    REG_ARIA_DISP_OSDD_OSD0_CTL         (p_optm_addr+0x20e4)
+#define    REG_ARIA_DISP_OSDD_OSD0_CTL2        (p_optm_addr+0x20e8)
+#define    REG_ARIA_DISP_OSDD_OSD1_CMD         (p_optm_addr+0x2100)
+#define    REG_ARIA_DISP_OSDD_OSD1_LENGTH_A    (p_optm_addr+0x2104)
+#define    REG_ARIA_DISP_OSDD_OSD1_LENGTH_R    (p_optm_addr+0x2108)
+#define    REG_ARIA_DISP_OSDD_OSD1_LENGTH_G    (p_optm_addr+0x210c)
+#define    REG_ARIA_DISP_OSDD_OSD1_LENGTH_B    (p_optm_addr+0x2110)
+#define    REG_ARIA_DISP_OSDD_OSD1_ADDR_A      (p_optm_addr+0x2114)
+#define    REG_ARIA_DISP_OSDD_OSD1_ADDR_R      (p_optm_addr+0x2118)
+#define    REG_ARIA_DISP_OSDD_OSD1_ADDR_G      (p_optm_addr+0x211c)
+#define    REG_ARIA_DISP_OSDD_OSD1_ADDR_B      (p_optm_addr+0x2120)
+#define    REG_ARIA_DISP_OSDD_OSD1_CTL         (p_optm_addr+0x2124)
+#define    REG_ARIA_DISP_OSDD_OSD1_CTL2        (p_optm_addr+0x2128)
+#define    REG_ARIA_DISP_OSDD_SUB_CMD          (p_optm_addr+0x2140)
+#define    REG_ARIA_DISP_OSDD_SUB_LENGTH_A     (p_optm_addr+0x2144)
+#define    REG_ARIA_DISP_OSDD_SUB_LENGTH_R     (p_optm_addr+0x2148)
+#define    REG_ARIA_DISP_OSDD_SUB_LENGHT_G     (p_optm_addr+0x214c)
+#define    REG_ARIA_DISP_OSDD_SUB_LENGTH_B     (p_optm_addr+0x2150)
+#define    REG_ARIA_DISP_OSDD_SUB_ADDR_A       (p_optm_addr+0x2154)
+#define    REG_ARIA_DISP_OSDD_SUB_ADDR_R       (p_optm_addr+0x2158)
+#define    REG_ARIA_DISP_OSDD_SUB_ADDR_G       (p_optm_addr+0x215c)
+#define    REG_ARIA_DISP_OSDD_SUB_ADDR_B       (p_optm_addr+0x2160)
+#define    REG_ARIA_DISP_OSDD_SUB_CTL          (p_optm_addr+0x2164)
+#define    REG_ARIA_DISP_OSDD_SUB_CTL2         (p_optm_addr+0x2168)
+#define    REG_ARIA_DISP_OSDC_CMD              (p_optm_addr+0x3000)
+#define    REG_ARIA_DISP_OSDC_RST              (p_optm_addr+0x3004)
+#define    REG_ARIA_DISP_OSDC_CTL              (p_optm_addr+0x3008)
+#define    REG_ARIA_DISP_OSDC_CTL2             (p_optm_addr+0x300c)
+#define    REG_ARIA_DISP_OSDC_FFRD_THRESHOLD   (p_optm_addr+0x3010)
+#define    REG_ARIA_DISP_OSDC_FFWR_THRESHOLD   (p_optm_addr+0x3014)
+#define    REG_ARIA_DISP_OSDC_DDR_RD_ADDR      (p_optm_addr+0x3018)
+#define    REG_ARIA_DISP_OSDC_WIDTH_STRIDE     (p_optm_addr+0x301c)
+#define    REG_ARIA_DISP_OSDC_DDR_WR_ADDR_A    (p_optm_addr+0x3020)
+#define    REG_ARIA_DISP_OSDC_DDR_WR_ADDR_R    (p_optm_addr+0x3024)
+#define    REG_ARIA_DISP_OSDC_DDR_WR_ADDR_G    (p_optm_addr+0x3028)
+#define    REG_ARIA_DISP_OSDC_DDR_WR_ADDR_B    (p_optm_addr+0x302c)
+#define    REG_ARIA_DISP_OSDC_STATUS           (p_optm_addr+0x3030)
+#define    REG_ARIA_DISP_OSDC_IRQ_EN           (p_optm_addr+0x3038)
+#define    REG_ARIA_DISP_OSDC_IRQ              (p_optm_addr+0x303c)
+#define    REG_ARIA_DISP_OSDC_COMPRESS_BIT_A   (p_optm_addr+0x3040)
+#define    REG_ARIA_DISP_OSDC_COMPRESS_BIT_R   (p_optm_addr+0x3044)
+#define    REG_ARIA_DISP_OSDC_COMPRESS_BIT_G   (p_optm_addr+0x3048)
+#define    REG_ARIA_DISP_OSDC_COMPRESS_BIT_B   (p_optm_addr+0x304c)
+#define    REG_ARIA_DISP_OSDC_BITS_MAX_A       (p_optm_addr+0x3050)
+#define    REG_ARIA_DISP_OSDC_BITS_MAX_R       (p_optm_addr+0x3054)
+#define    REG_ARIA_DISP_OSDC_BITS_MAX_G       (p_optm_addr+0x3058)
+#define    REG_ARIA_DISP_OSDC_BITS_MAX_B       (p_optm_addr+0x305c)
+#define    REG_ARIA_DISP_OSDC_CMD_ACK_LATENCY_AVG (p_optm_addr+0x3060)
+#define    REG_ARIA_DISP_OSDC_CMD_DAT_LATENCY_AVG (p_optm_addr+0x3064)
+#define    REG_ARIA_DISP_OSDC_DATLAST_LATENCY_AVG (p_optm_addr+0x3068)
+#define    REG_ARIA_DISP_OSDC_CMD_ACK_LATENCY_MAX (p_optm_addr+0x306c)
+#define    REG_ARIA_DISP_OSDC_CMD_DAT_LATENCY_MAX (p_optm_addr+0x3070)
+#define    REG_ARIA_DISP_OSDC_DATLAST_LATENCY_MAX (p_optm_addr+0x3074)
+#define    REG_ARIA_DISP_OSDC_REDUNDANT0       (p_optm_addr+0x3080)
+#define    REG_ARIA_DISP_OSDC_REDUNDANT1       (p_optm_addr+0x3084)
+#define    REG_ARIA_DISP_OSDC_REDUNDANT2       (p_optm_addr+0x3088)
+#define    REG_ARIA_DISP_OSDC_REDUNDANT3       (p_optm_addr+0x308c)
+#define    REG_ARIA_DISP_OSDC_REDUNDANT4       (p_optm_addr+0x3090)
+#define    REG_ARIA_DISP_STILL_CONTROL         (p_optm_addr+0x4000)
+#define    REG_ARIA_DISP_STILL_LATCH_COMMAND   (p_optm_addr+0x4004)
+#define    REG_ARIA_DISP_STILL_READ_X_CFG      (p_optm_addr+0x4008)
+#define    REG_ARIA_DISP_STILL_READ_Y_CFG      (p_optm_addr+0x400c)
+#define    REG_ARIA_DISP_STILL_STRIDE          (p_optm_addr+0x4010)
+#define    REG_ARIA_DISP_STILL_LUMA_BASEADDR   (p_optm_addr+0x4014)
+#define    REG_ARIA_DISP_STILL_CBCR_BASEADDR   (p_optm_addr+0x4018)
+#define    REG_ARIA_DISP_STILL_FIFO_THRESHOLD  (p_optm_addr+0x401c)
+#define    REG_ARIA_DISP_STILL_TILE_PARAMETER  (p_optm_addr+0x4020)
+#define    REG_ARIA_DISP_STILL_TILE_ROWJUMP_00 (p_optm_addr+0x4024)
+#define    REG_ARIA_DISP_STILL_TILE_ROWJUMP_01 (p_optm_addr+0x4028)
+#define    REG_ARIA_DISP_STILL_TILE_ROWJUMP_10 (p_optm_addr+0x402c)
+#define    REG_ARIA_DISP_STILL_TILE_ROWJUMP_11 (p_optm_addr+0x4030)
+#define    REG_ARIA_DISP_STILL_STATUS          (p_optm_addr+0x403c)
+#define    REG_ARIA_DISP_STILL_AXI_MONITOR_CTRL (p_optm_addr+0x4040)
+#define    REG_ARIA_DISP_STILL_CMD_ACK_LATENCY_MONITOR (p_optm_addr+0x4044)
+#define    REG_ARIA_DISP_STILL_DATA_ACK_LATENCY_MONITOR (p_optm_addr+0x4048)
+#define    REG_ARIA_DISP_STILL_DATA_LAST_LATENCY_MONITOR (p_optm_addr+0x404c)
+#define    REG_ARIA_DISP_STILL_SCALE_CTRL      (p_optm_addr+0x4080)
+#define    REG_ARIA_DISP_STILL_SCALE_H_RATIO   (p_optm_addr+0x4084)
+#define    REG_ARIA_DISP_STILL_SCALE_V_RATIO   (p_optm_addr+0x4088)
+#define    REG_ARIA_DISP_STILL_SCALE_H_START_FRA (p_optm_addr+0x408c)
+#define    REG_ARIA_DISP_STILL_SCALE_V_START_FRA (p_optm_addr+0x4090)
+#define    REG_ARIA_DISP_STILL_SCALE_HSIZE     (p_optm_addr+0x4094)
+#define    REG_ARIA_DISP_STILL_SCALE_VSIZE     (p_optm_addr+0x4098)
+#define    REG_ARIA_DISP_STILL_X_CONFIG        (p_optm_addr+0x409c)
+#define    REG_ARIA_DISP_STILL_Y_CONFIG        (p_optm_addr+0x40a0)
+#define    REG_ARIA_DISP_STILL_SCALE_Y_COEFF_ADDRESS (p_optm_addr+0x40a4)
+#define    REG_ARIA_DISP_STILL_SCALE_UV_COEFF_ADDRESS (p_optm_addr+0x40a8)
+#define    REG_ARIA_DISP_STILL_SCALE_FIFO1_THRESHOLD (p_optm_addr+0x40ac)
+#define    REG_ARIA_DISP_STILL_SCALE_FIFO2_THRESHOLD (p_optm_addr+0x40b0)
+#define    REG_ARIA_DISP_STILL_SCALER_STATUS   (p_optm_addr+0x40b4)
+#define    REG_ARIA_DISP_STILL_CSC_CTRL        (p_optm_addr+0x4100)
+#define    REG_ARIA_DISP_STILL_CSC_COEFF1      (p_optm_addr+0x4104)
+#define    REG_ARIA_DISP_STILL_CSC_COEFF2      (p_optm_addr+0x4108)
+#define    REG_ARIA_DISP_STILL_CSC_COEFF3      (p_optm_addr+0x410c)
+#define    REG_ARIA_DISP_STILL_CSC_COEFF4      (p_optm_addr+0x4110)
+#define    REG_ARIA_DISP_STILL_CSC_COEFF5      (p_optm_addr+0x4114)
+#define    REG_ARIA_DISP_PRES_CMD              (p_optm_addr+0x5000)
+#define    REG_ARIA_DISP_PRES_ID               (p_optm_addr+0x5004)
+#define    REG_ARIA_DISP_PRES_CMD2             (p_optm_addr+0x5008)
+#define    REG_ARIA_DISP_PRES_LUM_RADDR        (p_optm_addr+0x5010)
+#define    REG_ARIA_DISP_PRES_LUM_RADDR_2      (p_optm_addr+0x5014)
+#define    REG_ARIA_DISP_PRES_LUM_WADDR        (p_optm_addr+0x5018)
+#define    REG_ARIA_DISP_PRES_LUM_WADDR_2      (p_optm_addr+0x501c)
+#define    REG_ARIA_DISP_PRES_CHM_RADDR        (p_optm_addr+0x5020)
+#define    REG_ARIA_DISP_PRES_CHM_RADDR_2      (p_optm_addr+0x5024)
+#define    REG_ARIA_DISP_PRES_CHM_WADDR        (p_optm_addr+0x5028)
+#define    REG_ARIA_DISP_PRES_CHM_WADDR_2      (p_optm_addr+0x502c)
+#define    REG_ARIA_DISP_PRES_HCOEFF_LUM_ADDR  (p_optm_addr+0x5030)
+#define    REG_ARIA_DISP_PRES_VCOEFF_LUM_ADDR  (p_optm_addr+0x5034)
+#define    REG_ARIA_DISP_PRES_HCOEFF_CHM_ADDR  (p_optm_addr+0x5038)
+#define    REG_ARIA_DISP_PRES_VCOEFF_CHM_ADDR  (p_optm_addr+0x503c)
+#define    REG_ARIA_DISP_PRES_FFR_THRESHOLD    (p_optm_addr+0x5040)
+#define    REG_ARIA_DISP_PRES_FFW_THRESHOLD    (p_optm_addr+0x5044)
+#define    REG_ARIA_DISP_PRES_DDR_WR_STRIDE    (p_optm_addr+0x5048)
+#define    REG_ARIA_DISP_PRES_IRQ_EN           (p_optm_addr+0x504c)
+#define    REG_ARIA_DISP_PRES_IRQ              (p_optm_addr+0x5050)
+#define    REG_ARIA_DISP_PRES_SRC_SIZE         (p_optm_addr+0x5054)
+#define    REG_ARIA_DISP_PRES_DST_SIZE         (p_optm_addr+0x5058)
+#define    REG_ARIA_DISP_PRES_HRATIO           (p_optm_addr+0x505c)
+#define    REG_ARIA_DISP_PRES_VRATIO           (p_optm_addr+0x5060)
+#define    REG_ARIA_DISP_PRES_HINIT            (p_optm_addr+0x5064)
+#define    REG_ARIA_DISP_PRES_VINIT            (p_optm_addr+0x5068)
+#define    REG_ARIA_DISP_PRES_STATUS           (p_optm_addr+0x506c)
+#define    REG_ARIA_DISP_PRES_TILE_ROWJUMP_00  (p_optm_addr+0x5070)
+#define    REG_ARIA_DISP_PRES_TILE_ROWJUMP_01  (p_optm_addr+0x5074)
+#define    REG_ARIA_DISP_PRES_TILE_ROWJUMP_10  (p_optm_addr+0x5078)
+#define    REG_ARIA_DISP_PRES_TILE_ROWJUMP_11  (p_optm_addr+0x507c)
+#define    REG_ARIA_DISP_PRES_TILE_PARA        (p_optm_addr+0x5080)
+#define    REG_ARIA_DISP_PRES_CMD_ACK_LATENCY_AVG (p_optm_addr+0x5084)
+#define    REG_ARIA_DISP_PRES_CMD_DAT_LATENCY_AVG (p_optm_addr+0x5088)
+#define    REG_ARIA_DISP_PRES_DATLAST_LATENCY_AVG (p_optm_addr+0x508c)
+#define    REG_ARIA_DISP_PRES_CMD_ACK_LATENCY_MAX (p_optm_addr+0x5090)
+#define    REG_ARIA_DISP_PRES_CMD_DAT_LATENCY_MAX (p_optm_addr+0x5094)
+#define    REG_ARIA_DISP_PRES_DATLAST_LATENCY_MAX (p_optm_addr+0x5098)
+#define    REG_ARIA_DISP_PRES_STATUS1          (p_optm_addr+0x509c)
+#define    REG_ARIA_DISP_PRES_STATUS2          (p_optm_addr+0x50a0)
+#define    REG_ARIA_DISP_PRES_STATUS3          (p_optm_addr+0x50a4)
+#define    REG_ARIA_DISP_GRA_SCALE0_CTRL       (p_optm_addr+0x6000)
+#define    REG_ARIA_DISP_GRA_SCALE0_H_RATIO    (p_optm_addr+0x6008)
+#define    REG_ARIA_DISP_GRA_SCALE0_V_RATIO    (p_optm_addr+0x600c)
+#define    REG_ARIA_DISP_GRA_SCALE0_H_START_FRA (p_optm_addr+0x6010)
+#define    REG_ARIA_DISP_GRA_SCALE0_V_START_FRA (p_optm_addr+0x6014)
+#define    REG_ARIA_DISP_GRA_SCALE0_POSTPROCESS (p_optm_addr+0x6018)
+#define    REG_ARIA_DISP_GRA_SCALE0_HSCALER_ALPHA_COEFF_ADDRESS (p_optm_addr+0x601c)
+#define    REG_ARIA_DISP_GRA_SCALE0_HSCALER_LUMA_COEFF_ADDRESS (p_optm_addr+0x6020)
+#define    REG_ARIA_DISP_GRA_SCALE0_HSCALER_CBCR_COEFF_ADDRESS (p_optm_addr+0x6024)
+#define    REG_ARIA_DISP_GRA_SCALE0_VSCALER_LUMA_COEFF_ADDRESS (p_optm_addr+0x6028)
+#define    REG_ARIA_DISP_GRA_SCALE0_OUTPUT_SIZE (p_optm_addr+0x602c)
+#define    REG_ARIA_DISP_GRA_SCALE1_CTRL       (p_optm_addr+0x6040)
+#define    REG_ARIA_DISP_GRA_SCALE1_H_RATIO    (p_optm_addr+0x6048)
+#define    REG_ARIA_DISP_GRA_SCALE1_V_RATIO    (p_optm_addr+0x604c)
+#define    REG_ARIA_DISP_GRA_SCALE1_H_START_FRA (p_optm_addr+0x6050)
+#define    REG_ARIA_DISP_GRA_SCALE1_V_START_FRA (p_optm_addr+0x6054)
+#define    REG_ARIA_DISP_GRA_SCALE1_POSTPROCESS (p_optm_addr+0x6058)
+#define    REG_ARIA_DISP_GRA_SCALE1_HSCALER_ALPHA_COEFF_ADDRESS (p_optm_addr+0x605c)
+#define    REG_ARIA_DISP_GRA_SCALE1_HSCALER_LUMA_COEFF_ADDRESS (p_optm_addr+0x6060)
+#define    REG_ARIA_DISP_GRA_SCALE1_HSCALER_CBCR_COEFF_ADDRESS (p_optm_addr+0x6064)
+#define    REG_ARIA_DISP_GRA_SCALE1_VSCALER_LUMA_COEFF_ADDRESS (p_optm_addr+0x6068)
+#define    REG_ARIA_DISP_GRA_SCALE_FIFO_THRESHOLD (p_optm_addr+0x606c)
+#define    REG_ARIA_DISP_GRA_SCALER_STATUS     (p_optm_addr+0x6070)
+#define    REG_ARIA_DISP_GRA_SALER_LATCH_CMD   (p_optm_addr+0x6074)
+#define    REG_ARIA_DISP_SD_WR_CTRL            (p_optm_addr+0x7000)
+#define    REG_ARIA_DISP_SD_LATCH_COMMAND      (p_optm_addr+0x7004)
+#define    REG_ARIA_DISP_SD_WRBACK_ADDR_ODD    (p_optm_addr+0x7008)
+#define    REG_ARIA_DISP_SD_WRBACK_ADDR_EVEN   (p_optm_addr+0x700c)
+#define    REG_ARIA_DISP_SD_RDBACK_ADDR_ODD    (p_optm_addr+0x7010)
+#define    REG_ARIA_DISP_SD_RDBACK_ADDR_EVEN   (p_optm_addr+0x7014)
+#define    REG_ARIA_DISP_SD_WRBACK_FIFO_THRESHOLD (p_optm_addr+0x7018)
+#define    REG_ARIA_DISP_SD_BLANKSCREEN_MODE   (p_optm_addr+0x701c)
+#define    REG_ARIA_DISP_SD_STATUS             (p_optm_addr+0x7020)
+#define    REG_ARIA_DISP_SD_AXI_MONITOR_CTRL   (p_optm_addr+0x7024)
+#define    REG_ARIA_DISP_SDRD_CMD_ACK_LATENCY_MONITOR (p_optm_addr+0x7028)
+#define    REG_ARIA_DISP_SDRD_DATA_ACK_LATENCY_MONITOR (p_optm_addr+0x702c)
+#define    REG_ARIA_DISP_SDRD_DATA_LAST_LATENCY_MONITOR (p_optm_addr+0x7030)
+#define    REG_ARIA_DISP_SDWR_CMD_ACK_LATENCY_MONITOR (p_optm_addr+0x7034)
+#define    REG_ARIA_DISP_SDWR_DATA_ACK_LATENCY_MONITOR (p_optm_addr+0x7038)
+#define    REG_ARIA_DISP_SDWR_DATA_BREADY_LATENCY_MONITOR (p_optm_addr+0x703c)
+#define    REG_ARIA_DISP_SD_VIDEO_HUE_ADJUST   (p_optm_addr+0x7040)
+#define    REG_ARIA_DISP_SD_VIDEO_EFFECT_COEF  (p_optm_addr+0x7044)
+#define    REG_ARIA_DISP_SD_CSC_CTRL           (p_optm_addr+0x7080)
+#define    REG_ARIA_DISP_SD_CSC_COEFF1         (p_optm_addr+0x7084)
+#define    REG_ARIA_DISP_SD_CSC_COEFF2         (p_optm_addr+0x7088)
+#define    REG_ARIA_DISP_SD_CSC_COEFF3         (p_optm_addr+0x708c)
+#define    REG_ARIA_DISP_SD_CSC_COEFF4         (p_optm_addr+0x7090)
+#define    REG_ARIA_DISP_SD_CSC_COEFF5         (p_optm_addr+0x7094)
+#define    REG_ARIA_DISP_HD_SCREEN_OUT_SIZE    (p_optm_addr+0x8000)
+#define    REG_ARIA_DISP_SD_SCREEN_OUT_SIZE    (p_optm_addr+0x8004)
+#define    REG_ARIA_DISP_COEFF_TABLE_SEL       (p_optm_addr+0x8020)
+#define    REG_ARIA_DISP_DISPLAY_CTRL_LIMIT    (p_optm_addr+0xc000)
+
+/*!
+  the union of register reg_aria_disp_video_ctrl_1
+  */
+typedef union reg_aria_disp_video_ctrl_1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_sel                   : 1;
+        mt_u32                             : 3;
+        mt_u32 sd_hf_sel                   : 1;
+        mt_u32 sd_vf_sel                   : 1;
+        mt_u32                             : 2;
+        mt_u32 hd_hf_sel                   : 1;
+        mt_u32 hd_vf_sel                   : 1;
+        mt_u32                             : 2;
+        mt_u32 sd_video_cut_en             : 1;
+        mt_u32 hd_video_cut_en             : 1;
+        mt_u32                             : 2;
+        mt_u32 reg_latch_top_or_bot        : 1;
+        mt_u32                             : 3;
+        mt_u32 reg_latch_or_not            : 1;
+        mt_u32                             : 3;
+        mt_u32 only_use_first_reg_set      : 1;
+        mt_u32                             : 7;
+    } bitc;
+} reg_aria_disp_video_ctrl_1_t;
+
+/*!
+  the union of register reg_aria_disp_video_ctrl_2
+  */
+typedef union reg_aria_disp_video_ctrl_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 small_picture_upscaling_en  : 1;
+        mt_u32                             : 3;
+        mt_u32 luma_post_en                : 1;
+        mt_u32                             : 3;
+        mt_u32 cbcr_swap                   : 1;
+        mt_u32                             : 3;
+        mt_u32 vid_rd_4k_process_en        : 1;
+        mt_u32                             : 3;
+        mt_u32 video_plane_alpha           : 8;
+        mt_u32                             : 4;
+        mt_u32 video_display_field         : 2;
+        mt_u32                             : 2;
+    } bitc;
+} reg_aria_disp_video_ctrl_2_t;
+
+/*!
+  the union of register reg_aria_disp_video_input_frame_size
+  */
+typedef union reg_aria_disp_video_input_frame_size
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_input_frame_height    : 12;
+        mt_u32                             : 4;
+        mt_u32 video_input_frame_width     : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_video_input_frame_size_t;
+
+/*!
+  the union of register reg_aria_disp_video_crop_en
+  */
+typedef union reg_aria_disp_video_crop_en
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_crop_en               : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_video_crop_en_t;
+
+/*!
+  the union of register reg_aria_disp_video_crop_pixel
+  */
+typedef union reg_aria_disp_video_crop_pixel
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 crop_end_pixel              : 13;
+        mt_u32                             : 3;
+        mt_u32 crop_start_pixel            : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_video_crop_pixel_t;
+
+/*!
+  the union of register reg_aria_disp_video_crop_line
+  */
+typedef union reg_aria_disp_video_crop_line
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 crop_end_line               : 12;
+        mt_u32                             : 4;
+        mt_u32 crop_start_line             : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_video_crop_line_t;
+
+/*!
+  the union of register reg_aria_disp_video_pix_align_ctrl
+  */
+typedef union reg_aria_disp_video_pix_align_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 line_end_cut                : 5;
+        mt_u32                             : 3;
+        mt_u32 line_pre_cut                : 5;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_video_pix_align_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_video_data_endian_ctrl
+  */
+typedef union reg_aria_disp_video_data_endian_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_data_endian_ctrl_1    : 2;
+        mt_u32                             : 6;
+        mt_u32 video_data_endian_ctrl_2    : 2;
+        mt_u32                             : 22;
+    } bitc;
+} reg_aria_disp_video_data_endian_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_video_burst_info_1
+  */
+typedef union reg_aria_disp_video_burst_info_1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 output_bytes_sel            : 1;
+        mt_u32                             : 3;
+        mt_u32 burst_length_sel            : 2;
+        mt_u32                             : 2;
+        mt_u32 video_linear_addr_en        : 1;
+        mt_u32                             : 7;
+        mt_u32 vid_rd_stride               : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_video_burst_info_1_t;
+
+/*!
+  the union of register reg_aria_disp_video_burst_info_2
+  */
+typedef union reg_aria_disp_video_burst_info_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 line_rd_cnt_max_axi         : 8;
+        mt_u32                             : 4;
+        mt_u32 last_burst_length           : 4;
+        mt_u32                             : 8;
+        mt_u32 first_burst_length          : 4;
+        mt_u32 burst_info_en               : 1;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_video_burst_info_2_t;
+
+/*!
+  the union of register reg_aria_disp_video_line_rd_cnt_max
+  */
+typedef union reg_aria_disp_video_line_rd_cnt_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 line_rd_cnt_max             : 10;
+        mt_u32                             : 22;
+    } bitc;
+} reg_aria_disp_video_line_rd_cnt_max_t;
+
+/*!
+  the union of register reg_aria_disp_video_half_scale_ctrl
+  */
+typedef union reg_aria_disp_video_half_scale_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 horizontal_half_scale_en    : 1;
+        mt_u32                             : 3;
+        mt_u32 vertical_half_scale_en      : 1;
+        mt_u32                             : 27;
+    } bitc;
+} reg_aria_disp_video_half_scale_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_video_hf_phase
+  */
+typedef union reg_aria_disp_video_hf_phase
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_hf_init_phase            : 12;
+        mt_u32 hd_hf_tapnum                : 3;
+        mt_u32                             : 1;
+        mt_u32 hd_hf_init_phase            : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_video_hf_phase_t;
+
+/*!
+  the union of register reg_aria_disp_video_scale_init_phase_offset
+  */
+typedef union reg_aria_disp_video_scale_init_phase_offset
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 init_phase_offset           : 12;
+        mt_u32                             : 20;
+    } bitc;
+} reg_aria_disp_video_scale_init_phase_offset_t;
+
+/*!
+  the union of register reg_aria_disp_video_scale_hd_ratio
+  */
+typedef union reg_aria_disp_video_scale_hd_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 vratio_fra_hd               : 12;
+        mt_u32 vratio_int_hd               : 4;
+        mt_u32 hratio_fra_hd               : 12;
+        mt_u32 hratio_int_hd               : 4;
+    } bitc;
+} reg_aria_disp_video_scale_hd_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_video_scale_hd_init_ratio
+  */
+typedef union reg_aria_disp_video_scale_hd_init_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 bot_fra_init_hd             : 12;
+        mt_u32 bot_int_init_hd             : 4;
+        mt_u32 top_fra_init_hd             : 12;
+        mt_u32 top_int_init_hd             : 4;
+    } bitc;
+} reg_aria_disp_video_scale_hd_init_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_video_hd_window_x
+  */
+typedef union reg_aria_disp_video_hd_window_x
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_video_end_x              : 13;
+        mt_u32                             : 3;
+        mt_u32 hd_video_start_x            : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_video_hd_window_x_t;
+
+/*!
+  the union of register reg_aria_disp_video_hd_window_y
+  */
+typedef union reg_aria_disp_video_hd_window_y
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_video_end_y              : 12;
+        mt_u32                             : 4;
+        mt_u32 hd_video_start_y            : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_video_hd_window_y_t;
+
+/*!
+  the union of register reg_aria_disp_video_hd_window_cut
+  */
+typedef union reg_aria_disp_video_hd_window_cut
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_video_cut_right          : 8;
+        mt_u32 hd_video_cut_left           : 8;
+        mt_u32 hd_video_cut_bottom         : 8;
+        mt_u32 hd_video_cut_top            : 8;
+    } bitc;
+} reg_aria_disp_video_hd_window_cut_t;
+
+/*!
+  the union of register reg_aria_disp_video_scale_sd_ratio
+  */
+typedef union reg_aria_disp_video_scale_sd_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 vratio_fra_sd               : 12;
+        mt_u32 vratio_int_sd               : 4;
+        mt_u32 hratio_fra_sd               : 12;
+        mt_u32 hratio_int_sd               : 4;
+    } bitc;
+} reg_aria_disp_video_scale_sd_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_video_scale_sd_init_ratio
+  */
+typedef union reg_aria_disp_video_scale_sd_init_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 bot_fra_init_sd             : 12;
+        mt_u32 bot_int_init_sd             : 4;
+        mt_u32 top_fra_init_sd             : 12;
+        mt_u32 top_int_init_sd             : 4;
+    } bitc;
+} reg_aria_disp_video_scale_sd_init_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_video_sd_window_x
+  */
+typedef union reg_aria_disp_video_sd_window_x
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_video_end_x              : 12;
+        mt_u32                             : 4;
+        mt_u32 sd_video_start_x            : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_video_sd_window_x_t;
+
+/*!
+  the union of register reg_aria_disp_video_sd_window_y
+  */
+typedef union reg_aria_disp_video_sd_window_y
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_video_end_y              : 12;
+        mt_u32                             : 4;
+        mt_u32 sd_video_start_y            : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_video_sd_window_y_t;
+
+/*!
+  the union of register reg_aria_disp_video_sd_window_cut
+  */
+typedef union reg_aria_disp_video_sd_window_cut
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_video_cut_right          : 8;
+        mt_u32 sd_video_cut_left           : 8;
+        mt_u32 sd_video_cut_bottom         : 8;
+        mt_u32 sd_video_cut_top            : 8;
+    } bitc;
+} reg_aria_disp_video_sd_window_cut_t;
+
+/*!
+  the union of register reg_aria_disp_sd_video_path_ctrl
+  */
+typedef union reg_aria_disp_sd_video_path_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_video_path_en            : 1;
+        mt_u32                             : 7;
+        mt_u32 video_down_scale_en         : 1;
+        mt_u32                             : 7;
+        mt_u32 sd_use_hd_output_data       : 1;
+        mt_u32                             : 15;
+    } bitc;
+} reg_aria_disp_sd_video_path_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_hd_luma_vf_coeff_addr
+  */
+typedef union reg_aria_disp_hd_luma_vf_coeff_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_luma_vf_coeff_addr       : 32;
+    } bitc;
+} reg_aria_disp_hd_luma_vf_coeff_addr_t;
+
+/*!
+  the union of register reg_aria_disp_hd_luma_hf_coeff_addr
+  */
+typedef union reg_aria_disp_hd_luma_hf_coeff_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_luma_hf_coeff_addr       : 32;
+    } bitc;
+} reg_aria_disp_hd_luma_hf_coeff_addr_t;
+
+/*!
+  the union of register reg_aria_disp_hd_chroma_hf_coeff_addr
+  */
+typedef union reg_aria_disp_hd_chroma_hf_coeff_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_chroma_hf_coeff_addr     : 32;
+    } bitc;
+} reg_aria_disp_hd_chroma_hf_coeff_addr_t;
+
+/*!
+  the union of register reg_aria_disp_sd_luma_vf_coeff_addr
+  */
+typedef union reg_aria_disp_sd_luma_vf_coeff_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_luma_vf_coeff_addr       : 32;
+    } bitc;
+} reg_aria_disp_sd_luma_vf_coeff_addr_t;
+
+/*!
+  the union of register reg_aria_disp_sd_luma_hf_coeff_addr
+  */
+typedef union reg_aria_disp_sd_luma_hf_coeff_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_luma_hf_coeff_addr       : 32;
+    } bitc;
+} reg_aria_disp_sd_luma_hf_coeff_addr_t;
+
+/*!
+  the union of register reg_aria_disp_sd_chroma_hf_coeff_addr
+  */
+typedef union reg_aria_disp_sd_chroma_hf_coeff_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_chroma_hf_coeff_addr     : 32;
+    } bitc;
+} reg_aria_disp_sd_chroma_hf_coeff_addr_t;
+
+/*!
+  the union of register reg_aria_disp_video_dce_map_addr
+  */
+typedef union reg_aria_disp_video_dce_map_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 dce_map_addr                : 32;
+    } bitc;
+} reg_aria_disp_video_dce_map_addr_t;
+
+/*!
+  the union of register reg_aria_disp_histo_info_addr_0
+  */
+typedef union reg_aria_disp_histo_info_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 histo_info_addr_0           : 32;
+    } bitc;
+} reg_aria_disp_histo_info_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_histo_info_addr_2
+  */
+typedef union reg_aria_disp_histo_info_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 histo_info_addr_2           : 32;
+    } bitc;
+} reg_aria_disp_histo_info_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_upscale_ctrl
+  */
+typedef union reg_aria_disp_chroma_upscale_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_hori_ip_mode         : 2;
+        mt_u32                             : 2;
+        mt_u32 chroma_alpha_old            : 9;
+        mt_u32                             : 3;
+        mt_u32 mono_display_en             : 1;
+        mt_u32                             : 15;
+    } bitc;
+} reg_aria_disp_chroma_upscale_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_coef_0
+  */
+typedef union reg_aria_disp_chroma_coef_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_coef1                : 11;
+        mt_u32                             : 5;
+        mt_u32 chroma_coef0                : 11;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_chroma_coef_0_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_coef_1
+  */
+typedef union reg_aria_disp_chroma_coef_1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_coef3                : 11;
+        mt_u32                             : 5;
+        mt_u32 chroma_coef2                : 11;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_chroma_coef_1_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_coef_2
+  */
+typedef union reg_aria_disp_chroma_coef_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_coef5                : 11;
+        mt_u32                             : 5;
+        mt_u32 chroma_coef4                : 11;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_chroma_coef_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_coef_3
+  */
+typedef union reg_aria_disp_chroma_coef_3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 16;
+        mt_u32 chroma_coef6                : 11;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_chroma_coef_3_t;
+
+/*!
+  the union of register reg_aria_disp_color_enhance_ctrl
+  */
+typedef union reg_aria_disp_color_enhance_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 color_enhance_en            : 1;
+        mt_u32                             : 7;
+        mt_u32 color_enhance_red_dec       : 7;
+        mt_u32                             : 5;
+        mt_u32 color_enhance_length        : 7;
+        mt_u32                             : 1;
+        mt_u32 color_enhance_thr           : 4;
+    } bitc;
+} reg_aria_disp_color_enhance_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_video_dce_config
+  */
+typedef union reg_aria_disp_video_dce_config
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_video_dce_en             : 1;
+        mt_u32                             : 3;
+        mt_u32 hd_video_dce_en             : 1;
+        mt_u32                             : 27;
+    } bitc;
+} reg_aria_disp_video_dce_config_t;
+
+/*!
+  the union of register reg_aria_disp_video_horf_config
+  */
+typedef union reg_aria_disp_video_horf_config
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_infl_thr                 : 8;
+        mt_u32 hd_infl_thr                 : 8;
+        mt_u32 start_addr                  : 4;
+        mt_u32                             : 4;
+        mt_u32 hd_phase_type               : 1;
+        mt_u32                             : 7;
+    } bitc;
+} reg_aria_disp_video_horf_config_t;
+
+/*!
+  the union of register reg_aria_disp_hd_video_post_config
+  */
+typedef union reg_aria_disp_hd_video_post_config
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_leverage                 : 8;
+        mt_u32 hd_hp_enha                  : 8;
+        mt_u32 hd_hori_enha                : 8;
+        mt_u32 hd_shoot_cfg                : 8;
+    } bitc;
+} reg_aria_disp_hd_video_post_config_t;
+
+/*!
+  the union of register reg_aria_disp_sd_video_post_config
+  */
+typedef union reg_aria_disp_sd_video_post_config
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_leverage                 : 8;
+        mt_u32 sd_hp_enha                  : 8;
+        mt_u32 sd_hori_enha                : 8;
+        mt_u32 sd_shoot_cfg                : 8;
+    } bitc;
+} reg_aria_disp_sd_video_post_config_t;
+
+/*!
+  the union of register reg_aria_disp_hd_video_effect_coef
+  */
+typedef union reg_aria_disp_hd_video_effect_coef
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 bright_coeff                : 8;
+        mt_u32 contrast_coeff              : 8;
+        mt_u32 saturation_coeff            : 8;
+        mt_u32                             : 8;
+    } bitc;
+} reg_aria_disp_hd_video_effect_coef_t;
+
+/*!
+  the union of register reg_aria_disp_hd_video_hue_adjust
+  */
+typedef union reg_aria_disp_hd_video_hue_adjust
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_sina                     : 11;
+        mt_u32                             : 5;
+        mt_u32 hd_cosa                     : 11;
+        mt_u32                             : 4;
+        mt_u32 hd_hue_adjust_en            : 1;
+    } bitc;
+} reg_aria_disp_hd_video_hue_adjust_t;
+
+/*!
+  the union of register reg_aria_disp_sd_video_drop_line
+  */
+typedef union reg_aria_disp_sd_video_drop_line
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_bot_field_drop_line      : 4;
+        mt_u32                             : 12;
+        mt_u32 sd_top_field_drop_line      : 4;
+        mt_u32                             : 12;
+    } bitc;
+} reg_aria_disp_sd_video_drop_line_t;
+
+/*!
+  the union of register reg_aria_disp_video_scalar_buf_full_thr
+  */
+typedef union reg_aria_disp_video_scalar_buf_full_thr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 scaler_data_sfifo_thr       : 6;
+        mt_u32                             : 10;
+        mt_u32 di_data_sfifo_thr           : 6;
+        mt_u32                             : 10;
+    } bitc;
+} reg_aria_disp_video_scalar_buf_full_thr_t;
+
+/*!
+  the union of register reg_aria_disp_video_scalar_outbuf_full_thr
+  */
+typedef union reg_aria_disp_video_scalar_outbuf_full_thr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_scalar_buf_full_thr      : 10;
+        mt_u32                             : 6;
+        mt_u32 hd_scalar_buf_full_thr      : 10;
+        mt_u32                             : 6;
+    } bitc;
+} reg_aria_disp_video_scalar_outbuf_full_thr_t;
+
+/*!
+  the union of register reg_aria_disp_axi_cmd_req_fifo_thr
+  */
+typedef union reg_aria_disp_axi_cmd_req_fifo_thr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 axi_req_sfifo_thr           : 5;
+        mt_u32                             : 3;
+        mt_u32 axi_cmd_sfifo_thr           : 4;
+        mt_u32                             : 4;
+        mt_u32 lout_afifo_thr              : 5;
+        mt_u32                             : 11;
+    } bitc;
+} reg_aria_disp_axi_cmd_req_fifo_thr_t;
+
+/*!
+  the union of register reg_aria_disp_access_fifo_lo_hi_thr
+  */
+typedef union reg_aria_disp_access_fifo_lo_hi_thr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 acc_fifo_lo_thr             : 7;
+        mt_u32                             : 9;
+        mt_u32 acc_fifo_hi_thr             : 7;
+        mt_u32                             : 9;
+    } bitc;
+} reg_aria_disp_access_fifo_lo_hi_thr_t;
+
+/*!
+  the union of register reg_aria_disp_access_fifo_req_thr
+  */
+typedef union reg_aria_disp_access_fifo_req_thr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 fifo_thr_2                  : 8;
+        mt_u32 fifo_thr_1                  : 8;
+        mt_u32 fifo_thr_0                  : 8;
+        mt_u32 asyncfifo_low_thr           : 6;
+        mt_u32                             : 2;
+    } bitc;
+} reg_aria_disp_access_fifo_req_thr_t;
+
+/*!
+  the union of register reg_aria_disp_asym_fifo_thr
+  */
+typedef union reg_aria_disp_asym_fifo_thr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 disc2hdtv_async_fifo_full_thr: 7;
+        mt_u32                             : 25;
+    } bitc;
+} reg_aria_disp_asym_fifo_thr_t;
+
+/*!
+  the union of register reg_aria_disp_video_hd_line_cnt
+  */
+typedef union reg_aria_disp_video_hd_line_cnt
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_line_cnt_bot             : 12;
+        mt_u32                             : 4;
+        mt_u32 hd_line_cnt_top             : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_video_hd_line_cnt_t;
+
+/*!
+  the union of register reg_aria_disp_video_sd_line_cnt
+  */
+typedef union reg_aria_disp_video_sd_line_cnt
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_line_cnt_bot             : 12;
+        mt_u32                             : 4;
+        mt_u32 sd_line_cnt_top             : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_video_sd_line_cnt_t;
+
+/*!
+  the union of register reg_aria_disp_video_line_proc_status
+  */
+typedef union reg_aria_disp_video_line_proc_status
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 proc_line_num               : 12;
+        mt_u32                             : 19;
+        mt_u32 not_proc_over               : 1;
+    } bitc;
+} reg_aria_disp_video_line_proc_status_t;
+
+/*!
+  the union of register reg_aria_disp_alising_prob_reg1
+  */
+typedef union reg_aria_disp_alising_prob_reg1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 alpha_2nd_method_sel        : 1;
+        mt_u32                             : 7;
+        mt_u32 alpha_2nd_diff_ratio_sel    : 2;
+        mt_u32                             : 6;
+        mt_u32 alpha_2nd_diff_shift_sel    : 1;
+        mt_u32                             : 7;
+        mt_u32 alpha_2nd_diff              : 8;
+    } bitc;
+} reg_aria_disp_alising_prob_reg1_t;
+
+/*!
+  the union of register reg_aria_disp_alising_prob_reg2
+  */
+typedef union reg_aria_disp_alising_prob_reg2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 alpha_enlarge               : 10;
+        mt_u32                             : 2;
+        mt_u32 alpha_vdv_sel               : 2;
+        mt_u32                             : 2;
+        mt_u32 alpha_vdv                   : 8;
+        mt_u32 alpha_angle                 : 8;
+    } bitc;
+} reg_aria_disp_alising_prob_reg2_t;
+
+/*!
+  the union of register reg_aria_disp_alising_prob_reg3
+  */
+typedef union reg_aria_disp_alising_prob_reg3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 base_blending_factor        : 8;
+        mt_u32 default_prob                : 8;
+        mt_u32 op                          : 2;
+        mt_u32                             : 6;
+        mt_u32 slope_diff1_sel             : 2;
+        mt_u32                             : 6;
+    } bitc;
+} reg_aria_disp_alising_prob_reg3_t;
+
+/*!
+  the union of register reg_aria_disp_alising_prob_reg4
+  */
+typedef union reg_aria_disp_alising_prob_reg4
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pict_enhance_pix_sel        : 2;
+        mt_u32 adaptive_alpha_sel          : 1;
+        mt_u32 diff_2nd_sel                : 1;
+        mt_u32 interp_factor               : 4;
+        mt_u32 prob_coef3                  : 8;
+        mt_u32 prob_coef2                  : 8;
+        mt_u32 prob_coef1                  : 8;
+    } bitc;
+} reg_aria_disp_alising_prob_reg4_t;
+
+/*!
+  the union of register reg_aria_disp_di_ctrl
+  */
+typedef union reg_aria_disp_di_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 di_en                       : 1;
+        mt_u32                             : 3;
+        mt_u32 video_source_mode           : 1;
+        mt_u32                             : 3;
+        mt_u32 pdd_en                      : 1;
+        mt_u32                             : 3;
+        mt_u32 is_movie_type               : 1;
+        mt_u32                             : 3;
+        mt_u32 thr_reg                     : 8;
+        mt_u32 thr_sel                     : 2;
+        mt_u32                             : 6;
+    } bitc;
+} reg_aria_disp_di_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_di_pause_en
+  */
+typedef union reg_aria_disp_di_pause_en
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 di_pause_en                 : 1;
+        mt_u32                             : 3;
+        mt_u32 di_pause_bot_field_flag     : 1;
+        mt_u32                             : 3;
+        mt_u32 di_pause_top_field_flag     : 1;
+        mt_u32                             : 23;
+    } bitc;
+} reg_aria_disp_di_pause_en_t;
+
+/*!
+  the union of register reg_aria_disp_di_oper_mode
+  */
+typedef union reg_aria_disp_di_oper_mode
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 mix_output_mode             : 2;
+        mt_u32 motion_output_mode          : 1;
+        mt_u32                             : 1;
+        mt_u32 para_after_filter_en        : 1;
+        mt_u32                             : 3;
+        mt_u32 spatial_ip_mode             : 3;
+        mt_u32                             : 1;
+        mt_u32 hori_ip_en                  : 1;
+        mt_u32                             : 3;
+        mt_u32 temporal_ip_mode_bot        : 2;
+        mt_u32 temporal_ip_mode_top        : 2;
+        mt_u32                             : 4;
+        mt_u32 lbam_en                     : 1;
+        mt_u32 motion_est_mode             : 2;
+        mt_u32                             : 1;
+        mt_u32 motion_rd_en                : 1;
+        mt_u32 motion_wr_en                : 1;
+        mt_u32                             : 2;
+    } bitc;
+} reg_aria_disp_di_oper_mode_t;
+
+/*!
+  the union of register reg_aria_disp_di_p_or_n_pair
+  */
+typedef union reg_aria_disp_di_p_or_n_pair
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 p_or_n_pair_bot             : 1;
+        mt_u32                             : 3;
+        mt_u32 p_or_n_pair_top             : 1;
+        mt_u32                             : 27;
+    } bitc;
+} reg_aria_disp_di_p_or_n_pair_t;
+
+/*!
+  the union of register reg_aria_disp_di_para
+  */
+typedef union reg_aria_disp_di_para
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 g_alpha_k                   : 8;
+        mt_u32 g_alpha_0                   : 8;
+        mt_u32 p_tl                        : 5;
+        mt_u32                             : 3;
+        mt_u32 pdd_noise_thr               : 8;
+    } bitc;
+} reg_aria_disp_di_para_t;
+
+/*!
+  the union of register reg_aria_disp_di_chroma_para
+  */
+typedef union reg_aria_disp_di_chroma_para
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_g_alpha_k            : 8;
+        mt_u32 chroma_g_alpha_0            : 8;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_di_chroma_para_t;
+
+/*!
+  the union of register reg_aria_disp_di_alpha_para
+  */
+typedef union reg_aria_disp_di_alpha_para
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 g_alpha_0_min               : 8;
+        mt_u32 g_alpha_0_max               : 8;
+        mt_u32 luma_diff_k                 : 8;
+        mt_u32 diff_sel                    : 1;
+        mt_u32                             : 3;
+        mt_u32 new_alpha_en                : 1;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_di_alpha_para_t;
+
+/*!
+  the union of register reg_aria_disp_di_motion_ctrl_1
+  */
+typedef union reg_aria_disp_di_motion_ctrl_1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_propa_type           : 3;
+        mt_u32                             : 5;
+        mt_u32 motion_damping2             : 4;
+        mt_u32 motion_damping1             : 4;
+        mt_u32 medrsp_thr                  : 8;
+        mt_u32 difdamping                  : 8;
+    } bitc;
+} reg_aria_disp_di_motion_ctrl_1_t;
+
+/*!
+  the union of register reg_aria_disp_di_motion_ctrl_2
+  */
+typedef union reg_aria_disp_di_motion_ctrl_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 half_motion_en              : 1;
+        mt_u32                             : 7;
+        mt_u32 motion_data_mode            : 1;
+        mt_u32                             : 7;
+        mt_u32 motion_estmethod            : 1;
+        mt_u32 l0l2_motion_mode            : 1;
+        mt_u32                             : 6;
+        mt_u32 ip_smallmotion              : 2;
+        mt_u32 ip_average                  : 2;
+        mt_u32 ip_l0orl2                   : 2;
+        mt_u32                             : 2;
+    } bitc;
+} reg_aria_disp_di_motion_ctrl_2_t;
+
+/*!
+  the union of register reg_aria_disp_di_motion_ctrl_3
+  */
+typedef union reg_aria_disp_di_motion_ctrl_3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 new_algo_en                 : 1;
+        mt_u32                             : 3;
+        mt_u32 small_motion_magnify        : 1;
+        mt_u32                             : 3;
+        mt_u32 small_motion_thr2           : 8;
+        mt_u32 small_motion_thr1           : 8;
+        mt_u32 medrsp7dir_thr              : 3;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_di_motion_ctrl_3_t;
+
+/*!
+  the union of register reg_aria_disp_di_motion_ctrl_4
+  */
+typedef union reg_aria_disp_di_motion_ctrl_4
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 uv_motion_gain              : 8;
+        mt_u32 ip_l0andl2                  : 2;
+        mt_u32 ip_l1_difthr                : 2;
+        mt_u32                             : 4;
+        mt_u32 preserve_all_motion         : 1;
+        mt_u32 preserve_small_motion       : 1;
+        mt_u32                             : 6;
+        mt_u32 motion_magnify              : 4;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_di_motion_ctrl_4_t;
+
+/*!
+  the union of register reg_aria_disp_di_acc_odd_result
+  */
+typedef union reg_aria_disp_di_acc_odd_result
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 di_acc_odd_result           : 27;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_di_acc_odd_result_t;
+
+/*!
+  the union of register reg_aria_disp_di_acc_even_result
+  */
+typedef union reg_aria_disp_di_acc_even_result
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 di_acc_even_result          : 27;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_di_acc_even_result_t;
+
+/*!
+  the union of register reg_aria_disp_di_fields_flag
+  */
+typedef union reg_aria_disp_di_fields_flag
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 nxt_field_flag_2            : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_field_flag_2            : 1;
+        mt_u32                             : 3;
+        mt_u32 pre_field_flag_2            : 1;
+        mt_u32                             : 3;
+        mt_u32 ppre_field_flag_2           : 1;
+        mt_u32                             : 3;
+        mt_u32 nxt_field_flag              : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_field_flag              : 1;
+        mt_u32                             : 3;
+        mt_u32 pre_field_flag              : 1;
+        mt_u32                             : 3;
+        mt_u32 ppre_field_flag             : 1;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_di_fields_flag_t;
+
+/*!
+  the union of register reg_aria_disp_di_hevc_flag
+  */
+typedef union reg_aria_disp_di_hevc_flag
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 nxt_hevc_flag_2             : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_hevc_flag_2             : 1;
+        mt_u32                             : 3;
+        mt_u32 pre_hevc_flag_2             : 1;
+        mt_u32                             : 3;
+        mt_u32 ppre_hevc_flag_2            : 1;
+        mt_u32                             : 3;
+        mt_u32 nxt_hevc_flag               : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_hevc_flag               : 1;
+        mt_u32                             : 3;
+        mt_u32 pre_hevc_flag               : 1;
+        mt_u32                             : 3;
+        mt_u32 ppre_hevc_flag              : 1;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_di_hevc_flag_t;
+
+/*!
+  the union of register reg_aria_disp_none_di_progressive_flag
+  */
+typedef union reg_aria_disp_none_di_progressive_flag
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 progressive_frame_2         : 1;
+        mt_u32                             : 3;
+        mt_u32 progressive_frame_0         : 1;
+        mt_u32                             : 27;
+    } bitc;
+} reg_aria_disp_none_di_progressive_flag_t;
+
+/*!
+  the union of register reg_aria_disp_none_di_fields_flag
+  */
+typedef union reg_aria_disp_none_di_fields_flag
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cur_bot_field_flag_2        : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_top_field_flag_2        : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_bot_field_flag_0        : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_top_field_flag_0        : 1;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_none_di_fields_flag_t;
+
+/*!
+  the union of register reg_aria_disp_none_di_hevc_flag
+  */
+typedef union reg_aria_disp_none_di_hevc_flag
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cur_bot_hevc_flag_2         : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_top_hevc_flag_2         : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_bot_hevc_flag_0         : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_top_hevc_flag_0         : 1;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_none_di_hevc_flag_t;
+
+/*!
+  the union of register reg_aria_disp_none_di_progressive_flag_2nd
+  */
+typedef union reg_aria_disp_none_di_progressive_flag_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 progressive_frame_2         : 1;
+        mt_u32                             : 3;
+        mt_u32 progressive_frame_0         : 1;
+        mt_u32                             : 27;
+    } bitc;
+} reg_aria_disp_none_di_progressive_flag_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_none_di_fields_flag_2nd
+  */
+typedef union reg_aria_disp_none_di_fields_flag_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cur_bot_field_flag_2        : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_top_field_flag_2        : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_bot_field_flag_0        : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_top_field_flag_0        : 1;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_none_di_fields_flag_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_none_di_hevc_flag_2nd
+  */
+typedef union reg_aria_disp_none_di_hevc_flag_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cur_bot_hevc_flag_2         : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_top_hevc_flag_2         : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_bot_hevc_flag_0         : 1;
+        mt_u32                             : 3;
+        mt_u32 cur_top_hevc_flag_0         : 1;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_none_di_hevc_flag_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_motion_pre_addr_0
+  */
+typedef union reg_aria_disp_motion_pre_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_pre_addr_0           : 32;
+    } bitc;
+} reg_aria_disp_motion_pre_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_motion_cur_addr_0
+  */
+typedef union reg_aria_disp_motion_cur_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_cur_addr_0           : 32;
+    } bitc;
+} reg_aria_disp_motion_cur_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_motion_pre_addr_2
+  */
+typedef union reg_aria_disp_motion_pre_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_pre_addr_2           : 32;
+    } bitc;
+} reg_aria_disp_motion_pre_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_motion_cur_addr_2
+  */
+typedef union reg_aria_disp_motion_cur_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_cur_addr_2           : 32;
+    } bitc;
+} reg_aria_disp_motion_cur_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_luma_pre_addr_0
+  */
+typedef union reg_aria_disp_luma_pre_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_pre_addr_0             : 32;
+    } bitc;
+} reg_aria_disp_luma_pre_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_luma_top_cur_addr_0
+  */
+typedef union reg_aria_disp_luma_top_cur_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_top_cur_addr_0         : 32;
+    } bitc;
+} reg_aria_disp_luma_top_cur_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_luma_bot_cur_addr_0
+  */
+typedef union reg_aria_disp_luma_bot_cur_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_bot_cur_addr_0         : 32;
+    } bitc;
+} reg_aria_disp_luma_bot_cur_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_luma_nxt_addr_0
+  */
+typedef union reg_aria_disp_luma_nxt_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_nxt_addr_0             : 32;
+    } bitc;
+} reg_aria_disp_luma_nxt_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_luma_top_cur_addr_2nd_0
+  */
+typedef union reg_aria_disp_luma_top_cur_addr_2nd_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_top_cur_addr_2nd_0     : 32;
+    } bitc;
+} reg_aria_disp_luma_top_cur_addr_2nd_0_t;
+
+/*!
+  the union of register reg_aria_disp_luma_bot_cur_addr_2nd_0
+  */
+typedef union reg_aria_disp_luma_bot_cur_addr_2nd_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_bot_cur_addr_2nd_0     : 32;
+    } bitc;
+} reg_aria_disp_luma_bot_cur_addr_2nd_0_t;
+
+/*!
+  the union of register reg_aria_disp_luma_pre_addr_2
+  */
+typedef union reg_aria_disp_luma_pre_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_pre_addr_2             : 32;
+    } bitc;
+} reg_aria_disp_luma_pre_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_luma_top_cur_addr_2
+  */
+typedef union reg_aria_disp_luma_top_cur_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_top_cur_addr_2         : 32;
+    } bitc;
+} reg_aria_disp_luma_top_cur_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_luma_bot_cur_addr_2
+  */
+typedef union reg_aria_disp_luma_bot_cur_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_bot_cur_addr_2         : 32;
+    } bitc;
+} reg_aria_disp_luma_bot_cur_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_luma_nxt_addr_2
+  */
+typedef union reg_aria_disp_luma_nxt_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_nxt_addr_2             : 32;
+    } bitc;
+} reg_aria_disp_luma_nxt_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_luma_top_cur_addr_2nd_2
+  */
+typedef union reg_aria_disp_luma_top_cur_addr_2nd_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_top_cur_addr_2nd_2     : 32;
+    } bitc;
+} reg_aria_disp_luma_top_cur_addr_2nd_2_t;
+
+/*!
+  the union of register reg_aria_disp_luma_bot_cur_addr_2nd_2
+  */
+typedef union reg_aria_disp_luma_bot_cur_addr_2nd_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 luma_bot_cur_addr_2nd_2     : 32;
+    } bitc;
+} reg_aria_disp_luma_bot_cur_addr_2nd_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_ppre_addr_0
+  */
+typedef union reg_aria_disp_chroma_ppre_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_ppre_addr_0          : 32;
+    } bitc;
+} reg_aria_disp_chroma_ppre_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_pre_addr_0
+  */
+typedef union reg_aria_disp_chroma_pre_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_pre_addr_0           : 32;
+    } bitc;
+} reg_aria_disp_chroma_pre_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_top_cur_addr_0
+  */
+typedef union reg_aria_disp_chroma_top_cur_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_top_cur_addr_0       : 32;
+    } bitc;
+} reg_aria_disp_chroma_top_cur_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_bot_cur_addr_0
+  */
+typedef union reg_aria_disp_chroma_bot_cur_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_bot_cur_addr_0       : 32;
+    } bitc;
+} reg_aria_disp_chroma_bot_cur_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_nxt_addr_0
+  */
+typedef union reg_aria_disp_chroma_nxt_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_nxt_addr_0           : 32;
+    } bitc;
+} reg_aria_disp_chroma_nxt_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_top_cur_addr_2nd_0
+  */
+typedef union reg_aria_disp_chroma_top_cur_addr_2nd_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_top_cur_addr_2nd_0   : 32;
+    } bitc;
+} reg_aria_disp_chroma_top_cur_addr_2nd_0_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_bot_cur_addr_2nd_0
+  */
+typedef union reg_aria_disp_chroma_bot_cur_addr_2nd_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_bot_cur_addr_2nd_0   : 32;
+    } bitc;
+} reg_aria_disp_chroma_bot_cur_addr_2nd_0_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_ppre_addr_2
+  */
+typedef union reg_aria_disp_chroma_ppre_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_ppre_addr_2          : 32;
+    } bitc;
+} reg_aria_disp_chroma_ppre_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_pre_addr_2
+  */
+typedef union reg_aria_disp_chroma_pre_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_pre_addr_2           : 32;
+    } bitc;
+} reg_aria_disp_chroma_pre_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_top_cur_addr_2
+  */
+typedef union reg_aria_disp_chroma_top_cur_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_top_cur_addr_2       : 32;
+    } bitc;
+} reg_aria_disp_chroma_top_cur_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_bot_cur_addr_2
+  */
+typedef union reg_aria_disp_chroma_bot_cur_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_bot_cur_addr_2       : 32;
+    } bitc;
+} reg_aria_disp_chroma_bot_cur_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_nxt_addr_2
+  */
+typedef union reg_aria_disp_chroma_nxt_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_nxt_addr_2           : 32;
+    } bitc;
+} reg_aria_disp_chroma_nxt_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_top_cur_addr_2nd_2
+  */
+typedef union reg_aria_disp_chroma_top_cur_addr_2nd_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_top_cur_addr_2nd_2   : 32;
+    } bitc;
+} reg_aria_disp_chroma_top_cur_addr_2nd_2_t;
+
+/*!
+  the union of register reg_aria_disp_chroma_bot_cur_addr_2nd_2
+  */
+typedef union reg_aria_disp_chroma_bot_cur_addr_2nd_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 chroma_bot_cur_addr_2nd_2   : 32;
+    } bitc;
+} reg_aria_disp_chroma_bot_cur_addr_2nd_2_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_ctrl
+  */
+typedef union reg_aria_disp_down_scale_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_wr_en_2          : 1;
+        mt_u32 down_scale_wr_en_0          : 1;
+        mt_u32                             : 6;
+        mt_u32 wr_top_field_flag_2         : 1;
+        mt_u32 wr_top_field_flag_0         : 1;
+        mt_u32 wr_progressive_flag_2       : 1;
+        mt_u32 wr_progressive_flag_0       : 1;
+        mt_u32                             : 4;
+        mt_u32 cbcr_fifo_full_thr          : 8;
+        mt_u32 luma_fifo_full_thr          : 8;
+    } bitc;
+} reg_aria_disp_down_scale_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_out_size
+  */
+typedef union reg_aria_disp_down_scale_out_size
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_output_height    : 12;
+        mt_u32                             : 4;
+        mt_u32 down_scale_output_width     : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_down_scale_out_size_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_wr_stride
+  */
+typedef union reg_aria_disp_down_scale_wr_stride
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_wr_stride        : 13;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_down_scale_wr_stride_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_luma_wr_addr_0
+  */
+typedef union reg_aria_disp_down_scale_luma_wr_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_luma_wr_addr_0   : 32;
+    } bitc;
+} reg_aria_disp_down_scale_luma_wr_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_cbcr_wr_addr_0
+  */
+typedef union reg_aria_disp_down_scale_cbcr_wr_addr_0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_cbcr_wr_addr_0   : 32;
+    } bitc;
+} reg_aria_disp_down_scale_cbcr_wr_addr_0_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_luma_wr_addr_2
+  */
+typedef union reg_aria_disp_down_scale_luma_wr_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_luma_wr_addr_2   : 32;
+    } bitc;
+} reg_aria_disp_down_scale_luma_wr_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_cbcr_wr_addr_2
+  */
+typedef union reg_aria_disp_down_scale_cbcr_wr_addr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_cbcr_wr_addr_2   : 32;
+    } bitc;
+} reg_aria_disp_down_scale_cbcr_wr_addr_2_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_ctrl_2nd
+  */
+typedef union reg_aria_disp_down_scale_ctrl_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_wr_en_2          : 1;
+        mt_u32 down_scale_wr_en_0          : 1;
+        mt_u32                             : 6;
+        mt_u32 wr_top_field_flag_2         : 1;
+        mt_u32 wr_top_field_flag_0         : 1;
+        mt_u32 wr_progressive_flag_2       : 1;
+        mt_u32 wr_progressive_flag_0       : 1;
+        mt_u32                             : 4;
+        mt_u32 cbcr_fifo_full_thr          : 8;
+        mt_u32 luma_fifo_full_thr          : 8;
+    } bitc;
+} reg_aria_disp_down_scale_ctrl_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_out_size_2nd
+  */
+typedef union reg_aria_disp_down_scale_out_size_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_output_height    : 12;
+        mt_u32                             : 4;
+        mt_u32 down_scale_output_width     : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_down_scale_out_size_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_wr_stride_2nd
+  */
+typedef union reg_aria_disp_down_scale_wr_stride_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_wr_stride        : 13;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_down_scale_wr_stride_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_luma_wr_addr_0_2nd
+  */
+typedef union reg_aria_disp_down_scale_luma_wr_addr_0_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_luma_wr_addr_0   : 32;
+    } bitc;
+} reg_aria_disp_down_scale_luma_wr_addr_0_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_cbcr_wr_addr_0_2nd
+  */
+typedef union reg_aria_disp_down_scale_cbcr_wr_addr_0_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_cbcr_wr_addr_0   : 32;
+    } bitc;
+} reg_aria_disp_down_scale_cbcr_wr_addr_0_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_luma_wr_addr_2_2nd
+  */
+typedef union reg_aria_disp_down_scale_luma_wr_addr_2_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_luma_wr_addr_2   : 32;
+    } bitc;
+} reg_aria_disp_down_scale_luma_wr_addr_2_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_cbcr_wr_addr_2_2nd
+  */
+typedef union reg_aria_disp_down_scale_cbcr_wr_addr_2_2nd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 down_scale_cbcr_wr_addr_2   : 32;
+    } bitc;
+} reg_aria_disp_down_scale_cbcr_wr_addr_2_2nd_t;
+
+/*!
+  the union of register reg_aria_disp_down_scale_data_endian_ctrl
+  */
+typedef union reg_aria_disp_down_scale_data_endian_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 wr_data_endian_ctrl_2nd     : 2;
+        mt_u32                             : 6;
+        mt_u32 cbcr_swap_2nd               : 1;
+        mt_u32                             : 7;
+        mt_u32 wr_data_endian_ctrl         : 2;
+        mt_u32                             : 6;
+        mt_u32 cbcr_swap                   : 1;
+        mt_u32                             : 7;
+    } bitc;
+} reg_aria_disp_down_scale_data_endian_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_hd_csc_ctrl
+  */
+typedef union reg_aria_disp_hd_csc_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_csc_en                   : 1;
+        mt_u32                             : 3;
+        mt_u32 hd_bound_output_en          : 1;
+        mt_u32                             : 3;
+        mt_u32 hd_bound_input_en           : 1;
+        mt_u32                             : 23;
+    } bitc;
+} reg_aria_disp_hd_csc_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_hd_csc_coef_1
+  */
+typedef union reg_aria_disp_hd_csc_coef_1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 csc_a01                     : 12;
+        mt_u32                             : 4;
+        mt_u32 csc_a00                     : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_hd_csc_coef_1_t;
+
+/*!
+  the union of register reg_aria_disp_hd_csc_coef_2
+  */
+typedef union reg_aria_disp_hd_csc_coef_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 csc_a10                     : 12;
+        mt_u32                             : 4;
+        mt_u32 csc_a02                     : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_hd_csc_coef_2_t;
+
+/*!
+  the union of register reg_aria_disp_hd_csc_coef_3
+  */
+typedef union reg_aria_disp_hd_csc_coef_3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 csc_a12                     : 12;
+        mt_u32                             : 4;
+        mt_u32 csc_a11                     : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_hd_csc_coef_3_t;
+
+/*!
+  the union of register reg_aria_disp_hd_csc_coef_4
+  */
+typedef union reg_aria_disp_hd_csc_coef_4
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 csc_a21                     : 12;
+        mt_u32                             : 4;
+        mt_u32 csc_a20                     : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_hd_csc_coef_4_t;
+
+/*!
+  the union of register reg_aria_disp_hd_csc_coef_5
+  */
+typedef union reg_aria_disp_hd_csc_coef_5
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 16;
+        mt_u32 csc_a22                     : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_hd_csc_coef_5_t;
+
+/*!
+  the union of register reg_aria_disp_tile_para
+  */
+typedef union reg_aria_disp_tile_para
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 col_size_mode               : 2;
+        mt_u32                             : 6;
+        mt_u32 field_picture               : 1;
+        mt_u32                             : 3;
+        mt_u32 hd_map_mode                 : 1;
+        mt_u32                             : 3;
+        mt_u32 tile_config                 : 2;
+        mt_u32                             : 14;
+    } bitc;
+} reg_aria_disp_tile_para_t;
+
+/*!
+  the union of register reg_aria_disp_tile_rowjump_00
+  */
+typedef union reg_aria_disp_tile_rowjump_00
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 tile_rowjump_00             : 32;
+    } bitc;
+} reg_aria_disp_tile_rowjump_00_t;
+
+/*!
+  the union of register reg_aria_disp_tile_rowjump_01
+  */
+typedef union reg_aria_disp_tile_rowjump_01
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 tile_rowjump_01             : 32;
+    } bitc;
+} reg_aria_disp_tile_rowjump_01_t;
+
+/*!
+  the union of register reg_aria_disp_tile_rowjump_10
+  */
+typedef union reg_aria_disp_tile_rowjump_10
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 tile_rowjump_10             : 32;
+    } bitc;
+} reg_aria_disp_tile_rowjump_10_t;
+
+/*!
+  the union of register reg_aria_disp_tile_rowjump_11
+  */
+typedef union reg_aria_disp_tile_rowjump_11
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 tile_rowjump_11             : 32;
+    } bitc;
+} reg_aria_disp_tile_rowjump_11_t;
+
+/*!
+  the union of register reg_aria_disp_denoise_ctrl
+  */
+typedef union reg_aria_disp_denoise_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 denoise_en                  : 1;
+        mt_u32                             : 7;
+        mt_u32 denoise_thrd                : 2;
+        mt_u32                             : 6;
+        mt_u32 denoise_thrg                : 8;
+        mt_u32                             : 8;
+    } bitc;
+} reg_aria_disp_denoise_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_denoise_para_1
+  */
+typedef union reg_aria_disp_denoise_para_1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 denoise_a2                  : 12;
+        mt_u32                             : 4;
+        mt_u32 denoise_a1                  : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_denoise_para_1_t;
+
+/*!
+  the union of register reg_aria_disp_denoise_para_2
+  */
+typedef union reg_aria_disp_denoise_para_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 denoise_b1                  : 12;
+        mt_u32                             : 4;
+        mt_u32 denoise_a3                  : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_denoise_para_2_t;
+
+/*!
+  the union of register reg_aria_disp_denoise_para_3
+  */
+typedef union reg_aria_disp_denoise_para_3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 denoise_b3                  : 12;
+        mt_u32                             : 4;
+        mt_u32 denoise_b2                  : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_denoise_para_3_t;
+
+/*!
+  the union of register reg_aria_disp_background_color
+  */
+typedef union reg_aria_disp_background_color
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 background_cr               : 8;
+        mt_u32 background_cb               : 8;
+        mt_u32 background_luma             : 8;
+        mt_u32                             : 4;
+        mt_u32 background_sel              : 1;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_background_color_t;
+
+/*!
+  the union of register reg_aria_disp_hdenc_test_cmd
+  */
+typedef union reg_aria_disp_hdenc_test_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 test_en                     : 1;
+        mt_u32                             : 3;
+        mt_u32 wr_data_en                  : 1;
+        mt_u32                             : 11;
+        mt_u32 test_length_minus_1         : 10;
+        mt_u32                             : 6;
+    } bitc;
+} reg_aria_disp_hdenc_test_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_hdenc_test_data
+  */
+typedef union reg_aria_disp_hdenc_test_data
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 test_data                   : 24;
+        mt_u32                             : 8;
+    } bitc;
+} reg_aria_disp_hdenc_test_data_t;
+
+/*!
+  the union of register reg_aria_disp_video_axi_monitor_clr
+  */
+typedef union reg_aria_disp_video_axi_monitor_clr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_read_cmd_lantency_cnt_clr: 1;
+        mt_u32                             : 3;
+        mt_u32 video_read_data_lantency_cnt_clr: 1;
+        mt_u32                             : 3;
+        mt_u32 motion_write_cmd_lantency_cnt_clr: 1;
+        mt_u32                             : 3;
+        mt_u32 motion_write_data_lantency_cnt_clr: 1;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_video_axi_monitor_clr_t;
+
+/*!
+  the union of register reg_aria_disp_video_read_cmd_latency_cnt_max
+  */
+typedef union reg_aria_disp_video_read_cmd_latency_cnt_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_read_cmd_latency_cnt_max: 32;
+    } bitc;
+} reg_aria_disp_video_read_cmd_latency_cnt_max_t;
+
+/*!
+  the union of register reg_aria_disp_video_read_cmd_latency_cnt_sum
+  */
+typedef union reg_aria_disp_video_read_cmd_latency_cnt_sum
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_read_cmd_latency_cnt_sum: 32;
+    } bitc;
+} reg_aria_disp_video_read_cmd_latency_cnt_sum_t;
+
+/*!
+  the union of register reg_aria_disp_video_read_cmd_req_cnt_sum
+  */
+typedef union reg_aria_disp_video_read_cmd_req_cnt_sum
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_read_cmd_req_cnt_sum  : 32;
+    } bitc;
+} reg_aria_disp_video_read_cmd_req_cnt_sum_t;
+
+/*!
+  the union of register reg_aria_disp_video_read_data_latency_cnt_max
+  */
+typedef union reg_aria_disp_video_read_data_latency_cnt_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_read_data_latency_cnt_max: 32;
+    } bitc;
+} reg_aria_disp_video_read_data_latency_cnt_max_t;
+
+/*!
+  the union of register reg_aria_disp_video_read_data_latency_cnt_sum
+  */
+typedef union reg_aria_disp_video_read_data_latency_cnt_sum
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_read_data_latency_cnt_sum: 32;
+    } bitc;
+} reg_aria_disp_video_read_data_latency_cnt_sum_t;
+
+/*!
+  the union of register reg_aria_disp_video_read_data_req_cnt_sum
+  */
+typedef union reg_aria_disp_video_read_data_req_cnt_sum
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_read_data_req_cnt_sum : 32;
+    } bitc;
+} reg_aria_disp_video_read_data_req_cnt_sum_t;
+
+/*!
+  the union of register reg_aria_disp_motion_write_cmd_latency_cnt_max
+  */
+typedef union reg_aria_disp_motion_write_cmd_latency_cnt_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_write_cmd_latency_cnt_max: 32;
+    } bitc;
+} reg_aria_disp_motion_write_cmd_latency_cnt_max_t;
+
+/*!
+  the union of register reg_aria_disp_motion_write_cmd_latency_cnt_sum
+  */
+typedef union reg_aria_disp_motion_write_cmd_latency_cnt_sum
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_write_cmd_latency_cnt_sum: 32;
+    } bitc;
+} reg_aria_disp_motion_write_cmd_latency_cnt_sum_t;
+
+/*!
+  the union of register reg_aria_disp_motion_write_cmd_req_cnt_sum
+  */
+typedef union reg_aria_disp_motion_write_cmd_req_cnt_sum
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_write_cmd_req_cnt_sum: 32;
+    } bitc;
+} reg_aria_disp_motion_write_cmd_req_cnt_sum_t;
+
+/*!
+  the union of register reg_aria_disp_motion_write_data_latency_cnt_max
+  */
+typedef union reg_aria_disp_motion_write_data_latency_cnt_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_write_data_latency_cnt_max: 32;
+    } bitc;
+} reg_aria_disp_motion_write_data_latency_cnt_max_t;
+
+/*!
+  the union of register reg_aria_disp_motion_write_data_latency_cnt_sum
+  */
+typedef union reg_aria_disp_motion_write_data_latency_cnt_sum
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_write_data_latency_cnt_sum: 32;
+    } bitc;
+} reg_aria_disp_motion_write_data_latency_cnt_sum_t;
+
+/*!
+  the union of register reg_aria_disp_motion_write_data_req_cnt_sum
+  */
+typedef union reg_aria_disp_motion_write_data_req_cnt_sum
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 motion_write_data_req_cnt_sum: 32;
+    } bitc;
+} reg_aria_disp_motion_write_data_req_cnt_sum_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_osd0_cmd
+  */
+typedef union reg_aria_disp_osdl_osd0_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_layer_en                : 1;
+        mt_u32                             : 3;
+        mt_u32 force_progressive_mode      : 1;
+        mt_u32                             : 3;
+        mt_u32 osd_plane_alpha_en          : 1;
+        mt_u32                             : 3;
+        mt_u32 osd0_reduce_framerate       : 1;
+        mt_u32                             : 3;
+        mt_u32 plane_alpha                 : 8;
+        mt_u32 weak_edge_enable            : 1;
+        mt_u32                             : 7;
+    } bitc;
+} reg_aria_disp_osdl_osd0_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_osd1_cmd
+  */
+typedef union reg_aria_disp_osdl_osd1_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_layer_en                : 1;
+        mt_u32                             : 3;
+        mt_u32 force_progressive_mode      : 1;
+        mt_u32                             : 3;
+        mt_u32 osd_plane_alpha_en          : 1;
+        mt_u32                             : 3;
+        mt_u32 osd1_reduce_framerate       : 1;
+        mt_u32                             : 3;
+        mt_u32 plane_alpha                 : 8;
+        mt_u32 weak_edge_enable            : 1;
+        mt_u32                             : 7;
+    } bitc;
+} reg_aria_disp_osdl_osd1_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_sub_cmd
+  */
+typedef union reg_aria_disp_osdl_sub_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_layer                   : 1;
+        mt_u32                             : 3;
+        mt_u32 force_progressive_mode      : 1;
+        mt_u32                             : 3;
+        mt_u32 osd_plane_alpha_en          : 1;
+        mt_u32                             : 3;
+        mt_u32 sub_reduce_framerate        : 1;
+        mt_u32                             : 3;
+        mt_u32 plane_alpha                 : 8;
+        mt_u32 weak_edge_enable            : 1;
+        mt_u32                             : 7;
+    } bitc;
+} reg_aria_disp_osdl_sub_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_cmd
+  */
+typedef union reg_aria_disp_osdl_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd0_decomp_sync            : 1;
+        mt_u32 osd1_decomp_sync            : 1;
+        mt_u32 sub_decomp_sync             : 1;
+        mt_u32 osdl_monitor_reload         : 1;
+        mt_u32                             : 12;
+        mt_u32 osd_latch_top               : 1;
+        mt_u32 osd_latch_bot               : 1;
+        mt_u32 osd_latch_3d_1st            : 1;
+        mt_u32 osd_latch_3d_2nd            : 1;
+        mt_u32 osd_latch_or_not            : 1;
+        mt_u32                             : 11;
+    } bitc;
+} reg_aria_disp_osdl_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_osd0_ini_addr
+  */
+typedef union reg_aria_disp_osdl_osd0_ini_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd0_ini_addr               : 32;
+    } bitc;
+} reg_aria_disp_osdl_osd0_ini_addr_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_osd1_ini_addr
+  */
+typedef union reg_aria_disp_osdl_osd1_ini_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd1_ini_addr               : 32;
+    } bitc;
+} reg_aria_disp_osdl_osd1_ini_addr_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_sub_ini_addr
+  */
+typedef union reg_aria_disp_osdl_sub_ini_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sub_ini_addr                : 32;
+    } bitc;
+} reg_aria_disp_osdl_sub_ini_addr_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_ff_threshold
+  */
+typedef union reg_aria_disp_osdl_ff_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdl_ff_urgent_num          : 8;
+        mt_u32                             : 24;
+    } bitc;
+} reg_aria_disp_osdl_ff_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_rgb2y_coeff
+  */
+typedef union reg_aria_disp_osdl_rgb2y_coeff
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 r2y_coeff                   : 10;
+        mt_u32 g2y_coeff                   : 10;
+        mt_u32 b2y_coeff                   : 10;
+        mt_u32                             : 2;
+    } bitc;
+} reg_aria_disp_osdl_rgb2y_coeff_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_rgb2cb_coeff
+  */
+typedef union reg_aria_disp_osdl_rgb2cb_coeff
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 r2cb_coeff                  : 10;
+        mt_u32 g2cb_coeff                  : 10;
+        mt_u32 b2cb_coeff                  : 10;
+        mt_u32                             : 2;
+    } bitc;
+} reg_aria_disp_osdl_rgb2cb_coeff_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_rgb2cr_coeff
+  */
+typedef union reg_aria_disp_osdl_rgb2cr_coeff
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 r2cr_coeff                  : 10;
+        mt_u32 g2cr_coeff                  : 10;
+        mt_u32 b2cr_coeff                  : 10;
+        mt_u32                             : 2;
+    } bitc;
+} reg_aria_disp_osdl_rgb2cr_coeff_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_y_offset
+  */
+typedef union reg_aria_disp_osdl_y_offset
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 y_offset                    : 18;
+        mt_u32                             : 14;
+    } bitc;
+} reg_aria_disp_osdl_y_offset_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_cbcr_offset
+  */
+typedef union reg_aria_disp_osdl_cbcr_offset
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cbcr_offset                 : 18;
+        mt_u32                             : 14;
+    } bitc;
+} reg_aria_disp_osdl_cbcr_offset_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_osd0_debug
+  */
+typedef union reg_aria_disp_osdl_osd0_debug
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd0_decff_full             : 1;
+        mt_u32 osd0_decff_empty            : 1;
+        mt_u32                             : 30;
+    } bitc;
+} reg_aria_disp_osdl_osd0_debug_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_osd1_debug
+  */
+typedef union reg_aria_disp_osdl_osd1_debug
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd1_decff_full             : 1;
+        mt_u32 osd1_decff_empty            : 1;
+        mt_u32                             : 30;
+    } bitc;
+} reg_aria_disp_osdl_osd1_debug_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_sub_debug
+  */
+typedef union reg_aria_disp_osdl_sub_debug
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sub_decff_full              : 1;
+        mt_u32 sub_decff_empty             : 1;
+        mt_u32                             : 30;
+    } bitc;
+} reg_aria_disp_osdl_sub_debug_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_cmd_ack_latency
+  */
+typedef union reg_aria_disp_osdl_cmd_ack_latency
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cmd_ack_latency_max         : 16;
+        mt_u32 cmd_ack_latency_avg         : 16;
+    } bitc;
+} reg_aria_disp_osdl_cmd_ack_latency_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_cmd_dat_latency
+  */
+typedef union reg_aria_disp_osdl_cmd_dat_latency
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cmd_dat_latency_max         : 16;
+        mt_u32 cmd_dat_latency_avg         : 16;
+    } bitc;
+} reg_aria_disp_osdl_cmd_dat_latency_t;
+
+/*!
+  the union of register reg_aria_disp_osdl_datlast_latency
+  */
+typedef union reg_aria_disp_osdl_datlast_latency
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 datlast_latency_max         : 16;
+        mt_u32 datlast_latency_avg         : 16;
+    } bitc;
+} reg_aria_disp_osdl_datlast_latency_t;
+
+/*!
+  the union of register reg_aria_disp_osdm_cmd
+  */
+typedef union reg_aria_disp_osdm_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 12;
+        mt_u32 osd_sub_mux_sel             : 3;
+        mt_u32                             : 16;
+        mt_u32 osd_sub_mix_first           : 1;
+    } bitc;
+} reg_aria_disp_osdm_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdm_threshold
+  */
+typedef union reg_aria_disp_osdm_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdm_full_threshold         : 6;
+        mt_u32                             : 2;
+        mt_u32 osdm_empty_threshold        : 6;
+        mt_u32                             : 18;
+    } bitc;
+} reg_aria_disp_osdm_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_osdm_osd0_ckey
+  */
+typedef union reg_aria_disp_osdm_osd0_ckey
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 colorkey_value              : 24;
+        mt_u32 osd0_colorkey_en            : 1;
+        mt_u32                             : 7;
+    } bitc;
+} reg_aria_disp_osdm_osd0_ckey_t;
+
+/*!
+  the union of register reg_aria_disp_osdm_osd1_ckey
+  */
+typedef union reg_aria_disp_osdm_osd1_ckey
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 colorkey_value              : 24;
+        mt_u32 osd1_colorkey_en            : 1;
+        mt_u32                             : 7;
+    } bitc;
+} reg_aria_disp_osdm_osd1_ckey_t;
+
+/*!
+  the union of register reg_aria_disp_osds_cmd
+  */
+typedef union reg_aria_disp_osds_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_vphase_type             : 1;
+        mt_u32                             : 3;
+        mt_u32 osd_vert_no_filter          : 1;
+        mt_u32 osd_vert_no_filter_alpha    : 1;
+        mt_u32 osd_vert_no_boundary        : 1;
+        mt_u32                             : 1;
+        mt_u32 osd_vert_bypass_en          : 1;
+        mt_u32                             : 1;
+        mt_u32 osd_hori_no_filter_alpha    : 1;
+        mt_u32 osd_hori_do_boundary        : 1;
+        mt_u32                             : 4;
+        mt_u32 osd_hori_start_fra          : 12;
+        mt_u32 osd_hori_no_filter          : 1;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_osds_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osds_hsize
+  */
+typedef union reg_aria_disp_osds_hsize
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_dst_hsize               : 13;
+        mt_u32                             : 3;
+        mt_u32 osd_ori_hsize               : 11;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_osds_hsize_t;
+
+/*!
+  the union of register reg_aria_disp_osds_hratio
+  */
+typedef union reg_aria_disp_osds_hratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_hori_ratio_fra          : 12;
+        mt_u32 osd_hori_ratio_int          : 4;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osds_hratio_t;
+
+/*!
+  the union of register reg_aria_disp_osds_hf_coeff_addr
+  */
+typedef union reg_aria_disp_osds_hf_coeff_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_hf_coeff_addr           : 32;
+    } bitc;
+} reg_aria_disp_osds_hf_coeff_addr_t;
+
+/*!
+  the union of register reg_aria_disp_osds_vsize
+  */
+typedef union reg_aria_disp_osds_vsize
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_dst_vsize               : 12;
+        mt_u32                             : 4;
+        mt_u32 osd_ori_vsize               : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_osds_vsize_t;
+
+/*!
+  the union of register reg_aria_disp_osds_vratio
+  */
+typedef union reg_aria_disp_osds_vratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_vert_ratio_fra          : 12;
+        mt_u32 osd_vert_ratio_int          : 5;
+        mt_u32                             : 15;
+    } bitc;
+} reg_aria_disp_osds_vratio_t;
+
+/*!
+  the union of register reg_aria_disp_osds_vf_coeff_addr
+  */
+typedef union reg_aria_disp_osds_vf_coeff_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_vf_coeff_addr           : 32;
+    } bitc;
+} reg_aria_disp_osds_vf_coeff_addr_t;
+
+/*!
+  the union of register reg_aria_disp_osds_v_start_line
+  */
+typedef union reg_aria_disp_osds_v_start_line
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_odd_start_line          : 4;
+        mt_u32 osd_even_start_line         : 4;
+        mt_u32                             : 24;
+    } bitc;
+} reg_aria_disp_osds_v_start_line_t;
+
+/*!
+  the union of register reg_aria_disp_osds_v_start_fra
+  */
+typedef union reg_aria_disp_osds_v_start_fra
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_vert_start_fra_odd      : 12;
+        mt_u32                             : 4;
+        mt_u32 osd_vert_start_fra_even     : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_osds_v_start_fra_t;
+
+/*!
+  the union of register reg_aria_disp_osds_v_tap
+  */
+typedef union reg_aria_disp_osds_v_tap
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osd_vert_tap_num            : 3;
+        mt_u32                             : 29;
+    } bitc;
+} reg_aria_disp_osds_v_tap_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_cmd
+  */
+typedef union reg_aria_disp_osdd_osd0_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 compress_en_osd0            : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_osdd_osd0_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_length_a
+  */
+typedef union reg_aria_disp_osdd_osd0_length_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 a_compress_bits_osd0        : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd0_length_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_length_r
+  */
+typedef union reg_aria_disp_osdd_osd0_length_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 r_compress_bits_osd0        : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd0_length_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_length_g
+  */
+typedef union reg_aria_disp_osdd_osd0_length_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 g_compress_bits_osd0        : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd0_length_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_length_b
+  */
+typedef union reg_aria_disp_osdd_osd0_length_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 b_compress_bits_osd0        : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd0_length_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_addr_a
+  */
+typedef union reg_aria_disp_osdd_osd0_addr_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff0_ddr_addr_base_osd0      : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd0_addr_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_addr_r
+  */
+typedef union reg_aria_disp_osdd_osd0_addr_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff1_ddr_addr_base_osd0      : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd0_addr_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_addr_g
+  */
+typedef union reg_aria_disp_osdd_osd0_addr_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff2_ddr_addr_base_osd0      : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd0_addr_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_addr_b
+  */
+typedef union reg_aria_disp_osdd_osd0_addr_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff3_ddr_addr_base_osd0      : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd0_addr_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_ctl
+  */
+typedef union reg_aria_disp_osdd_osd0_ctl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 runl_diff_num_a_osd0        : 4;
+        mt_u32 runl_diff_num_r_osd0        : 4;
+        mt_u32 runl_diff_num_g_osd0        : 4;
+        mt_u32 runl_diff_num_b_osd0        : 4;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osdd_osd0_ctl_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd0_ctl2
+  */
+typedef union reg_aria_disp_osdd_osd0_ctl2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 a_osdd_arith_adapt_en_osd0  : 1;
+        mt_u32 r_osdd_arith_adapt_en_osd0  : 1;
+        mt_u32 g_osdd_arith_adapt_en_osd0  : 1;
+        mt_u32 b_osdd_arith_adapt_en_osd0  : 1;
+        mt_u32 lossy_a_osd0                : 1;
+        mt_u32 lossy_r_osd0                : 1;
+        mt_u32 lossy_g_osd0                : 1;
+        mt_u32 lossy_b_osd0                : 1;
+        mt_u32 a_osdd_init_arith_osd0      : 1;
+        mt_u32 r_osdd_init_arith_osd0      : 1;
+        mt_u32 g_osdd_init_arith_osd0      : 1;
+        mt_u32 b_osdd_init_arith_osd0      : 1;
+        mt_u32 a_dpcm_quanmode_osd0        : 1;
+        mt_u32 r_dpcm_quanmode_osd0        : 1;
+        mt_u32 g_dpcm_quanmode_osd0        : 1;
+        mt_u32 b_dpcm_quanmode_osd0        : 1;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osdd_osd0_ctl2_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_cmd
+  */
+typedef union reg_aria_disp_osdd_osd1_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 compress_en_osd1            : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_osdd_osd1_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_length_a
+  */
+typedef union reg_aria_disp_osdd_osd1_length_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 a_compress_bits_osd1        : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd1_length_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_length_r
+  */
+typedef union reg_aria_disp_osdd_osd1_length_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 r_compress_bits_osd1        : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd1_length_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_length_g
+  */
+typedef union reg_aria_disp_osdd_osd1_length_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 g_compress_bits_osd1        : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd1_length_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_length_b
+  */
+typedef union reg_aria_disp_osdd_osd1_length_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 b_compress_bits_osd1        : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd1_length_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_addr_a
+  */
+typedef union reg_aria_disp_osdd_osd1_addr_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff0_ddr_addr_base_osd1      : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd1_addr_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_addr_r
+  */
+typedef union reg_aria_disp_osdd_osd1_addr_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff1_ddr_addr_base_osd1      : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd1_addr_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_addr_g
+  */
+typedef union reg_aria_disp_osdd_osd1_addr_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff2_ddr_addr_base_osd1      : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd1_addr_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_addr_b
+  */
+typedef union reg_aria_disp_osdd_osd1_addr_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff3_ddr_addr_base_osd1      : 32;
+    } bitc;
+} reg_aria_disp_osdd_osd1_addr_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_ctl
+  */
+typedef union reg_aria_disp_osdd_osd1_ctl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 runl_diff_num_a_osd1        : 4;
+        mt_u32 runl_diff_num_r_osd1        : 4;
+        mt_u32 runl_diff_num_g_osd1        : 4;
+        mt_u32 runl_diff_num_b_osd1        : 4;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osdd_osd1_ctl_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_osd1_ctl2
+  */
+typedef union reg_aria_disp_osdd_osd1_ctl2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 a_osdd_arith_adapt_en_osd1  : 1;
+        mt_u32 r_osdd_arith_adapt_en_osd1  : 1;
+        mt_u32 g_osdd_arith_adapt_en_osd1  : 1;
+        mt_u32 b_osdd_arith_adapt_en_osd1  : 1;
+        mt_u32 lossy_a_osd1                : 1;
+        mt_u32 lossy_r_osd1                : 1;
+        mt_u32 lossy_g_osd1                : 1;
+        mt_u32 lossy_b_osd1                : 1;
+        mt_u32 a_osdd_init_arith_osd1      : 1;
+        mt_u32 r_osdd_init_arith_osd1      : 1;
+        mt_u32 g_osdd_init_arith_osd1      : 1;
+        mt_u32 b_osdd_init_arith_osd1      : 1;
+        mt_u32 a_dpcm_quanmode_osd1        : 1;
+        mt_u32 r_dpcm_quanmode_osd1        : 1;
+        mt_u32 g_dpcm_quanmode_osd1        : 1;
+        mt_u32 b_dpcm_quanmode_osd1        : 1;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osdd_osd1_ctl2_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_cmd
+  */
+typedef union reg_aria_disp_osdd_sub_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 compress_en_sub             : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_osdd_sub_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_length_a
+  */
+typedef union reg_aria_disp_osdd_sub_length_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 a_compress_bits_osd1        : 32;
+    } bitc;
+} reg_aria_disp_osdd_sub_length_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_length_r
+  */
+typedef union reg_aria_disp_osdd_sub_length_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 r_compress_bits_osd1        : 32;
+    } bitc;
+} reg_aria_disp_osdd_sub_length_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_lenght_g
+  */
+typedef union reg_aria_disp_osdd_sub_lenght_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 g_compress_bits_osd1        : 32;
+    } bitc;
+} reg_aria_disp_osdd_sub_lenght_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_length_b
+  */
+typedef union reg_aria_disp_osdd_sub_length_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 b_compress_bits_osd1        : 32;
+    } bitc;
+} reg_aria_disp_osdd_sub_length_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_addr_a
+  */
+typedef union reg_aria_disp_osdd_sub_addr_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff0_ddr_addr_base_sub       : 32;
+    } bitc;
+} reg_aria_disp_osdd_sub_addr_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_addr_r
+  */
+typedef union reg_aria_disp_osdd_sub_addr_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff1_ddr_addr_base_sub       : 32;
+    } bitc;
+} reg_aria_disp_osdd_sub_addr_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_addr_g
+  */
+typedef union reg_aria_disp_osdd_sub_addr_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff2_ddr_addr_base_sub       : 32;
+    } bitc;
+} reg_aria_disp_osdd_sub_addr_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_addr_b
+  */
+typedef union reg_aria_disp_osdd_sub_addr_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 ff3_ddr_addr_base_sub       : 32;
+    } bitc;
+} reg_aria_disp_osdd_sub_addr_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_ctl
+  */
+typedef union reg_aria_disp_osdd_sub_ctl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 runl_diff_num_a_sub         : 4;
+        mt_u32 runl_diff_num_r_sub         : 4;
+        mt_u32 runl_diff_num_g_sub         : 4;
+        mt_u32 runl_diff_num_b_sub         : 4;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osdd_sub_ctl_t;
+
+/*!
+  the union of register reg_aria_disp_osdd_sub_ctl2
+  */
+typedef union reg_aria_disp_osdd_sub_ctl2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 a_osdd_arith_adapt_en_sub   : 1;
+        mt_u32 r_osdd_arith_adapt_en_sub   : 1;
+        mt_u32 g_osdd_arith_adapt_en_sub   : 1;
+        mt_u32 b_osdd_arith_adapt_en_sub   : 1;
+        mt_u32 lossy_a_sub                 : 1;
+        mt_u32 lossy_r_sub                 : 1;
+        mt_u32 lossy_g_sub                 : 1;
+        mt_u32 lossy_b_sub                 : 1;
+        mt_u32 a_osdd_init_arith_sub       : 1;
+        mt_u32 r_osdd_init_arith_sub       : 1;
+        mt_u32 g_osdd_init_arith_sub       : 1;
+        mt_u32 b_osdd_init_arith_sub       : 1;
+        mt_u32 a_dpcm_quanmode_sub         : 1;
+        mt_u32 r_dpcm_quanmode_sub         : 1;
+        mt_u32 g_dpcm_quanmode_sub         : 1;
+        mt_u32 b_dpcm_quanmode_sub         : 1;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osdd_sub_ctl2_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_cmd
+  */
+typedef union reg_aria_disp_osdc_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_osd_width              : 11;
+        mt_u32                             : 1;
+        mt_u32 osdc_endian                 : 4;
+        mt_u32 osdc_osd_height             : 11;
+        mt_u32                             : 1;
+        mt_u32 osdc_pre_judge              : 1;
+        mt_u32                             : 2;
+        mt_u32 osdc_osdcomp_start          : 1;
+    } bitc;
+} reg_aria_disp_osdc_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_rst
+  */
+typedef union reg_aria_disp_osdc_rst
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_rst_h                  : 1;
+        mt_u32 osdc_terminate              : 1;
+        mt_u32 osdc_monitor_reload         : 1;
+        mt_u32                             : 1;
+        mt_u32 osdc_rdndt_latch_sdb        : 1;
+        mt_u32 osdc_rdndt_latch_osd        : 1;
+        mt_u32 osdc_rdndt_latch_pre        : 1;
+        mt_u32 osdc_rdndt_latch_sti        : 1;
+        mt_u32 osdc_axi_w_limit            : 4;
+        mt_u32 osdc_axi_r_limit            : 4;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osdc_rst_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ctl
+  */
+typedef union reg_aria_disp_osdc_ctl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_a_value_diff_num       : 4;
+        mt_u32 osdc_r_value_diff_num       : 4;
+        mt_u32 osdc_g_value_diff_num       : 4;
+        mt_u32 osdc_b_value_diff_num       : 4;
+        mt_u32 osdc_a_dn_same_num          : 4;
+        mt_u32 osdc_r_dn_same_num          : 4;
+        mt_u32 osdc_g_dn_same_num          : 4;
+        mt_u32 osdc_b_dn_same_num          : 4;
+    } bitc;
+} reg_aria_disp_osdc_ctl_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ctl2
+  */
+typedef union reg_aria_disp_osdc_ctl2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_a_arith_adapt_en       : 1;
+        mt_u32 osdc_r_arith_adapt_en       : 1;
+        mt_u32 osdc_g_arith_adapt_en       : 1;
+        mt_u32 osdc_b_arith_adapt_en       : 1;
+        mt_u32 osdc_a_lossy                : 1;
+        mt_u32 osdc_r_lossy                : 1;
+        mt_u32 osdc_g_lossy                : 1;
+        mt_u32 osdc_b_lossy                : 1;
+        mt_u32 osdc_a_init_arith           : 1;
+        mt_u32 osdc_r_init_arith           : 1;
+        mt_u32 osdc_g_init_arith           : 1;
+        mt_u32 osdc_b_init_arith           : 1;
+        mt_u32 osdc_a_dpcm_quanmode        : 1;
+        mt_u32 osdc_r_dpcm_quanmode        : 1;
+        mt_u32 osdc_g_dpcm_quanmode        : 1;
+        mt_u32 osdc_b_dpcm_quanmode        : 1;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_osdc_ctl2_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ffrd_threshold
+  */
+typedef union reg_aria_disp_osdc_ffrd_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_urgent_num_ddr_rd      : 6;
+        mt_u32                             : 2;
+        mt_u32 osdc_weight_num_ddr_rd      : 6;
+        mt_u32                             : 18;
+    } bitc;
+} reg_aria_disp_osdc_ffrd_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ffwr_threshold
+  */
+typedef union reg_aria_disp_osdc_ffwr_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_urgent_num_ddr_wr0     : 4;
+        mt_u32 osdc_weight_num_ddr_wr0     : 4;
+        mt_u32 osdc_urgent_num_ddr_wr1     : 4;
+        mt_u32 osdc_weight_num_ddr_wr1     : 4;
+        mt_u32 osdc_urgent_num_ddr_wr2     : 4;
+        mt_u32 osdc_weight_num_ddr_wr2     : 4;
+        mt_u32 osdc_urgent_num_ddr_wr3     : 4;
+        mt_u32 osdc_weight_num_ddr_wr3     : 4;
+    } bitc;
+} reg_aria_disp_osdc_ffwr_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ddr_rd_addr
+  */
+typedef union reg_aria_disp_osdc_ddr_rd_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_ddr_rd_base_addr       : 32;
+    } bitc;
+} reg_aria_disp_osdc_ddr_rd_addr_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_width_stride
+  */
+typedef union reg_aria_disp_osdc_width_stride
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_osd_width_stride       : 11;
+        mt_u32                             : 21;
+    } bitc;
+} reg_aria_disp_osdc_width_stride_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ddr_wr_addr_a
+  */
+typedef union reg_aria_disp_osdc_ddr_wr_addr_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_ddr_wr_base_addr0      : 32;
+    } bitc;
+} reg_aria_disp_osdc_ddr_wr_addr_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ddr_wr_addr_r
+  */
+typedef union reg_aria_disp_osdc_ddr_wr_addr_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_ddr_wr_base_addr1      : 32;
+    } bitc;
+} reg_aria_disp_osdc_ddr_wr_addr_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ddr_wr_addr_g
+  */
+typedef union reg_aria_disp_osdc_ddr_wr_addr_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_ddr_wr_base_addr2      : 32;
+    } bitc;
+} reg_aria_disp_osdc_ddr_wr_addr_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_ddr_wr_addr_b
+  */
+typedef union reg_aria_disp_osdc_ddr_wr_addr_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_ddr_wr_base_addr3      : 32;
+    } bitc;
+} reg_aria_disp_osdc_ddr_wr_addr_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_status
+  */
+typedef union reg_aria_disp_osdc_status
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_soft_rst_done          : 1;
+        mt_u32 osdc_terminate_done         : 1;
+        mt_u32 osdc_axi_w_done             : 1;
+        mt_u32 osdc_axi_r_done             : 1;
+        mt_u32 osdc_rdfifo_full            : 1;
+        mt_u32 osdc_rdfifo_empty           : 1;
+        mt_u32                             : 2;
+        mt_u32 osdc_wrfifo0_full           : 1;
+        mt_u32 osdc_wrfifo0_empty          : 1;
+        mt_u32 osdc_wrfifo1_full           : 1;
+        mt_u32 osdc_wrfifo1_empty          : 1;
+        mt_u32 osdc_wrfifo2_full           : 1;
+        mt_u32 osdc_wrfifo2_empty          : 1;
+        mt_u32 osdc_wrfifo3_full           : 1;
+        mt_u32 osdc_wrfifo3_empty          : 1;
+        mt_u32                             : 4;
+        mt_u32 osdc_wrddr_error0           : 1;
+        mt_u32 osdc_wrddr_error1           : 1;
+        mt_u32 osdc_wrddr_error2           : 1;
+        mt_u32 osdc_wrddr_error3           : 1;
+        mt_u32                             : 4;
+        mt_u32 osdc_latency_overflow_rd    : 1;
+        mt_u32 osdc_latency_overflow_wr    : 1;
+        mt_u32                             : 1;
+        mt_u32 osdc_free                   : 1;
+    } bitc;
+} reg_aria_disp_osdc_status_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_irq_en
+  */
+typedef union reg_aria_disp_osdc_irq_en
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_end_irq_en             : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_osdc_irq_en_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_irq
+  */
+typedef union reg_aria_disp_osdc_irq
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_end_irq                : 1;
+        mt_u32 osdc_bits_exceed_irq        : 1;
+        mt_u32 osdc_terminate_irq          : 1;
+        mt_u32                             : 1;
+        mt_u32 osdc_end0_irq               : 1;
+        mt_u32 osdc_end1_irq               : 1;
+        mt_u32 osdc_end2_irq               : 1;
+        mt_u32 osdc_end3_irq               : 1;
+        mt_u32                             : 24;
+    } bitc;
+} reg_aria_disp_osdc_irq_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_compress_bit_a
+  */
+typedef union reg_aria_disp_osdc_compress_bit_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_compress_bit_a         : 32;
+    } bitc;
+} reg_aria_disp_osdc_compress_bit_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_compress_bit_r
+  */
+typedef union reg_aria_disp_osdc_compress_bit_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_compress_bit_r         : 32;
+    } bitc;
+} reg_aria_disp_osdc_compress_bit_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_compress_bit_g
+  */
+typedef union reg_aria_disp_osdc_compress_bit_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_compress_bit_g         : 32;
+    } bitc;
+} reg_aria_disp_osdc_compress_bit_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_compress_bit_b
+  */
+typedef union reg_aria_disp_osdc_compress_bit_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_compress_bit_b         : 32;
+    } bitc;
+} reg_aria_disp_osdc_compress_bit_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_bits_max_a
+  */
+typedef union reg_aria_disp_osdc_bits_max_a
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_bits_max_a             : 32;
+    } bitc;
+} reg_aria_disp_osdc_bits_max_a_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_bits_max_r
+  */
+typedef union reg_aria_disp_osdc_bits_max_r
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_bits_max_r             : 32;
+    } bitc;
+} reg_aria_disp_osdc_bits_max_r_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_bits_max_g
+  */
+typedef union reg_aria_disp_osdc_bits_max_g
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_bits_max_g             : 32;
+    } bitc;
+} reg_aria_disp_osdc_bits_max_g_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_bits_max_b
+  */
+typedef union reg_aria_disp_osdc_bits_max_b
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_bits_max_b             : 32;
+    } bitc;
+} reg_aria_disp_osdc_bits_max_b_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_cmd_ack_latency_avg
+  */
+typedef union reg_aria_disp_osdc_cmd_ack_latency_avg
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_cmd_ack_latency_avg_rd : 16;
+        mt_u32 osdc_cmd_ack_latency_avg_wr : 16;
+    } bitc;
+} reg_aria_disp_osdc_cmd_ack_latency_avg_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_cmd_dat_latency_avg
+  */
+typedef union reg_aria_disp_osdc_cmd_dat_latency_avg
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_cmd_dat_latency_avg_rd : 16;
+        mt_u32 osdc_cmd_dat_latency_avg_wr : 16;
+    } bitc;
+} reg_aria_disp_osdc_cmd_dat_latency_avg_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_datlast_latency_avg
+  */
+typedef union reg_aria_disp_osdc_datlast_latency_avg
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_cmd_dat_latency_avg_rd : 16;
+        mt_u32 osdc_cmd_dat_latency_avg_wr : 16;
+    } bitc;
+} reg_aria_disp_osdc_datlast_latency_avg_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_cmd_ack_latency_max
+  */
+typedef union reg_aria_disp_osdc_cmd_ack_latency_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_cmd_ack_latency_max_rd : 16;
+        mt_u32 osdc_cmd_ack_latency_max_wr : 16;
+    } bitc;
+} reg_aria_disp_osdc_cmd_ack_latency_max_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_cmd_dat_latency_max
+  */
+typedef union reg_aria_disp_osdc_cmd_dat_latency_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_cmd_dat_latency_max_rd : 16;
+        mt_u32 osdc_cmd_dat_latency_max_wr : 16;
+    } bitc;
+} reg_aria_disp_osdc_cmd_dat_latency_max_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_datlast_latency_max
+  */
+typedef union reg_aria_disp_osdc_datlast_latency_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_datlast_latency_max_rd : 16;
+        mt_u32 osdc_datlast_latency_max_wr : 16;
+    } bitc;
+} reg_aria_disp_osdc_datlast_latency_max_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_redundant0
+  */
+typedef union reg_aria_disp_osdc_redundant0
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_redundant0             : 32;
+    } bitc;
+} reg_aria_disp_osdc_redundant0_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_redundant1
+  */
+typedef union reg_aria_disp_osdc_redundant1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_redundant1             : 32;
+    } bitc;
+} reg_aria_disp_osdc_redundant1_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_redundant2
+  */
+typedef union reg_aria_disp_osdc_redundant2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_redundant2             : 32;
+    } bitc;
+} reg_aria_disp_osdc_redundant2_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_redundant3
+  */
+typedef union reg_aria_disp_osdc_redundant3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_redundant3             : 32;
+    } bitc;
+} reg_aria_disp_osdc_redundant3_t;
+
+/*!
+  the union of register reg_aria_disp_osdc_redundant4
+  */
+typedef union reg_aria_disp_osdc_redundant4
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 osdc_redundant4             : 32;
+    } bitc;
+} reg_aria_disp_osdc_redundant4_t;
+
+/*!
+  the union of register reg_aria_disp_still_control
+  */
+typedef union reg_aria_disp_still_control
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 progressive_mode            : 1;
+        mt_u32                             : 3;
+        mt_u32 still_select                : 1;
+        mt_u32                             : 3;
+        mt_u32 still_format                : 3;
+        mt_u32                             : 1;
+        mt_u32 tile_mode                   : 1;
+        mt_u32 tile_burst_length_select    : 2;
+        mt_u32                             : 1;
+        mt_u32 still_cr_select             : 2;
+        mt_u32                             : 2;
+        mt_u32 still_cb_select             : 2;
+        mt_u32                             : 2;
+        mt_u32 still_y_select              : 2;
+        mt_u32                             : 2;
+        mt_u32 still_endian_change         : 3;
+        mt_u32 still_cr_first              : 1;
+    } bitc;
+} reg_aria_disp_still_control_t;
+
+/*!
+  the union of register reg_aria_disp_still_latch_command
+  */
+typedef union reg_aria_disp_still_latch_command
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 16;
+        mt_u32 still_latch_top             : 1;
+        mt_u32 still_latch_bot             : 1;
+        mt_u32 still_latch_3d_1st          : 1;
+        mt_u32 still_latch_3d_2nd          : 1;
+        mt_u32 still_latch_or_not          : 1;
+        mt_u32                             : 11;
+    } bitc;
+} reg_aria_disp_still_latch_command_t;
+
+/*!
+  the union of register reg_aria_disp_still_read_x_cfg
+  */
+typedef union reg_aria_disp_still_read_x_cfg
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_read_x_start          : 16;
+        mt_u32 still_read_x_end            : 16;
+    } bitc;
+} reg_aria_disp_still_read_x_cfg_t;
+
+/*!
+  the union of register reg_aria_disp_still_read_y_cfg
+  */
+typedef union reg_aria_disp_still_read_y_cfg
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_read_y_start          : 16;
+        mt_u32 still_read_y_end            : 16;
+    } bitc;
+} reg_aria_disp_still_read_y_cfg_t;
+
+/*!
+  the union of register reg_aria_disp_still_stride
+  */
+typedef union reg_aria_disp_still_stride
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_stride                : 12;
+        mt_u32                             : 20;
+    } bitc;
+} reg_aria_disp_still_stride_t;
+
+/*!
+  the union of register reg_aria_disp_still_luma_baseaddr
+  */
+typedef union reg_aria_disp_still_luma_baseaddr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_luma_baseaddr         : 28;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_still_luma_baseaddr_t;
+
+/*!
+  the union of register reg_aria_disp_still_cbcr_baseaddr
+  */
+typedef union reg_aria_disp_still_cbcr_baseaddr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_cbcr_baseaddr         : 28;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_still_cbcr_baseaddr_t;
+
+/*!
+  the union of register reg_aria_disp_still_fifo_threshold
+  */
+typedef union reg_aria_disp_still_fifo_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_fifo_low_threshold    : 7;
+        mt_u32                             : 9;
+        mt_u32 still_fifo_high_threshold   : 7;
+        mt_u32                             : 9;
+    } bitc;
+} reg_aria_disp_still_fifo_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_still_tile_parameter
+  */
+typedef union reg_aria_disp_still_tile_parameter
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 tile_col_size_mode          : 2;
+        mt_u32                             : 6;
+        mt_u32 still_field_picture         : 1;
+        mt_u32                             : 3;
+        mt_u32 still_hd_map_mode           : 1;
+        mt_u32                             : 3;
+        mt_u32 still_tile_config           : 2;
+        mt_u32                             : 14;
+    } bitc;
+} reg_aria_disp_still_tile_parameter_t;
+
+/*!
+  the union of register reg_aria_disp_still_tile_rowjump_00
+  */
+typedef union reg_aria_disp_still_tile_rowjump_00
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_tile_rowjump_00       : 32;
+    } bitc;
+} reg_aria_disp_still_tile_rowjump_00_t;
+
+/*!
+  the union of register reg_aria_disp_still_tile_rowjump_01
+  */
+typedef union reg_aria_disp_still_tile_rowjump_01
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_tile_rowjump_01       : 32;
+    } bitc;
+} reg_aria_disp_still_tile_rowjump_01_t;
+
+/*!
+  the union of register reg_aria_disp_still_tile_rowjump_10
+  */
+typedef union reg_aria_disp_still_tile_rowjump_10
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_tile_rowjump_10       : 32;
+    } bitc;
+} reg_aria_disp_still_tile_rowjump_10_t;
+
+/*!
+  the union of register reg_aria_disp_still_tile_rowjump_11
+  */
+typedef union reg_aria_disp_still_tile_rowjump_11
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_tile_rowjump_11       : 32;
+    } bitc;
+} reg_aria_disp_still_tile_rowjump_11_t;
+
+/*!
+  the union of register reg_aria_disp_still_status
+  */
+typedef union reg_aria_disp_still_status
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_axi_rready_error      : 1;
+        mt_u32                             : 3;
+        mt_u32 still_fifo_uv_full          : 1;
+        mt_u32 still_fifo_y_full           : 1;
+        mt_u32 still_fifo_uv_empty         : 1;
+        mt_u32 still_fifo_y_empty          : 1;
+        mt_u32                             : 24;
+    } bitc;
+} reg_aria_disp_still_status_t;
+
+/*!
+  the union of register reg_aria_disp_still_axi_monitor_ctrl
+  */
+typedef union reg_aria_disp_still_axi_monitor_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_axi_monitor_reload    : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_still_axi_monitor_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_still_cmd_ack_latency_monitor
+  */
+typedef union reg_aria_disp_still_cmd_ack_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cmd_ack_latency_max_value   : 16;
+        mt_u32 cmd_ack_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_still_cmd_ack_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_still_data_ack_latency_monitor
+  */
+typedef union reg_aria_disp_still_data_ack_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cmd_data_latency_max_value  : 16;
+        mt_u32 cmd_data_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_still_data_ack_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_still_data_last_latency_monitor
+  */
+typedef union reg_aria_disp_still_data_last_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 last_data_latency_max_value : 16;
+        mt_u32 last_data_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_still_data_last_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_ctrl
+  */
+typedef union reg_aria_disp_still_scale_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_h_filter_en           : 1;
+        mt_u32 still_v_filter_en           : 1;
+        mt_u32                             : 2;
+        mt_u32 downsample_en               : 1;
+        mt_u32                             : 3;
+        mt_u32 v_phase_type                : 1;
+        mt_u32                             : 3;
+        mt_u32 odd_start_line_number       : 3;
+        mt_u32                             : 1;
+        mt_u32 even_start_line_number      : 3;
+        mt_u32                             : 13;
+    } bitc;
+} reg_aria_disp_still_scale_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_h_ratio
+  */
+typedef union reg_aria_disp_still_scale_h_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 h_ratio_int                 : 4;
+        mt_u32                             : 4;
+        mt_u32 h_ratio_fra                 : 12;
+        mt_u32                             : 12;
+    } bitc;
+} reg_aria_disp_still_scale_h_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_v_ratio
+  */
+typedef union reg_aria_disp_still_scale_v_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 v_ratio_int                 : 4;
+        mt_u32                             : 4;
+        mt_u32 v_ratio_fra                 : 12;
+        mt_u32                             : 12;
+    } bitc;
+} reg_aria_disp_still_scale_v_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_h_start_fra
+  */
+typedef union reg_aria_disp_still_scale_h_start_fra
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_scale_h_start_fra     : 12;
+        mt_u32                             : 20;
+    } bitc;
+} reg_aria_disp_still_scale_h_start_fra_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_v_start_fra
+  */
+typedef union reg_aria_disp_still_scale_v_start_fra
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_scale_v_start_fra_odd : 12;
+        mt_u32                             : 4;
+        mt_u32 still_scale_v_start_fra_even: 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_still_scale_v_start_fra_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_hsize
+  */
+typedef union reg_aria_disp_still_scale_hsize
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 dst_hsize                   : 13;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_still_scale_hsize_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_vsize
+  */
+typedef union reg_aria_disp_still_scale_vsize
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 dst_vsize                   : 13;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_still_scale_vsize_t;
+
+/*!
+  the union of register reg_aria_disp_still_x_config
+  */
+typedef union reg_aria_disp_still_x_config
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 x_start                     : 13;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_still_x_config_t;
+
+/*!
+  the union of register reg_aria_disp_still_y_config
+  */
+typedef union reg_aria_disp_still_y_config
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 y_start                     : 12;
+        mt_u32                             : 20;
+    } bitc;
+} reg_aria_disp_still_y_config_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_y_coeff_address
+  */
+typedef union reg_aria_disp_still_scale_y_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_scale_y_coeff_address : 32;
+    } bitc;
+} reg_aria_disp_still_scale_y_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_uv_coeff_address
+  */
+typedef union reg_aria_disp_still_scale_uv_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_scale_uv_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_still_scale_uv_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_fifo1_threshold
+  */
+typedef union reg_aria_disp_still_scale_fifo1_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_scale_fifo1_threshold : 32;
+    } bitc;
+} reg_aria_disp_still_scale_fifo1_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_still_scale_fifo2_threshold
+  */
+typedef union reg_aria_disp_still_scale_fifo2_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_scale_fifo2_threshold : 32;
+    } bitc;
+} reg_aria_disp_still_scale_fifo2_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_still_scaler_status
+  */
+typedef union reg_aria_disp_still_scaler_status
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_saler_fifo_full       : 1;
+        mt_u32 still_scaler_fifo_empty     : 1;
+        mt_u32                             : 30;
+    } bitc;
+} reg_aria_disp_still_scaler_status_t;
+
+/*!
+  the union of register reg_aria_disp_still_csc_ctrl
+  */
+typedef union reg_aria_disp_still_csc_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 8;
+        mt_u32 still_bound_output_en       : 1;
+        mt_u32                             : 15;
+        mt_u32 still_bound_input_en        : 1;
+        mt_u32                             : 6;
+        mt_u32 still_csc_en                : 1;
+    } bitc;
+} reg_aria_disp_still_csc_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_still_csc_coeff1
+  */
+typedef union reg_aria_disp_still_csc_coeff1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_csc_a01               : 12;
+        mt_u32                             : 4;
+        mt_u32 still_csc_a00               : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_still_csc_coeff1_t;
+
+/*!
+  the union of register reg_aria_disp_still_csc_coeff2
+  */
+typedef union reg_aria_disp_still_csc_coeff2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_csc_a10               : 12;
+        mt_u32                             : 4;
+        mt_u32 still_csc_a02               : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_still_csc_coeff2_t;
+
+/*!
+  the union of register reg_aria_disp_still_csc_coeff3
+  */
+typedef union reg_aria_disp_still_csc_coeff3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_csc_a12               : 12;
+        mt_u32                             : 4;
+        mt_u32 still_csc_a11               : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_still_csc_coeff3_t;
+
+/*!
+  the union of register reg_aria_disp_still_csc_coeff4
+  */
+typedef union reg_aria_disp_still_csc_coeff4
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 still_csc_a21               : 12;
+        mt_u32                             : 4;
+        mt_u32 still_csc_a20               : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_still_csc_coeff4_t;
+
+/*!
+  the union of register reg_aria_disp_still_csc_coeff5
+  */
+typedef union reg_aria_disp_still_csc_coeff5
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 16;
+        mt_u32 still_csc_a22               : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_still_csc_coeff5_t;
+
+/*!
+  the union of register reg_aria_disp_pres_cmd
+  */
+typedef union reg_aria_disp_pres_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_hcoeff_load_en         : 1;
+        mt_u32 pres_vcoeff_load_en         : 1;
+        mt_u32                             : 2;
+        mt_u32 pres_input_interlace        : 1;
+        mt_u32 pres_output_interlace       : 1;
+        mt_u32 pres_2_picture              : 1;
+        mt_u32 pres_top_bot_inverse        : 1;
+        mt_u32 pres_endian_input           : 4;
+        mt_u32 pres_endian_output          : 4;
+        mt_u32 pres_wr_stride_sel          : 2;
+        mt_u32 pres_uv_change              : 1;
+        mt_u32                             : 6;
+        mt_u32 field0007                   : 1;
+        mt_u32 pres_hf_flag                : 1;
+        mt_u32 pres_vf_flag                : 1;
+        mt_u32 pres_ddr_rd_qos             : 3;
+        mt_u32 pres_enable                 : 1;
+    } bitc;
+} reg_aria_disp_pres_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_pres_id
+  */
+typedef union reg_aria_disp_pres_id
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_id                     : 32;
+    } bitc;
+} reg_aria_disp_pres_id_t;
+
+/*!
+  the union of register reg_aria_disp_pres_cmd2
+  */
+typedef union reg_aria_disp_pres_cmd2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_off_line               : 1;
+        mt_u32 pres_latch_or_not           : 1;
+        mt_u32 pres_swrst_h                : 1;
+        mt_u32 pres_terminate              : 1;
+        mt_u32 pres_work_top               : 1;
+        mt_u32 pres_work_bot               : 1;
+        mt_u32 pres_work_3d_1st            : 1;
+        mt_u32 pres_work_3d_2nd            : 1;
+        mt_u32 pres_latch_top              : 1;
+        mt_u32 pres_latch_bot              : 1;
+        mt_u32 pres_latch_3d_1st           : 1;
+        mt_u32 pres_latch_3d_2nd           : 1;
+        mt_u32 pres_axi_w_limit            : 4;
+        mt_u32 pres_axi_r_limit            : 4;
+        mt_u32 pres_monitor_reload         : 1;
+        mt_u32                             : 11;
+    } bitc;
+} reg_aria_disp_pres_cmd2_t;
+
+/*!
+  the union of register reg_aria_disp_pres_lum_raddr
+  */
+typedef union reg_aria_disp_pres_lum_raddr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_luma_rd_addr           : 32;
+    } bitc;
+} reg_aria_disp_pres_lum_raddr_t;
+
+/*!
+  the union of register reg_aria_disp_pres_lum_raddr_2
+  */
+typedef union reg_aria_disp_pres_lum_raddr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_luma_rd_addr_2         : 32;
+    } bitc;
+} reg_aria_disp_pres_lum_raddr_2_t;
+
+/*!
+  the union of register reg_aria_disp_pres_lum_waddr
+  */
+typedef union reg_aria_disp_pres_lum_waddr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_luma_wr_addr           : 32;
+    } bitc;
+} reg_aria_disp_pres_lum_waddr_t;
+
+/*!
+  the union of register reg_aria_disp_pres_lum_waddr_2
+  */
+typedef union reg_aria_disp_pres_lum_waddr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_luma_wr_addr_2         : 32;
+    } bitc;
+} reg_aria_disp_pres_lum_waddr_2_t;
+
+/*!
+  the union of register reg_aria_disp_pres_chm_raddr
+  */
+typedef union reg_aria_disp_pres_chm_raddr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_chroma_rd_addr         : 32;
+    } bitc;
+} reg_aria_disp_pres_chm_raddr_t;
+
+/*!
+  the union of register reg_aria_disp_pres_chm_raddr_2
+  */
+typedef union reg_aria_disp_pres_chm_raddr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_chroma_rd_addr_2       : 32;
+    } bitc;
+} reg_aria_disp_pres_chm_raddr_2_t;
+
+/*!
+  the union of register reg_aria_disp_pres_chm_waddr
+  */
+typedef union reg_aria_disp_pres_chm_waddr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_chroma_wr_addr         : 32;
+    } bitc;
+} reg_aria_disp_pres_chm_waddr_t;
+
+/*!
+  the union of register reg_aria_disp_pres_chm_waddr_2
+  */
+typedef union reg_aria_disp_pres_chm_waddr_2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_chroma_wr_addr_2       : 32;
+    } bitc;
+} reg_aria_disp_pres_chm_waddr_2_t;
+
+/*!
+  the union of register reg_aria_disp_pres_hcoeff_lum_addr
+  */
+typedef union reg_aria_disp_pres_hcoeff_lum_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_hcoeff_lum_addr        : 32;
+    } bitc;
+} reg_aria_disp_pres_hcoeff_lum_addr_t;
+
+/*!
+  the union of register reg_aria_disp_pres_vcoeff_lum_addr
+  */
+typedef union reg_aria_disp_pres_vcoeff_lum_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_vcoeff_lum_addr        : 32;
+    } bitc;
+} reg_aria_disp_pres_vcoeff_lum_addr_t;
+
+/*!
+  the union of register reg_aria_disp_pres_hcoeff_chm_addr
+  */
+typedef union reg_aria_disp_pres_hcoeff_chm_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_hcoeff_chm_addr        : 32;
+    } bitc;
+} reg_aria_disp_pres_hcoeff_chm_addr_t;
+
+/*!
+  the union of register reg_aria_disp_pres_vcoeff_chm_addr
+  */
+typedef union reg_aria_disp_pres_vcoeff_chm_addr
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_vcoeff_chm_addr        : 32;
+    } bitc;
+} reg_aria_disp_pres_vcoeff_chm_addr_t;
+
+/*!
+  the union of register reg_aria_disp_pres_ffr_threshold
+  */
+typedef union reg_aria_disp_pres_ffr_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_urgent_num_ddr_wr      : 5;
+        mt_u32                             : 3;
+        mt_u32 pres_weight_num_ddr_wr      : 5;
+        mt_u32                             : 3;
+        mt_u32 pres_urgent_num_ddr_rd      : 5;
+        mt_u32                             : 3;
+        mt_u32 pres_weight_num_ddr_rd      : 5;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_pres_ffr_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_pres_ffw_threshold
+  */
+typedef union reg_aria_disp_pres_ffw_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 field0000                   : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_pres_ffw_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_pres_ddr_wr_stride
+  */
+typedef union reg_aria_disp_pres_ddr_wr_stride
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_ddr_wr_line_stride     : 13;
+        mt_u32                             : 19;
+    } bitc;
+} reg_aria_disp_pres_ddr_wr_stride_t;
+
+/*!
+  the union of register reg_aria_disp_pres_irq_en
+  */
+typedef union reg_aria_disp_pres_irq_en
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_end_irq_en             : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_pres_irq_en_t;
+
+/*!
+  the union of register reg_aria_disp_pres_irq
+  */
+typedef union reg_aria_disp_pres_irq
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_end_irq                : 1;
+        mt_u32                             : 31;
+    } bitc;
+} reg_aria_disp_pres_irq_t;
+
+/*!
+  the union of register reg_aria_disp_pres_src_size
+  */
+typedef union reg_aria_disp_pres_src_size
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_src_vsize              : 12;
+        mt_u32                             : 4;
+        mt_u32 pres_src_hsize              : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_pres_src_size_t;
+
+/*!
+  the union of register reg_aria_disp_pres_dst_size
+  */
+typedef union reg_aria_disp_pres_dst_size
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_dst_vsize              : 12;
+        mt_u32                             : 4;
+        mt_u32 pres_dst_hsize              : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_pres_dst_size_t;
+
+/*!
+  the union of register reg_aria_disp_pres_hratio
+  */
+typedef union reg_aria_disp_pres_hratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_h_ratio_fra            : 12;
+        mt_u32 pres_h_ratio_int            : 4;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_pres_hratio_t;
+
+/*!
+  the union of register reg_aria_disp_pres_vratio
+  */
+typedef union reg_aria_disp_pres_vratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_v_ratio_fra            : 12;
+        mt_u32 pres_v_ratio_int            : 9;
+        mt_u32                             : 11;
+    } bitc;
+} reg_aria_disp_pres_vratio_t;
+
+/*!
+  the union of register reg_aria_disp_pres_hinit
+  */
+typedef union reg_aria_disp_pres_hinit
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_h_start_fra            : 12;
+        mt_u32                             : 20;
+    } bitc;
+} reg_aria_disp_pres_hinit_t;
+
+/*!
+  the union of register reg_aria_disp_pres_vinit
+  */
+typedef union reg_aria_disp_pres_vinit
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_v_start_fra            : 12;
+        mt_u32 pres_v_start_int            : 4;
+        mt_u32 pres_v_start_fra_bot        : 12;
+        mt_u32 pres_v_start_int_bot        : 4;
+    } bitc;
+} reg_aria_disp_pres_vinit_t;
+
+/*!
+  the union of register reg_aria_disp_pres_status
+  */
+typedef union reg_aria_disp_pres_status
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_end_irq                : 1;
+        mt_u32 pres_wrddr_error            : 1;
+        mt_u32 pres_wrfifo_full            : 1;
+        mt_u32 pres_wrfifo_empty           : 1;
+        mt_u32 pres_soft_rst_done          : 1;
+        mt_u32                             : 1;
+        mt_u32 pres_axi_w_done             : 1;
+        mt_u32 pres_axi_r_done             : 1;
+        mt_u32                             : 20;
+        mt_u32 pres_latency_overflow_rd    : 1;
+        mt_u32 pres_latency_overflow_wr    : 1;
+        mt_u32                             : 1;
+        mt_u32 pres_free                   : 1;
+    } bitc;
+} reg_aria_disp_pres_status_t;
+
+/*!
+  the union of register reg_aria_disp_pres_tile_rowjump_00
+  */
+typedef union reg_aria_disp_pres_tile_rowjump_00
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_tile_rowjump_00        : 32;
+    } bitc;
+} reg_aria_disp_pres_tile_rowjump_00_t;
+
+/*!
+  the union of register reg_aria_disp_pres_tile_rowjump_01
+  */
+typedef union reg_aria_disp_pres_tile_rowjump_01
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_tile_rowjump_01        : 32;
+    } bitc;
+} reg_aria_disp_pres_tile_rowjump_01_t;
+
+/*!
+  the union of register reg_aria_disp_pres_tile_rowjump_10
+  */
+typedef union reg_aria_disp_pres_tile_rowjump_10
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_tile_rowjump_10        : 32;
+    } bitc;
+} reg_aria_disp_pres_tile_rowjump_10_t;
+
+/*!
+  the union of register reg_aria_disp_pres_tile_rowjump_11
+  */
+typedef union reg_aria_disp_pres_tile_rowjump_11
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_tile_rowjump_11        : 32;
+    } bitc;
+} reg_aria_disp_pres_tile_rowjump_11_t;
+
+/*!
+  the union of register reg_aria_disp_pres_tile_para
+  */
+typedef union reg_aria_disp_pres_tile_para
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_col_size_mode          : 2;
+        mt_u32                             : 6;
+        mt_u32 pres_field_picture          : 1;
+        mt_u32                             : 3;
+        mt_u32 pres_hd_map_mode            : 1;
+        mt_u32                             : 3;
+        mt_u32 pres_tile_config            : 2;
+        mt_u32                             : 14;
+    } bitc;
+} reg_aria_disp_pres_tile_para_t;
+
+/*!
+  the union of register reg_aria_disp_pres_cmd_ack_latency_avg
+  */
+typedef union reg_aria_disp_pres_cmd_ack_latency_avg
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_cmd_ack_latency_avg_rd : 16;
+        mt_u32 pres_cmd_ack_latency_avg_wr : 16;
+    } bitc;
+} reg_aria_disp_pres_cmd_ack_latency_avg_t;
+
+/*!
+  the union of register reg_aria_disp_pres_cmd_dat_latency_avg
+  */
+typedef union reg_aria_disp_pres_cmd_dat_latency_avg
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_cmd_dat_latency_avg_rd : 16;
+        mt_u32 pres_cmd_dat_latency_avg_wr : 16;
+    } bitc;
+} reg_aria_disp_pres_cmd_dat_latency_avg_t;
+
+/*!
+  the union of register reg_aria_disp_pres_datlast_latency_avg
+  */
+typedef union reg_aria_disp_pres_datlast_latency_avg
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_datlast_latency_avg_rd : 16;
+        mt_u32 pres_datlast_latency_avg_wr : 16;
+    } bitc;
+} reg_aria_disp_pres_datlast_latency_avg_t;
+
+/*!
+  the union of register reg_aria_disp_pres_cmd_ack_latency_max
+  */
+typedef union reg_aria_disp_pres_cmd_ack_latency_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_cmd_ack_latency_max_rd : 16;
+        mt_u32 pres_cmd_ack_latency_max_wr : 16;
+    } bitc;
+} reg_aria_disp_pres_cmd_ack_latency_max_t;
+
+/*!
+  the union of register reg_aria_disp_pres_cmd_dat_latency_max
+  */
+typedef union reg_aria_disp_pres_cmd_dat_latency_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_cmd_dat_latency_max_rd : 16;
+        mt_u32 pres_cmd_dat_latency_max_wr : 16;
+    } bitc;
+} reg_aria_disp_pres_cmd_dat_latency_max_t;
+
+/*!
+  the union of register reg_aria_disp_pres_datlast_latency_max
+  */
+typedef union reg_aria_disp_pres_datlast_latency_max
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_datlast_latency_max_rd : 16;
+        mt_u32 pres_datlast_latency_max_wr : 16;
+    } bitc;
+} reg_aria_disp_pres_datlast_latency_max_t;
+
+/*!
+  the union of register reg_aria_disp_pres_status1
+  */
+typedef union reg_aria_disp_pres_status1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_vf_line_cnt            : 12;
+        mt_u32 pres_hf_line_cnt            : 12;
+        mt_u32                             : 8;
+    } bitc;
+} reg_aria_disp_pres_status1_t;
+
+/*!
+  the union of register reg_aria_disp_pres_status2
+  */
+typedef union reg_aria_disp_pres_status2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_ffwr_lne_cnt           : 12;
+        mt_u32 pres_ffwr_pxl_cnt           : 8;
+        mt_u32                             : 12;
+    } bitc;
+} reg_aria_disp_pres_status2_t;
+
+/*!
+  the union of register reg_aria_disp_pres_status3
+  */
+typedef union reg_aria_disp_pres_status3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 pres_ffrd_data_cnt          : 6;
+        mt_u32 pres_rdreq_stt              : 10;
+        mt_u32 pres_flt_stt                : 5;
+        mt_u32                             : 11;
+    } bitc;
+} reg_aria_disp_pres_status3_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_ctrl
+  */
+typedef union reg_aria_disp_gra_scale0_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 h_filter_enable             : 1;
+        mt_u32 v_filter_enable             : 1;
+        mt_u32 h_phase                     : 1;
+        mt_u32 v_phase                     : 1;
+        mt_u32 hscaler_alpha_bypass        : 1;
+        mt_u32                             : 3;
+        mt_u32 hscaler_tapnum              : 3;
+        mt_u32                             : 1;
+        mt_u32 odd_startline               : 3;
+        mt_u32                             : 1;
+        mt_u32 even_startline              : 3;
+        mt_u32                             : 1;
+        mt_u32 v_scale_border_disable      : 2;
+        mt_u32 h_scale_border_disable      : 1;
+        mt_u32                             : 1;
+        mt_u32 h_scaler_startnum           : 3;
+        mt_u32                             : 5;
+    } bitc;
+} reg_aria_disp_gra_scale0_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_h_ratio
+  */
+typedef union reg_aria_disp_gra_scale0_h_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 h_ratio_int                 : 4;
+        mt_u32                             : 4;
+        mt_u32 h_ratio_fra                 : 12;
+        mt_u32                             : 12;
+    } bitc;
+} reg_aria_disp_gra_scale0_h_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_v_ratio
+  */
+typedef union reg_aria_disp_gra_scale0_v_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 v_ratio_int                 : 4;
+        mt_u32                             : 4;
+        mt_u32 v_ratio_fra                 : 12;
+        mt_u32                             : 12;
+    } bitc;
+} reg_aria_disp_gra_scale0_v_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_h_start_fra
+  */
+typedef union reg_aria_disp_gra_scale0_h_start_fra
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale0_h_start_fra      : 12;
+        mt_u32                             : 20;
+    } bitc;
+} reg_aria_disp_gra_scale0_h_start_fra_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_v_start_fra
+  */
+typedef union reg_aria_disp_gra_scale0_v_start_fra
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale0_v_start_fra_odd  : 12;
+        mt_u32                             : 4;
+        mt_u32 gra_scale0_v_start_fra_even : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_gra_scale0_v_start_fra_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_postprocess
+  */
+typedef union reg_aria_disp_gra_scale0_postprocess
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 shoot_chg                   : 8;
+        mt_u32 hp_enha                     : 8;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_gra_scale0_postprocess_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_hscaler_alpha_coeff_address
+  */
+typedef union reg_aria_disp_gra_scale0_hscaler_alpha_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale0_hscaler_alpha_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_gra_scale0_hscaler_alpha_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_hscaler_luma_coeff_address
+  */
+typedef union reg_aria_disp_gra_scale0_hscaler_luma_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale0_hscaler_luma_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_gra_scale0_hscaler_luma_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_hscaler_cbcr_coeff_address
+  */
+typedef union reg_aria_disp_gra_scale0_hscaler_cbcr_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale0_hscaler_cbcr_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_gra_scale0_hscaler_cbcr_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_vscaler_luma_coeff_address
+  */
+typedef union reg_aria_disp_gra_scale0_vscaler_luma_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale0_vscaler_luma_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_gra_scale0_vscaler_luma_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale0_output_size
+  */
+typedef union reg_aria_disp_gra_scale0_output_size
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale0_height_out       : 12;
+        mt_u32                             : 4;
+        mt_u32 gra_scale0_width_out        : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_gra_scale0_output_size_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_ctrl
+  */
+typedef union reg_aria_disp_gra_scale1_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 h_filter_enable             : 1;
+        mt_u32 v_filter_enable             : 1;
+        mt_u32 h_phase                     : 1;
+        mt_u32 v_phase                     : 1;
+        mt_u32 hscaler_alpha_bypass        : 1;
+        mt_u32                             : 3;
+        mt_u32 hscaler_tapnum              : 3;
+        mt_u32                             : 1;
+        mt_u32 odd_startline               : 3;
+        mt_u32                             : 1;
+        mt_u32 even_startline              : 3;
+        mt_u32                             : 1;
+        mt_u32 v_scale_border_disable      : 2;
+        mt_u32 h_scale_border_disable      : 1;
+        mt_u32                             : 1;
+        mt_u32 h_scaler_startnum           : 3;
+        mt_u32                             : 1;
+        mt_u32 downsample_enable           : 1;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_gra_scale1_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_h_ratio
+  */
+typedef union reg_aria_disp_gra_scale1_h_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 h_ratio_int                 : 4;
+        mt_u32                             : 4;
+        mt_u32 h_ratio_fra                 : 12;
+        mt_u32                             : 12;
+    } bitc;
+} reg_aria_disp_gra_scale1_h_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_v_ratio
+  */
+typedef union reg_aria_disp_gra_scale1_v_ratio
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 v_ratio_int                 : 4;
+        mt_u32                             : 4;
+        mt_u32 v_ratio_fra                 : 12;
+        mt_u32                             : 12;
+    } bitc;
+} reg_aria_disp_gra_scale1_v_ratio_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_h_start_fra
+  */
+typedef union reg_aria_disp_gra_scale1_h_start_fra
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale1_h_start_fra      : 12;
+        mt_u32                             : 20;
+    } bitc;
+} reg_aria_disp_gra_scale1_h_start_fra_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_v_start_fra
+  */
+typedef union reg_aria_disp_gra_scale1_v_start_fra
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale1_v_start_fra_odd  : 12;
+        mt_u32                             : 4;
+        mt_u32 gra_scale1_v_start_fra_even : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_gra_scale1_v_start_fra_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_postprocess
+  */
+typedef union reg_aria_disp_gra_scale1_postprocess
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 shoot_chg                   : 8;
+        mt_u32 hp_enha                     : 8;
+        mt_u32                             : 16;
+    } bitc;
+} reg_aria_disp_gra_scale1_postprocess_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_hscaler_alpha_coeff_address
+  */
+typedef union reg_aria_disp_gra_scale1_hscaler_alpha_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale1_hscaler_alpha_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_gra_scale1_hscaler_alpha_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_hscaler_luma_coeff_address
+  */
+typedef union reg_aria_disp_gra_scale1_hscaler_luma_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale1_hscaler_luma_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_gra_scale1_hscaler_luma_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_hscaler_cbcr_coeff_address
+  */
+typedef union reg_aria_disp_gra_scale1_hscaler_cbcr_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale1_hscaler_cbcr_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_gra_scale1_hscaler_cbcr_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale1_vscaler_luma_coeff_address
+  */
+typedef union reg_aria_disp_gra_scale1_vscaler_luma_coeff_address
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale1_vscaler_luma_coeff_address: 32;
+    } bitc;
+} reg_aria_disp_gra_scale1_vscaler_luma_coeff_address_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scale_fifo_threshold
+  */
+typedef union reg_aria_disp_gra_scale_fifo_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scale0_fifo_threshold   : 10;
+        mt_u32                             : 6;
+        mt_u32 gra_scale1_fifo_threshold   : 10;
+        mt_u32                             : 6;
+    } bitc;
+} reg_aria_disp_gra_scale_fifo_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_gra_scaler_status
+  */
+typedef union reg_aria_disp_gra_scaler_status
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 gra_scaler1_fifo_full       : 1;
+        mt_u32 gra_scaler1_fifo_empty      : 1;
+        mt_u32 gra_scaler0_fifo_full       : 1;
+        mt_u32 gra_scaler0_fifo_empty      : 1;
+        mt_u32                             : 28;
+    } bitc;
+} reg_aria_disp_gra_scaler_status_t;
+
+/*!
+  the union of register reg_aria_disp_gra_saler_latch_cmd
+  */
+typedef union reg_aria_disp_gra_saler_latch_cmd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 16;
+        mt_u32 gra_latch_top               : 1;
+        mt_u32 gra_latch_bot               : 1;
+        mt_u32 gra_latch_3d_1st            : 1;
+        mt_u32 gra_latch_3d_2nd            : 1;
+        mt_u32 gra_latch_or_not            : 1;
+        mt_u32                             : 11;
+    } bitc;
+} reg_aria_disp_gra_saler_latch_cmd_t;
+
+/*!
+  the union of register reg_aria_disp_sd_wr_ctrl
+  */
+typedef union reg_aria_disp_sd_wr_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cfg_sd_startlines           : 9;
+        mt_u32                             : 3;
+        mt_u32 sd_pal_format               : 1;
+        mt_u32                             : 3;
+        mt_u32 cfg_sd_onefield_mode        : 1;
+        mt_u32                             : 3;
+        mt_u32 cfg_rate_conversion_enable  : 1;
+        mt_u32                             : 3;
+        mt_u32 sd_buffer_number            : 2;
+        mt_u32                             : 2;
+        mt_u32 sd_wr_back_forbidden        : 1;
+        mt_u32 sd_wrback_yuv444            : 1;
+        mt_u32                             : 1;
+        mt_u32 sdbuf_softctrl_en           : 1;
+    } bitc;
+} reg_aria_disp_sd_wr_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_sd_latch_command
+  */
+typedef union reg_aria_disp_sd_latch_command
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 16;
+        mt_u32 sd_latch_top                : 1;
+        mt_u32 sd_latch_bot                : 1;
+        mt_u32 sd_latch_3d_1st             : 1;
+        mt_u32 sd_latch_3d_2nd             : 1;
+        mt_u32 sd_latch_or_not             : 1;
+        mt_u32                             : 11;
+    } bitc;
+} reg_aria_disp_sd_latch_command_t;
+
+/*!
+  the union of register reg_aria_disp_sd_wrback_addr_odd
+  */
+typedef union reg_aria_disp_sd_wrback_addr_odd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_wrback_addr_odd          : 29;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_sd_wrback_addr_odd_t;
+
+/*!
+  the union of register reg_aria_disp_sd_wrback_addr_even
+  */
+typedef union reg_aria_disp_sd_wrback_addr_even
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_wrback_addr_odd          : 29;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_sd_wrback_addr_even_t;
+
+/*!
+  the union of register reg_aria_disp_sd_rdback_addr_odd
+  */
+typedef union reg_aria_disp_sd_rdback_addr_odd
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_rdback_addr_odd          : 29;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_sd_rdback_addr_odd_t;
+
+/*!
+  the union of register reg_aria_disp_sd_rdback_addr_even
+  */
+typedef union reg_aria_disp_sd_rdback_addr_even
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_rdback_addr_even         : 29;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_sd_rdback_addr_even_t;
+
+/*!
+  the union of register reg_aria_disp_sd_wrback_fifo_threshold
+  */
+typedef union reg_aria_disp_sd_wrback_fifo_threshold
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_wrback_fifo_threshold    : 8;
+        mt_u32                             : 24;
+    } bitc;
+} reg_aria_disp_sd_wrback_fifo_threshold_t;
+
+/*!
+  the union of register reg_aria_disp_sd_blankscreen_mode
+  */
+typedef union reg_aria_disp_sd_blankscreen_mode
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_blankscreen_cr_color     : 8;
+        mt_u32 sd_blankscreen_cb_color     : 8;
+        mt_u32 sd_blankscreen_luma         : 8;
+        mt_u32                             : 7;
+        mt_u32 cfg_sd_blankscreen_mode     : 1;
+    } bitc;
+} reg_aria_disp_sd_blankscreen_mode_t;
+
+/*!
+  the union of register reg_aria_disp_sd_status
+  */
+typedef union reg_aria_disp_sd_status
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sdrd_fifo_empty             : 1;
+        mt_u32 sdwr_fifo_full              : 1;
+        mt_u32                             : 2;
+        mt_u32 sdbuf_empty_flag            : 1;
+        mt_u32 sdbuf_full_flag             : 1;
+        mt_u32                             : 2;
+        mt_u32 sdbuf_rdptr                 : 2;
+        mt_u32                             : 2;
+        mt_u32 sdbuf_wrptr                 : 2;
+        mt_u32                             : 2;
+        mt_u32 disable_sdenv               : 1;
+        mt_u32                             : 13;
+        mt_u32 sdwr_axi_bresp_error        : 1;
+        mt_u32 sdrd_axi_rready_error       : 1;
+    } bitc;
+} reg_aria_disp_sd_status_t;
+
+/*!
+  the union of register reg_aria_disp_sd_axi_monitor_ctrl
+  */
+typedef union reg_aria_disp_sd_axi_monitor_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_rd_axi_monitor_restart   : 1;
+        mt_u32 sd_wr_axi_monitor_restart   : 1;
+        mt_u32                             : 30;
+    } bitc;
+} reg_aria_disp_sd_axi_monitor_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_sdrd_cmd_ack_latency_monitor
+  */
+typedef union reg_aria_disp_sdrd_cmd_ack_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cmd_ack_latency_max_value   : 16;
+        mt_u32 cmd_ack_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_sdrd_cmd_ack_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_sdrd_data_ack_latency_monitor
+  */
+typedef union reg_aria_disp_sdrd_data_ack_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cmd_data_latency_max_value  : 16;
+        mt_u32 cmd_data_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_sdrd_data_ack_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_sdrd_data_last_latency_monitor
+  */
+typedef union reg_aria_disp_sdrd_data_last_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 last_data_latency_max_value : 16;
+        mt_u32 last_data_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_sdrd_data_last_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_sdwr_cmd_ack_latency_monitor
+  */
+typedef union reg_aria_disp_sdwr_cmd_ack_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cmd_ack_latency_max_value   : 16;
+        mt_u32 cmd_ack_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_sdwr_cmd_ack_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_sdwr_data_ack_latency_monitor
+  */
+typedef union reg_aria_disp_sdwr_data_ack_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 cmd_data_latency_max_value  : 16;
+        mt_u32 cmd_data_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_sdwr_data_ack_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_sdwr_data_bready_latency_monitor
+  */
+typedef union reg_aria_disp_sdwr_data_bready_latency_monitor
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 data_bready_latency_max_value: 16;
+        mt_u32 data_bready_latency_average_value: 16;
+    } bitc;
+} reg_aria_disp_sdwr_data_bready_latency_monitor_t;
+
+/*!
+  the union of register reg_aria_disp_sd_video_hue_adjust
+  */
+typedef union reg_aria_disp_sd_video_hue_adjust
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_sina                     : 11;
+        mt_u32                             : 5;
+        mt_u32 sd_cosa                     : 11;
+        mt_u32                             : 4;
+        mt_u32 sd_hue_adjust_en            : 1;
+    } bitc;
+} reg_aria_disp_sd_video_hue_adjust_t;
+
+/*!
+  the union of register reg_aria_disp_sd_video_effect_coef
+  */
+typedef union reg_aria_disp_sd_video_effect_coef
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_bright_coeff             : 8;
+        mt_u32 sd_contrast_coeff           : 8;
+        mt_u32 sd_saturation_coeff         : 8;
+        mt_u32                             : 8;
+    } bitc;
+} reg_aria_disp_sd_video_effect_coef_t;
+
+/*!
+  the union of register reg_aria_disp_sd_csc_ctrl
+  */
+typedef union reg_aria_disp_sd_csc_ctrl
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 8;
+        mt_u32 sd_bound_output_en          : 1;
+        mt_u32                             : 15;
+        mt_u32 sd_bound_input_en           : 1;
+        mt_u32                             : 6;
+        mt_u32 sd_csc_en                   : 1;
+    } bitc;
+} reg_aria_disp_sd_csc_ctrl_t;
+
+/*!
+  the union of register reg_aria_disp_sd_csc_coeff1
+  */
+typedef union reg_aria_disp_sd_csc_coeff1
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_csc_a01                  : 12;
+        mt_u32                             : 4;
+        mt_u32 sd_csc_a00                  : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_sd_csc_coeff1_t;
+
+/*!
+  the union of register reg_aria_disp_sd_csc_coeff2
+  */
+typedef union reg_aria_disp_sd_csc_coeff2
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_csc_a10                  : 12;
+        mt_u32                             : 4;
+        mt_u32 sd_csc_a02                  : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_sd_csc_coeff2_t;
+
+/*!
+  the union of register reg_aria_disp_sd_csc_coeff3
+  */
+typedef union reg_aria_disp_sd_csc_coeff3
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_csc_a12                  : 12;
+        mt_u32                             : 4;
+        mt_u32 sd_csc_a11                  : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_sd_csc_coeff3_t;
+
+/*!
+  the union of register reg_aria_disp_sd_csc_coeff4
+  */
+typedef union reg_aria_disp_sd_csc_coeff4
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_csc_a21                  : 12;
+        mt_u32                             : 4;
+        mt_u32 sd_csc_a20                  : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_sd_csc_coeff4_t;
+
+/*!
+  the union of register reg_aria_disp_sd_csc_coeff5
+  */
+typedef union reg_aria_disp_sd_csc_coeff5
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32                             : 16;
+        mt_u32 sd_csc_a22                  : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_sd_csc_coeff5_t;
+
+/*!
+  the union of register reg_aria_disp_hd_screen_out_size
+  */
+typedef union reg_aria_disp_hd_screen_out_size
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 hd_screen_height            : 12;
+        mt_u32                             : 4;
+        mt_u32 hd_screen_width             : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_hd_screen_out_size_t;
+
+/*!
+  the union of register reg_aria_disp_sd_screen_out_size
+  */
+typedef union reg_aria_disp_sd_screen_out_size
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 sd_screen_height            : 12;
+        mt_u32                             : 4;
+        mt_u32 sd_screen_width             : 13;
+        mt_u32                             : 3;
+    } bitc;
+} reg_aria_disp_sd_screen_out_size_t;
+
+/*!
+  the union of register reg_aria_disp_coeff_table_sel
+  */
+typedef union reg_aria_disp_coeff_table_sel
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 video_dce_map_load_en       : 1;
+        mt_u32                             : 3;
+        mt_u32 gra1_alpha_hf_coeff_load_en : 1;
+        mt_u32 gra1_chroma_hf_coeff_load_en: 1;
+        mt_u32 gra1_luma_hf_coeff_load_en  : 1;
+        mt_u32 gra1_luma_vf_coeff_load_en  : 1;
+        mt_u32 gra0_alpha_hf_coeff_load_en : 1;
+        mt_u32 gra0_chroma_hf_coeff_load_en: 1;
+        mt_u32 gra0_luma_hf_coeff_load_en  : 1;
+        mt_u32 gra0_luma_vf_coeff_load_en  : 1;
+        mt_u32 stillscalar_chroma_coeff_load_en: 1;
+        mt_u32 stillscalar_luma_coeff_load_en: 1;
+        mt_u32 osd_hf_coeff_load_en        : 1;
+        mt_u32 osd_vf_coeff_load_en        : 1;
+        mt_u32 sd_chroma_hf_coeff_load_en  : 1;
+        mt_u32 sd_luma_hf_coeff_load_en    : 1;
+        mt_u32 sd_luma_vf_coeff_load_en    : 1;
+        mt_u32 hd_chroma_hf_coeff_load_en  : 1;
+        mt_u32 hd_luma_hf_coeff_load_en    : 1;
+        mt_u32 hd_luma_vf_coeff_load_en    : 1;
+        mt_u32                             : 10;
+    } bitc;
+} reg_aria_disp_coeff_table_sel_t;
+
+/*!
+  the union of register reg_aria_disp_display_ctrl_limit
+  */
+typedef union reg_aria_disp_display_ctrl_limit
+{
+    mt_u32 all;
+    struct
+    {
+        mt_u32 wseccpu                     : 12;
+        mt_u32                             : 4;
+        mt_u32 rseccpu                     : 12;
+        mt_u32                             : 4;
+    } bitc;
+} reg_aria_disp_display_ctrl_limit_t;
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*!
+  register REGARIA_DISP_video_ctrl_1 (read/write)
+  */
+void reg_aria_disp_set_video_ctrl_1(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_ctrl_1(void);
+void reg_aria_disp_set_video_ctrl_1_video_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_video_sel(void);
+void reg_aria_disp_set_video_ctrl_1_sd_hf_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_sd_hf_sel(void);
+void reg_aria_disp_set_video_ctrl_1_sd_vf_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_sd_vf_sel(void);
+void reg_aria_disp_set_video_ctrl_1_hd_hf_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_hd_hf_sel(void);
+void reg_aria_disp_set_video_ctrl_1_hd_vf_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_hd_vf_sel(void);
+void reg_aria_disp_set_video_ctrl_1_sd_video_cut_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_sd_video_cut_en(void);
+void reg_aria_disp_set_video_ctrl_1_hd_video_cut_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_hd_video_cut_en(void);
+void reg_aria_disp_set_video_ctrl_1_reg_latch_top_or_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_reg_latch_top_or_bot(void);
+void reg_aria_disp_set_video_ctrl_1_reg_latch_or_not(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_reg_latch_or_not(void);
+void reg_aria_disp_set_video_ctrl_1_only_use_first_reg_set(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_1_only_use_first_reg_set(void);
+
+/*!
+  register REGARIA_DISP_video_ctrl_2 (read/write)
+  */
+void reg_aria_disp_set_video_ctrl_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_ctrl_2(void);
+void reg_aria_disp_set_video_ctrl_2_small_picture_upscaling_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_2_small_picture_upscaling_en(void);
+void reg_aria_disp_set_video_ctrl_2_luma_post_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_2_luma_post_en(void);
+void reg_aria_disp_set_video_ctrl_2_cbcr_swap(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_2_cbcr_swap(void);
+void reg_aria_disp_set_video_ctrl_2_vid_rd_4k_process_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_2_vid_rd_4k_process_en(void);
+void reg_aria_disp_set_video_ctrl_2_video_plane_alpha(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_2_video_plane_alpha(void);
+void reg_aria_disp_set_video_ctrl_2_video_display_field(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_ctrl_2_video_display_field(void);
+
+/*!
+  register REGARIA_DISP_video_input_frame_size (read/write)
+  */
+void reg_aria_disp_set_video_input_frame_size(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_input_frame_size(void);
+void reg_aria_disp_set_video_input_frame_size_video_input_frame_height(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_input_frame_size_video_input_frame_height(void);
+void reg_aria_disp_set_video_input_frame_size_video_input_frame_width(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_input_frame_size_video_input_frame_width(void);
+
+/*!
+  register REGARIA_DISP_video_crop_en (read/write)
+  */
+void reg_aria_disp_set_video_crop_en(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_crop_en(void);
+void reg_aria_disp_set_video_crop_en_video_crop_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_crop_en_video_crop_en(void);
+
+/*!
+  register REGARIA_DISP_video_crop_pixel (read/write)
+  */
+void reg_aria_disp_set_video_crop_pixel(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_crop_pixel(void);
+void reg_aria_disp_set_video_crop_pixel_crop_end_pixel(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_crop_pixel_crop_end_pixel(void);
+void reg_aria_disp_set_video_crop_pixel_crop_start_pixel(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_crop_pixel_crop_start_pixel(void);
+
+/*!
+  register REGARIA_DISP_video_crop_line (read/write)
+  */
+void reg_aria_disp_set_video_crop_line(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_crop_line(void);
+void reg_aria_disp_set_video_crop_line_crop_end_line(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_crop_line_crop_end_line(void);
+void reg_aria_disp_set_video_crop_line_crop_start_line(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_crop_line_crop_start_line(void);
+
+/*!
+  register REGARIA_DISP_video_pix_align_ctrl (read/write)
+  */
+void reg_aria_disp_set_video_pix_align_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_pix_align_ctrl(void);
+void reg_aria_disp_set_video_pix_align_ctrl_line_end_cut(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_pix_align_ctrl_line_end_cut(void);
+void reg_aria_disp_set_video_pix_align_ctrl_line_pre_cut(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_pix_align_ctrl_line_pre_cut(void);
+
+/*!
+  register REGARIA_DISP_video_data_endian_ctrl (read/write)
+  */
+void reg_aria_disp_set_video_data_endian_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_data_endian_ctrl(void);
+void reg_aria_disp_set_video_data_endian_ctrl_video_data_endian_ctrl_1(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_data_endian_ctrl_video_data_endian_ctrl_1(void);
+void reg_aria_disp_set_video_data_endian_ctrl_video_data_endian_ctrl_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_data_endian_ctrl_video_data_endian_ctrl_2(void);
+
+/*!
+  register REGARIA_DISP_video_burst_info_1 (read/write)
+  */
+void reg_aria_disp_set_video_burst_info_1(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_burst_info_1(void);
+void reg_aria_disp_set_video_burst_info_1_output_bytes_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_burst_info_1_output_bytes_sel(void);
+void reg_aria_disp_set_video_burst_info_1_burst_length_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_burst_info_1_burst_length_sel(void);
+void reg_aria_disp_set_video_burst_info_1_video_linear_addr_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_burst_info_1_video_linear_addr_en(void);
+void reg_aria_disp_set_video_burst_info_1_vid_rd_stride(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_burst_info_1_vid_rd_stride(void);
+
+/*!
+  register REGARIA_DISP_video_burst_info_2 (read/write)
+  */
+void reg_aria_disp_set_video_burst_info_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_burst_info_2(void);
+void reg_aria_disp_set_video_burst_info_2_line_rd_cnt_max_axi(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_burst_info_2_line_rd_cnt_max_axi(void);
+void reg_aria_disp_set_video_burst_info_2_last_burst_length(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_burst_info_2_last_burst_length(void);
+void reg_aria_disp_set_video_burst_info_2_first_burst_length(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_burst_info_2_first_burst_length(void);
+void reg_aria_disp_set_video_burst_info_2_burst_info_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_burst_info_2_burst_info_en(void);
+
+/*!
+  register REGARIA_DISP_video_line_rd_cnt_max (read/write)
+  */
+void reg_aria_disp_set_video_line_rd_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_line_rd_cnt_max(void);
+void reg_aria_disp_set_video_line_rd_cnt_max_line_rd_cnt_max(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_line_rd_cnt_max_line_rd_cnt_max(void);
+
+/*!
+  register REGARIA_DISP_video_half_scale_ctrl (read/write)
+  */
+void reg_aria_disp_set_video_half_scale_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_half_scale_ctrl(void);
+void reg_aria_disp_set_video_half_scale_ctrl_horizontal_half_scale_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_half_scale_ctrl_horizontal_half_scale_en(void);
+void reg_aria_disp_set_video_half_scale_ctrl_vertical_half_scale_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_half_scale_ctrl_vertical_half_scale_en(void);
+
+/*!
+  register REGARIA_DISP_video_hf_phase (read/write)
+  */
+void reg_aria_disp_set_video_hf_phase(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_hf_phase(void);
+void reg_aria_disp_set_video_hf_phase_sd_hf_init_phase(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_hf_phase_sd_hf_init_phase(void);
+void reg_aria_disp_set_video_hf_phase_hd_hf_tapnum(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_hf_phase_hd_hf_tapnum(void);
+void reg_aria_disp_set_video_hf_phase_hd_hf_init_phase(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_hf_phase_hd_hf_init_phase(void);
+
+/*!
+  register REGARIA_DISP_video_scale_init_phase_offset (read/write)
+  */
+void reg_aria_disp_set_video_scale_init_phase_offset(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_scale_init_phase_offset(void);
+void reg_aria_disp_set_video_scale_init_phase_offset_init_phase_offset(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_init_phase_offset_init_phase_offset(void);
+
+/*!
+  register REGARIA_DISP_video_scale_hd_ratio (read/write)
+  */
+void reg_aria_disp_set_video_scale_hd_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_scale_hd_ratio(void);
+void reg_aria_disp_set_video_scale_hd_ratio_vratio_fra_hd(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_hd_ratio_vratio_fra_hd(void);
+void reg_aria_disp_set_video_scale_hd_ratio_vratio_int_hd(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scale_hd_ratio_vratio_int_hd(void);
+void reg_aria_disp_set_video_scale_hd_ratio_hratio_fra_hd(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_hd_ratio_hratio_fra_hd(void);
+void reg_aria_disp_set_video_scale_hd_ratio_hratio_int_hd(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scale_hd_ratio_hratio_int_hd(void);
+
+/*!
+  register REGARIA_DISP_video_scale_hd_init_ratio (read/write)
+  */
+void reg_aria_disp_set_video_scale_hd_init_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_scale_hd_init_ratio(void);
+void reg_aria_disp_set_video_scale_hd_init_ratio_bot_fra_init_hd(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_hd_init_ratio_bot_fra_init_hd(void);
+void reg_aria_disp_set_video_scale_hd_init_ratio_bot_int_init_hd(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scale_hd_init_ratio_bot_int_init_hd(void);
+void reg_aria_disp_set_video_scale_hd_init_ratio_top_fra_init_hd(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_hd_init_ratio_top_fra_init_hd(void);
+void reg_aria_disp_set_video_scale_hd_init_ratio_top_int_init_hd(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scale_hd_init_ratio_top_int_init_hd(void);
+
+/*!
+  register REGARIA_DISP_video_hd_window_x (read/write)
+  */
+void reg_aria_disp_set_video_hd_window_x(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_hd_window_x(void);
+void reg_aria_disp_set_video_hd_window_x_hd_video_end_x(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_hd_window_x_hd_video_end_x(void);
+void reg_aria_disp_set_video_hd_window_x_hd_video_start_x(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_hd_window_x_hd_video_start_x(void);
+
+/*!
+  register REGARIA_DISP_video_hd_window_y (read/write)
+  */
+void reg_aria_disp_set_video_hd_window_y(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_hd_window_y(void);
+void reg_aria_disp_set_video_hd_window_y_hd_video_end_y(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_hd_window_y_hd_video_end_y(void);
+void reg_aria_disp_set_video_hd_window_y_hd_video_start_y(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_hd_window_y_hd_video_start_y(void);
+
+/*!
+  register REGARIA_DISP_video_hd_window_cut (read/write)
+  */
+void reg_aria_disp_set_video_hd_window_cut(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_hd_window_cut(void);
+void reg_aria_disp_set_video_hd_window_cut_hd_video_cut_right(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_hd_window_cut_hd_video_cut_right(void);
+void reg_aria_disp_set_video_hd_window_cut_hd_video_cut_left(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_hd_window_cut_hd_video_cut_left(void);
+void reg_aria_disp_set_video_hd_window_cut_hd_video_cut_bottom(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_hd_window_cut_hd_video_cut_bottom(void);
+void reg_aria_disp_set_video_hd_window_cut_hd_video_cut_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_hd_window_cut_hd_video_cut_top(void);
+
+/*!
+  register REGARIA_DISP_video_scale_sd_ratio (read/write)
+  */
+void reg_aria_disp_set_video_scale_sd_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_scale_sd_ratio(void);
+void reg_aria_disp_set_video_scale_sd_ratio_vratio_fra_sd(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_sd_ratio_vratio_fra_sd(void);
+void reg_aria_disp_set_video_scale_sd_ratio_vratio_int_sd(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scale_sd_ratio_vratio_int_sd(void);
+void reg_aria_disp_set_video_scale_sd_ratio_hratio_fra_sd(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_sd_ratio_hratio_fra_sd(void);
+void reg_aria_disp_set_video_scale_sd_ratio_hratio_int_sd(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scale_sd_ratio_hratio_int_sd(void);
+
+/*!
+  register REGARIA_DISP_video_scale_sd_init_ratio (read/write)
+  */
+void reg_aria_disp_set_video_scale_sd_init_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_scale_sd_init_ratio(void);
+void reg_aria_disp_set_video_scale_sd_init_ratio_bot_fra_init_sd(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_sd_init_ratio_bot_fra_init_sd(void);
+void reg_aria_disp_set_video_scale_sd_init_ratio_bot_int_init_sd(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scale_sd_init_ratio_bot_int_init_sd(void);
+void reg_aria_disp_set_video_scale_sd_init_ratio_top_fra_init_sd(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scale_sd_init_ratio_top_fra_init_sd(void);
+void reg_aria_disp_set_video_scale_sd_init_ratio_top_int_init_sd(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scale_sd_init_ratio_top_int_init_sd(void);
+
+/*!
+  register REGARIA_DISP_video_sd_window_x (read/write)
+  */
+void reg_aria_disp_set_video_sd_window_x(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_sd_window_x(void);
+void reg_aria_disp_set_video_sd_window_x_sd_video_end_x(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_sd_window_x_sd_video_end_x(void);
+void reg_aria_disp_set_video_sd_window_x_sd_video_start_x(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_sd_window_x_sd_video_start_x(void);
+
+/*!
+  register REGARIA_DISP_video_sd_window_y (read/write)
+  */
+void reg_aria_disp_set_video_sd_window_y(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_sd_window_y(void);
+void reg_aria_disp_set_video_sd_window_y_sd_video_end_y(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_sd_window_y_sd_video_end_y(void);
+void reg_aria_disp_set_video_sd_window_y_sd_video_start_y(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_sd_window_y_sd_video_start_y(void);
+
+/*!
+  register REGARIA_DISP_video_sd_window_cut (read/write)
+  */
+void reg_aria_disp_set_video_sd_window_cut(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_sd_window_cut(void);
+void reg_aria_disp_set_video_sd_window_cut_sd_video_cut_right(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_sd_window_cut_sd_video_cut_right(void);
+void reg_aria_disp_set_video_sd_window_cut_sd_video_cut_left(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_sd_window_cut_sd_video_cut_left(void);
+void reg_aria_disp_set_video_sd_window_cut_sd_video_cut_bottom(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_sd_window_cut_sd_video_cut_bottom(void);
+void reg_aria_disp_set_video_sd_window_cut_sd_video_cut_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_sd_window_cut_sd_video_cut_top(void);
+
+/*!
+  register REGARIA_DISP_sd_video_path_ctrl (read/write)
+  */
+void reg_aria_disp_set_sd_video_path_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_video_path_ctrl(void);
+void reg_aria_disp_set_sd_video_path_ctrl_sd_video_path_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_path_ctrl_sd_video_path_en(void);
+void reg_aria_disp_set_sd_video_path_ctrl_video_down_scale_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_path_ctrl_video_down_scale_en(void);
+void reg_aria_disp_set_sd_video_path_ctrl_sd_use_hd_output_data(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_path_ctrl_sd_use_hd_output_data(void);
+
+/*!
+  register REGARIA_DISP_hd_luma_vf_coeff_addr (read/write)
+  */
+void reg_aria_disp_set_hd_luma_vf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_luma_vf_coeff_addr(void);
+void reg_aria_disp_set_hd_luma_vf_coeff_addr_hd_luma_vf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_luma_vf_coeff_addr_hd_luma_vf_coeff_addr(void);
+
+/*!
+  register REGARIA_DISP_hd_luma_hf_coeff_addr (read/write)
+  */
+void reg_aria_disp_set_hd_luma_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_luma_hf_coeff_addr(void);
+void reg_aria_disp_set_hd_luma_hf_coeff_addr_hd_luma_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_luma_hf_coeff_addr_hd_luma_hf_coeff_addr(void);
+
+/*!
+  register REGARIA_DISP_hd_chroma_hf_coeff_addr (read/write)
+  */
+void reg_aria_disp_set_hd_chroma_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_chroma_hf_coeff_addr(void);
+void reg_aria_disp_set_hd_chroma_hf_coeff_addr_hd_chroma_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_chroma_hf_coeff_addr_hd_chroma_hf_coeff_addr(void);
+
+/*!
+  register REGARIA_DISP_sd_luma_vf_coeff_addr (read/write)
+  */
+void reg_aria_disp_set_sd_luma_vf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_luma_vf_coeff_addr(void);
+void reg_aria_disp_set_sd_luma_vf_coeff_addr_sd_luma_vf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_luma_vf_coeff_addr_sd_luma_vf_coeff_addr(void);
+
+/*!
+  register REGARIA_DISP_sd_luma_hf_coeff_addr (read/write)
+  */
+void reg_aria_disp_set_sd_luma_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_luma_hf_coeff_addr(void);
+void reg_aria_disp_set_sd_luma_hf_coeff_addr_sd_luma_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_luma_hf_coeff_addr_sd_luma_hf_coeff_addr(void);
+
+/*!
+  register REGARIA_DISP_sd_chroma_hf_coeff_addr (read/write)
+  */
+void reg_aria_disp_set_sd_chroma_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_chroma_hf_coeff_addr(void);
+void reg_aria_disp_set_sd_chroma_hf_coeff_addr_sd_chroma_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_chroma_hf_coeff_addr_sd_chroma_hf_coeff_addr(void);
+
+/*!
+  register REGARIA_DISP_video_dce_map_addr (read/write)
+  */
+void reg_aria_disp_set_video_dce_map_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_dce_map_addr(void);
+void reg_aria_disp_set_video_dce_map_addr_dce_map_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_dce_map_addr_dce_map_addr(void);
+
+/*!
+  register REGARIA_DISP_histo_info_addr_0 (read/write)
+  */
+void reg_aria_disp_set_histo_info_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_histo_info_addr_0(void);
+void reg_aria_disp_set_histo_info_addr_0_histo_info_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_histo_info_addr_0_histo_info_addr_0(void);
+
+/*!
+  register REGARIA_DISP_histo_info_addr_2 (read/write)
+  */
+void reg_aria_disp_set_histo_info_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_histo_info_addr_2(void);
+void reg_aria_disp_set_histo_info_addr_2_histo_info_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_histo_info_addr_2_histo_info_addr_2(void);
+
+/*!
+  register REGARIA_DISP_chroma_upscale_ctrl (read/write)
+  */
+void reg_aria_disp_set_chroma_upscale_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_upscale_ctrl(void);
+void reg_aria_disp_set_chroma_upscale_ctrl_chroma_hori_ip_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_chroma_upscale_ctrl_chroma_hori_ip_mode(void);
+void reg_aria_disp_set_chroma_upscale_ctrl_chroma_alpha_old(mt_u16 data);
+mt_u16  reg_aria_disp_get_chroma_upscale_ctrl_chroma_alpha_old(void);
+void reg_aria_disp_set_chroma_upscale_ctrl_mono_display_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_chroma_upscale_ctrl_mono_display_en(void);
+
+/*!
+  register REGARIA_DISP_chroma_coef_0 (read/write)
+  */
+void reg_aria_disp_set_chroma_coef_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_coef_0(void);
+void reg_aria_disp_set_chroma_coef_0_chroma_coef1(mt_u16 data);
+mt_u16  reg_aria_disp_get_chroma_coef_0_chroma_coef1(void);
+void reg_aria_disp_set_chroma_coef_0_chroma_coef0(mt_u16 data);
+mt_u16  reg_aria_disp_get_chroma_coef_0_chroma_coef0(void);
+
+/*!
+  register REGARIA_DISP_chroma_coef_1 (read/write)
+  */
+void reg_aria_disp_set_chroma_coef_1(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_coef_1(void);
+void reg_aria_disp_set_chroma_coef_1_chroma_coef3(mt_u16 data);
+mt_u16  reg_aria_disp_get_chroma_coef_1_chroma_coef3(void);
+void reg_aria_disp_set_chroma_coef_1_chroma_coef2(mt_u16 data);
+mt_u16  reg_aria_disp_get_chroma_coef_1_chroma_coef2(void);
+
+/*!
+  register REGARIA_DISP_chroma_coef_2 (read/write)
+  */
+void reg_aria_disp_set_chroma_coef_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_coef_2(void);
+void reg_aria_disp_set_chroma_coef_2_chroma_coef5(mt_u16 data);
+mt_u16  reg_aria_disp_get_chroma_coef_2_chroma_coef5(void);
+void reg_aria_disp_set_chroma_coef_2_chroma_coef4(mt_u16 data);
+mt_u16  reg_aria_disp_get_chroma_coef_2_chroma_coef4(void);
+
+/*!
+  register REGARIA_DISP_chroma_coef_3 (read/write)
+  */
+void reg_aria_disp_set_chroma_coef_3(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_coef_3(void);
+void reg_aria_disp_set_chroma_coef_3_chroma_coef6(mt_u16 data);
+mt_u16  reg_aria_disp_get_chroma_coef_3_chroma_coef6(void);
+
+/*!
+  register REGARIA_DISP_color_enhance_ctrl (read/write)
+  */
+void reg_aria_disp_set_color_enhance_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_color_enhance_ctrl(void);
+void reg_aria_disp_set_color_enhance_ctrl_color_enhance_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_color_enhance_ctrl_color_enhance_en(void);
+void reg_aria_disp_set_color_enhance_ctrl_color_enhance_red_dec(mt_u8 data);
+mt_u8   reg_aria_disp_get_color_enhance_ctrl_color_enhance_red_dec(void);
+void reg_aria_disp_set_color_enhance_ctrl_color_enhance_length(mt_u8 data);
+mt_u8   reg_aria_disp_get_color_enhance_ctrl_color_enhance_length(void);
+void reg_aria_disp_set_color_enhance_ctrl_color_enhance_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_color_enhance_ctrl_color_enhance_thr(void);
+
+/*!
+  register REGARIA_DISP_video_dce_config (read/write)
+  */
+void reg_aria_disp_set_video_dce_config(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_dce_config(void);
+void reg_aria_disp_set_video_dce_config_sd_video_dce_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_dce_config_sd_video_dce_en(void);
+void reg_aria_disp_set_video_dce_config_hd_video_dce_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_dce_config_hd_video_dce_en(void);
+
+/*!
+  register REGARIA_DISP_video_horf_config (read/write)
+  */
+void reg_aria_disp_set_video_horf_config(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_horf_config(void);
+void reg_aria_disp_set_video_horf_config_sd_infl_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_horf_config_sd_infl_thr(void);
+void reg_aria_disp_set_video_horf_config_hd_infl_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_horf_config_hd_infl_thr(void);
+void reg_aria_disp_set_video_horf_config_start_addr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_horf_config_start_addr(void);
+void reg_aria_disp_set_video_horf_config_hd_phase_type(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_horf_config_hd_phase_type(void);
+
+/*!
+  register REGARIA_DISP_hd_video_post_config (read/write)
+  */
+void reg_aria_disp_set_hd_video_post_config(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_video_post_config(void);
+void reg_aria_disp_set_hd_video_post_config_hd_leverage(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_video_post_config_hd_leverage(void);
+void reg_aria_disp_set_hd_video_post_config_hd_hp_enha(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_video_post_config_hd_hp_enha(void);
+void reg_aria_disp_set_hd_video_post_config_hd_hori_enha(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_video_post_config_hd_hori_enha(void);
+void reg_aria_disp_set_hd_video_post_config_hd_shoot_cfg(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_video_post_config_hd_shoot_cfg(void);
+
+/*!
+  register REGARIA_DISP_sd_video_post_config (read/write)
+  */
+void reg_aria_disp_set_sd_video_post_config(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_video_post_config(void);
+void reg_aria_disp_set_sd_video_post_config_sd_leverage(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_post_config_sd_leverage(void);
+void reg_aria_disp_set_sd_video_post_config_sd_hp_enha(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_post_config_sd_hp_enha(void);
+void reg_aria_disp_set_sd_video_post_config_sd_hori_enha(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_post_config_sd_hori_enha(void);
+void reg_aria_disp_set_sd_video_post_config_sd_shoot_cfg(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_post_config_sd_shoot_cfg(void);
+
+/*!
+  register REGARIA_DISP_hd_video_effect_coef (read/write)
+  */
+void reg_aria_disp_set_hd_video_effect_coef(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_video_effect_coef(void);
+void reg_aria_disp_set_hd_video_effect_coef_bright_coeff(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_video_effect_coef_bright_coeff(void);
+void reg_aria_disp_set_hd_video_effect_coef_contrast_coeff(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_video_effect_coef_contrast_coeff(void);
+void reg_aria_disp_set_hd_video_effect_coef_saturation_coeff(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_video_effect_coef_saturation_coeff(void);
+
+/*!
+  register REGARIA_DISP_hd_video_hue_adjust (read/write)
+  */
+void reg_aria_disp_set_hd_video_hue_adjust(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_video_hue_adjust(void);
+void reg_aria_disp_set_hd_video_hue_adjust_hd_sina(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_video_hue_adjust_hd_sina(void);
+void reg_aria_disp_set_hd_video_hue_adjust_hd_cosa(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_video_hue_adjust_hd_cosa(void);
+void reg_aria_disp_set_hd_video_hue_adjust_hd_hue_adjust_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_video_hue_adjust_hd_hue_adjust_en(void);
+
+/*!
+  register REGARIA_DISP_sd_video_drop_line (read/write)
+  */
+void reg_aria_disp_set_sd_video_drop_line(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_video_drop_line(void);
+void reg_aria_disp_set_sd_video_drop_line_sd_bot_field_drop_line(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_drop_line_sd_bot_field_drop_line(void);
+void reg_aria_disp_set_sd_video_drop_line_sd_top_field_drop_line(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_drop_line_sd_top_field_drop_line(void);
+
+/*!
+  register REGARIA_DISP_video_scalar_buf_full_thr (read/write)
+  */
+void reg_aria_disp_set_video_scalar_buf_full_thr(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_scalar_buf_full_thr(void);
+void reg_aria_disp_set_video_scalar_buf_full_thr_scaler_data_sfifo_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scalar_buf_full_thr_scaler_data_sfifo_thr(void);
+void reg_aria_disp_set_video_scalar_buf_full_thr_di_data_sfifo_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_scalar_buf_full_thr_di_data_sfifo_thr(void);
+
+/*!
+  register REGARIA_DISP_video_scalar_outbuf_full_thr (read/write)
+  */
+void reg_aria_disp_set_video_scalar_outbuf_full_thr(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_scalar_outbuf_full_thr(void);
+void reg_aria_disp_set_video_scalar_outbuf_full_thr_sd_scalar_buf_full_thr(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scalar_outbuf_full_thr_sd_scalar_buf_full_thr(void);
+void reg_aria_disp_set_video_scalar_outbuf_full_thr_hd_scalar_buf_full_thr(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_scalar_outbuf_full_thr_hd_scalar_buf_full_thr(void);
+
+/*!
+  register REGARIA_DISP_axi_cmd_req_fifo_thr (read/write)
+  */
+void reg_aria_disp_set_axi_cmd_req_fifo_thr(mt_u32 data);
+mt_u32  reg_aria_disp_get_axi_cmd_req_fifo_thr(void);
+void reg_aria_disp_set_axi_cmd_req_fifo_thr_axi_req_sfifo_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_axi_cmd_req_fifo_thr_axi_req_sfifo_thr(void);
+void reg_aria_disp_set_axi_cmd_req_fifo_thr_axi_cmd_sfifo_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_axi_cmd_req_fifo_thr_axi_cmd_sfifo_thr(void);
+void reg_aria_disp_set_axi_cmd_req_fifo_thr_lout_afifo_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_axi_cmd_req_fifo_thr_lout_afifo_thr(void);
+
+/*!
+  register REGARIA_DISP_access_fifo_lo_hi_thr (read/write)
+  */
+void reg_aria_disp_set_access_fifo_lo_hi_thr(mt_u32 data);
+mt_u32  reg_aria_disp_get_access_fifo_lo_hi_thr(void);
+void reg_aria_disp_set_access_fifo_lo_hi_thr_acc_fifo_lo_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_access_fifo_lo_hi_thr_acc_fifo_lo_thr(void);
+void reg_aria_disp_set_access_fifo_lo_hi_thr_acc_fifo_hi_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_access_fifo_lo_hi_thr_acc_fifo_hi_thr(void);
+
+/*!
+  register REGARIA_DISP_access_fifo_req_thr (read/write)
+  */
+void reg_aria_disp_set_access_fifo_req_thr(mt_u32 data);
+mt_u32  reg_aria_disp_get_access_fifo_req_thr(void);
+void reg_aria_disp_set_access_fifo_req_thr_fifo_thr_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_access_fifo_req_thr_fifo_thr_2(void);
+void reg_aria_disp_set_access_fifo_req_thr_fifo_thr_1(mt_u8 data);
+mt_u8   reg_aria_disp_get_access_fifo_req_thr_fifo_thr_1(void);
+void reg_aria_disp_set_access_fifo_req_thr_fifo_thr_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_access_fifo_req_thr_fifo_thr_0(void);
+void reg_aria_disp_set_access_fifo_req_thr_asyncfifo_low_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_access_fifo_req_thr_asyncfifo_low_thr(void);
+
+/*!
+  register REGARIA_DISP_asym_fifo_thr (read/write)
+  */
+void reg_aria_disp_set_asym_fifo_thr(mt_u32 data);
+mt_u32  reg_aria_disp_get_asym_fifo_thr(void);
+void reg_aria_disp_set_asym_fifo_thr_disc2hdtv_async_fifo_full_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_asym_fifo_thr_disc2hdtv_async_fifo_full_thr(void);
+
+/*!
+  register REGARIA_DISP_video_hd_line_cnt (read/write)
+  */
+void reg_aria_disp_set_video_hd_line_cnt(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_hd_line_cnt(void);
+void reg_aria_disp_set_video_hd_line_cnt_hd_line_cnt_bot(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_hd_line_cnt_hd_line_cnt_bot(void);
+void reg_aria_disp_set_video_hd_line_cnt_hd_line_cnt_top(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_hd_line_cnt_hd_line_cnt_top(void);
+
+/*!
+  register REGARIA_DISP_video_sd_line_cnt (read/write)
+  */
+void reg_aria_disp_set_video_sd_line_cnt(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_sd_line_cnt(void);
+void reg_aria_disp_set_video_sd_line_cnt_sd_line_cnt_bot(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_sd_line_cnt_sd_line_cnt_bot(void);
+void reg_aria_disp_set_video_sd_line_cnt_sd_line_cnt_top(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_sd_line_cnt_sd_line_cnt_top(void);
+
+/*!
+  register REGARIA_DISP_video_line_proc_status (read/write)
+  */
+void reg_aria_disp_set_video_line_proc_status(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_line_proc_status(void);
+void reg_aria_disp_set_video_line_proc_status_proc_line_num(mt_u16 data);
+mt_u16  reg_aria_disp_get_video_line_proc_status_proc_line_num(void);
+void reg_aria_disp_set_video_line_proc_status_not_proc_over(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_line_proc_status_not_proc_over(void);
+
+/*!
+  register REGARIA_DISP_alising_prob_reg1 (read/write)
+  */
+void reg_aria_disp_set_alising_prob_reg1(mt_u32 data);
+mt_u32  reg_aria_disp_get_alising_prob_reg1(void);
+void reg_aria_disp_set_alising_prob_reg1_alpha_2nd_method_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg1_alpha_2nd_method_sel(void);
+void reg_aria_disp_set_alising_prob_reg1_alpha_2nd_diff_ratio_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg1_alpha_2nd_diff_ratio_sel(void);
+void reg_aria_disp_set_alising_prob_reg1_alpha_2nd_diff_shift_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg1_alpha_2nd_diff_shift_sel(void);
+void reg_aria_disp_set_alising_prob_reg1_alpha_2nd_diff(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg1_alpha_2nd_diff(void);
+
+/*!
+  register REGARIA_DISP_alising_prob_reg2 (read/write)
+  */
+void reg_aria_disp_set_alising_prob_reg2(mt_u32 data);
+mt_u32  reg_aria_disp_get_alising_prob_reg2(void);
+void reg_aria_disp_set_alising_prob_reg2_alpha_enlarge(mt_u16 data);
+mt_u16  reg_aria_disp_get_alising_prob_reg2_alpha_enlarge(void);
+void reg_aria_disp_set_alising_prob_reg2_alpha_vdv_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg2_alpha_vdv_sel(void);
+void reg_aria_disp_set_alising_prob_reg2_alpha_vdv(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg2_alpha_vdv(void);
+void reg_aria_disp_set_alising_prob_reg2_alpha_angle(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg2_alpha_angle(void);
+
+/*!
+  register REGARIA_DISP_alising_prob_reg3 (read/write)
+  */
+void reg_aria_disp_set_alising_prob_reg3(mt_u32 data);
+mt_u32  reg_aria_disp_get_alising_prob_reg3(void);
+void reg_aria_disp_set_alising_prob_reg3_base_blending_factor(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg3_base_blending_factor(void);
+void reg_aria_disp_set_alising_prob_reg3_default_prob(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg3_default_prob(void);
+void reg_aria_disp_set_alising_prob_reg3_op(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg3_op(void);
+void reg_aria_disp_set_alising_prob_reg3_slope_diff1_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg3_slope_diff1_sel(void);
+
+/*!
+  register REGARIA_DISP_alising_prob_reg4 (read/write)
+  */
+void reg_aria_disp_set_alising_prob_reg4(mt_u32 data);
+mt_u32  reg_aria_disp_get_alising_prob_reg4(void);
+void reg_aria_disp_set_alising_prob_reg4_pict_enhance_pix_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg4_pict_enhance_pix_sel(void);
+void reg_aria_disp_set_alising_prob_reg4_adaptive_alpha_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg4_adaptive_alpha_sel(void);
+void reg_aria_disp_set_alising_prob_reg4_diff_2nd_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg4_diff_2nd_sel(void);
+void reg_aria_disp_set_alising_prob_reg4_interp_factor(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg4_interp_factor(void);
+void reg_aria_disp_set_alising_prob_reg4_prob_coef3(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg4_prob_coef3(void);
+void reg_aria_disp_set_alising_prob_reg4_prob_coef2(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg4_prob_coef2(void);
+void reg_aria_disp_set_alising_prob_reg4_prob_coef1(mt_u8 data);
+mt_u8   reg_aria_disp_get_alising_prob_reg4_prob_coef1(void);
+
+/*!
+  register REGARIA_DISP_di_ctrl (read/write)
+  */
+void reg_aria_disp_set_di_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_ctrl(void);
+void reg_aria_disp_set_di_ctrl_di_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_ctrl_di_en(void);
+void reg_aria_disp_set_di_ctrl_video_source_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_ctrl_video_source_mode(void);
+void reg_aria_disp_set_di_ctrl_pdd_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_ctrl_pdd_en(void);
+void reg_aria_disp_set_di_ctrl_is_movie_type(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_ctrl_is_movie_type(void);
+void reg_aria_disp_set_di_ctrl_thr_reg(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_ctrl_thr_reg(void);
+void reg_aria_disp_set_di_ctrl_thr_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_ctrl_thr_sel(void);
+
+/*!
+  register REGARIA_DISP_di_pause_en (read/write)
+  */
+void reg_aria_disp_set_di_pause_en(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_pause_en(void);
+void reg_aria_disp_set_di_pause_en_di_pause_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_pause_en_di_pause_en(void);
+void reg_aria_disp_set_di_pause_en_di_pause_bot_field_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_pause_en_di_pause_bot_field_flag(void);
+void reg_aria_disp_set_di_pause_en_di_pause_top_field_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_pause_en_di_pause_top_field_flag(void);
+
+/*!
+  register REGARIA_DISP_di_oper_mode (read/write)
+  */
+void reg_aria_disp_set_di_oper_mode(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_oper_mode(void);
+void reg_aria_disp_set_di_oper_mode_mix_output_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_mix_output_mode(void);
+void reg_aria_disp_set_di_oper_mode_motion_output_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_motion_output_mode(void);
+void reg_aria_disp_set_di_oper_mode_para_after_filter_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_para_after_filter_en(void);
+void reg_aria_disp_set_di_oper_mode_spatial_ip_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_spatial_ip_mode(void);
+void reg_aria_disp_set_di_oper_mode_hori_ip_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_hori_ip_en(void);
+void reg_aria_disp_set_di_oper_mode_temporal_ip_mode_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_temporal_ip_mode_bot(void);
+void reg_aria_disp_set_di_oper_mode_temporal_ip_mode_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_temporal_ip_mode_top(void);
+void reg_aria_disp_set_di_oper_mode_lbam_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_lbam_en(void);
+void reg_aria_disp_set_di_oper_mode_motion_est_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_motion_est_mode(void);
+void reg_aria_disp_set_di_oper_mode_motion_rd_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_motion_rd_en(void);
+void reg_aria_disp_set_di_oper_mode_motion_wr_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_oper_mode_motion_wr_en(void);
+
+/*!
+  register REGARIA_DISP_di_p_or_n_pair (read/write)
+  */
+void reg_aria_disp_set_di_p_or_n_pair(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_p_or_n_pair(void);
+void reg_aria_disp_set_di_p_or_n_pair_p_or_n_pair_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_p_or_n_pair_p_or_n_pair_bot(void);
+void reg_aria_disp_set_di_p_or_n_pair_p_or_n_pair_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_p_or_n_pair_p_or_n_pair_top(void);
+
+/*!
+  register REGARIA_DISP_di_para (read/write)
+  */
+void reg_aria_disp_set_di_para(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_para(void);
+void reg_aria_disp_set_di_para_g_alpha_k(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_para_g_alpha_k(void);
+void reg_aria_disp_set_di_para_g_alpha_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_para_g_alpha_0(void);
+void reg_aria_disp_set_di_para_p_tl(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_para_p_tl(void);
+void reg_aria_disp_set_di_para_pdd_noise_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_para_pdd_noise_thr(void);
+
+/*!
+  register REGARIA_DISP_di_chroma_para (read/write)
+  */
+void reg_aria_disp_set_di_chroma_para(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_chroma_para(void);
+void reg_aria_disp_set_di_chroma_para_chroma_g_alpha_k(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_chroma_para_chroma_g_alpha_k(void);
+void reg_aria_disp_set_di_chroma_para_chroma_g_alpha_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_chroma_para_chroma_g_alpha_0(void);
+
+/*!
+  register REGARIA_DISP_di_alpha_para (read/write)
+  */
+void reg_aria_disp_set_di_alpha_para(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_alpha_para(void);
+void reg_aria_disp_set_di_alpha_para_g_alpha_0_min(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_alpha_para_g_alpha_0_min(void);
+void reg_aria_disp_set_di_alpha_para_g_alpha_0_max(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_alpha_para_g_alpha_0_max(void);
+void reg_aria_disp_set_di_alpha_para_luma_diff_k(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_alpha_para_luma_diff_k(void);
+void reg_aria_disp_set_di_alpha_para_diff_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_alpha_para_diff_sel(void);
+void reg_aria_disp_set_di_alpha_para_new_alpha_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_alpha_para_new_alpha_en(void);
+
+/*!
+  register REGARIA_DISP_di_motion_ctrl_1 (read/write)
+  */
+void reg_aria_disp_set_di_motion_ctrl_1(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_motion_ctrl_1(void);
+void reg_aria_disp_set_di_motion_ctrl_1_motion_propa_type(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_1_motion_propa_type(void);
+void reg_aria_disp_set_di_motion_ctrl_1_motion_damping2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_1_motion_damping2(void);
+void reg_aria_disp_set_di_motion_ctrl_1_motion_damping1(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_1_motion_damping1(void);
+void reg_aria_disp_set_di_motion_ctrl_1_medrsp_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_1_medrsp_thr(void);
+void reg_aria_disp_set_di_motion_ctrl_1_difdamping(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_1_difdamping(void);
+
+/*!
+  register REGARIA_DISP_di_motion_ctrl_2 (read/write)
+  */
+void reg_aria_disp_set_di_motion_ctrl_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_motion_ctrl_2(void);
+void reg_aria_disp_set_di_motion_ctrl_2_half_motion_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_2_half_motion_en(void);
+void reg_aria_disp_set_di_motion_ctrl_2_motion_data_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_2_motion_data_mode(void);
+void reg_aria_disp_set_di_motion_ctrl_2_motion_estmethod(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_2_motion_estmethod(void);
+void reg_aria_disp_set_di_motion_ctrl_2_l0l2_motion_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_2_l0l2_motion_mode(void);
+void reg_aria_disp_set_di_motion_ctrl_2_ip_smallmotion(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_2_ip_smallmotion(void);
+void reg_aria_disp_set_di_motion_ctrl_2_ip_average(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_2_ip_average(void);
+void reg_aria_disp_set_di_motion_ctrl_2_ip_l0orl2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_2_ip_l0orl2(void);
+
+/*!
+  register REGARIA_DISP_di_motion_ctrl_3 (read/write)
+  */
+void reg_aria_disp_set_di_motion_ctrl_3(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_motion_ctrl_3(void);
+void reg_aria_disp_set_di_motion_ctrl_3_new_algo_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_3_new_algo_en(void);
+void reg_aria_disp_set_di_motion_ctrl_3_small_motion_magnify(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_3_small_motion_magnify(void);
+void reg_aria_disp_set_di_motion_ctrl_3_small_motion_thr2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_3_small_motion_thr2(void);
+void reg_aria_disp_set_di_motion_ctrl_3_small_motion_thr1(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_3_small_motion_thr1(void);
+void reg_aria_disp_set_di_motion_ctrl_3_medrsp7dir_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_3_medrsp7dir_thr(void);
+
+/*!
+  register REGARIA_DISP_di_motion_ctrl_4 (read/write)
+  */
+void reg_aria_disp_set_di_motion_ctrl_4(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_motion_ctrl_4(void);
+void reg_aria_disp_set_di_motion_ctrl_4_uv_motion_gain(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_4_uv_motion_gain(void);
+void reg_aria_disp_set_di_motion_ctrl_4_ip_l0andl2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_4_ip_l0andl2(void);
+void reg_aria_disp_set_di_motion_ctrl_4_ip_l1_difthr(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_4_ip_l1_difthr(void);
+void reg_aria_disp_set_di_motion_ctrl_4_preserve_all_motion(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_4_preserve_all_motion(void);
+void reg_aria_disp_set_di_motion_ctrl_4_preserve_small_motion(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_4_preserve_small_motion(void);
+void reg_aria_disp_set_di_motion_ctrl_4_motion_magnify(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_motion_ctrl_4_motion_magnify(void);
+
+/*!
+  register REGARIA_DISP_di_acc_odd_result (read/write)
+  */
+void reg_aria_disp_set_di_acc_odd_result(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_acc_odd_result(void);
+void reg_aria_disp_set_di_acc_odd_result_di_acc_odd_result(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_acc_odd_result_di_acc_odd_result(void);
+
+/*!
+  register REGARIA_DISP_di_acc_even_result (read/write)
+  */
+void reg_aria_disp_set_di_acc_even_result(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_acc_even_result(void);
+void reg_aria_disp_set_di_acc_even_result_di_acc_even_result(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_acc_even_result_di_acc_even_result(void);
+
+/*!
+  register REGARIA_DISP_di_fields_flag (read/write)
+  */
+void reg_aria_disp_set_di_fields_flag(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_fields_flag(void);
+void reg_aria_disp_set_di_fields_flag_nxt_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_fields_flag_nxt_field_flag_2(void);
+void reg_aria_disp_set_di_fields_flag_cur_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_fields_flag_cur_field_flag_2(void);
+void reg_aria_disp_set_di_fields_flag_pre_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_fields_flag_pre_field_flag_2(void);
+void reg_aria_disp_set_di_fields_flag_ppre_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_fields_flag_ppre_field_flag_2(void);
+void reg_aria_disp_set_di_fields_flag_nxt_field_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_fields_flag_nxt_field_flag(void);
+void reg_aria_disp_set_di_fields_flag_cur_field_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_fields_flag_cur_field_flag(void);
+void reg_aria_disp_set_di_fields_flag_pre_field_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_fields_flag_pre_field_flag(void);
+void reg_aria_disp_set_di_fields_flag_ppre_field_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_fields_flag_ppre_field_flag(void);
+
+/*!
+  register REGARIA_DISP_di_hevc_flag (read/write)
+  */
+void reg_aria_disp_set_di_hevc_flag(mt_u32 data);
+mt_u32  reg_aria_disp_get_di_hevc_flag(void);
+void reg_aria_disp_set_di_hevc_flag_nxt_hevc_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_hevc_flag_nxt_hevc_flag_2(void);
+void reg_aria_disp_set_di_hevc_flag_cur_hevc_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_hevc_flag_cur_hevc_flag_2(void);
+void reg_aria_disp_set_di_hevc_flag_pre_hevc_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_hevc_flag_pre_hevc_flag_2(void);
+void reg_aria_disp_set_di_hevc_flag_ppre_hevc_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_hevc_flag_ppre_hevc_flag_2(void);
+void reg_aria_disp_set_di_hevc_flag_nxt_hevc_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_hevc_flag_nxt_hevc_flag(void);
+void reg_aria_disp_set_di_hevc_flag_cur_hevc_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_hevc_flag_cur_hevc_flag(void);
+void reg_aria_disp_set_di_hevc_flag_pre_hevc_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_hevc_flag_pre_hevc_flag(void);
+void reg_aria_disp_set_di_hevc_flag_ppre_hevc_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_di_hevc_flag_ppre_hevc_flag(void);
+
+/*!
+  register REGARIA_DISP_none_di_progressive_flag (read/write)
+  */
+void reg_aria_disp_set_none_di_progressive_flag(mt_u32 data);
+mt_u32  reg_aria_disp_get_none_di_progressive_flag(void);
+void reg_aria_disp_set_none_di_progressive_flag_progressive_frame_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_progressive_flag_progressive_frame_2(void);
+void reg_aria_disp_set_none_di_progressive_flag_progressive_frame_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_progressive_flag_progressive_frame_0(void);
+
+/*!
+  register REGARIA_DISP_none_di_fields_flag (read/write)
+  */
+void reg_aria_disp_set_none_di_fields_flag(mt_u32 data);
+mt_u32  reg_aria_disp_get_none_di_fields_flag(void);
+void reg_aria_disp_set_none_di_fields_flag_cur_bot_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_fields_flag_cur_bot_field_flag_2(void);
+void reg_aria_disp_set_none_di_fields_flag_cur_top_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_fields_flag_cur_top_field_flag_2(void);
+void reg_aria_disp_set_none_di_fields_flag_cur_bot_field_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_fields_flag_cur_bot_field_flag_0(void);
+void reg_aria_disp_set_none_di_fields_flag_cur_top_field_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_fields_flag_cur_top_field_flag_0(void);
+
+/*!
+  register REGARIA_DISP_none_di_hevc_flag (read/write)
+  */
+void reg_aria_disp_set_none_di_hevc_flag(mt_u32 data);
+mt_u32  reg_aria_disp_get_none_di_hevc_flag(void);
+void reg_aria_disp_set_none_di_hevc_flag_cur_bot_hevc_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_hevc_flag_cur_bot_hevc_flag_2(void);
+void reg_aria_disp_set_none_di_hevc_flag_cur_top_hevc_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_hevc_flag_cur_top_hevc_flag_2(void);
+void reg_aria_disp_set_none_di_hevc_flag_cur_bot_hevc_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_hevc_flag_cur_bot_hevc_flag_0(void);
+void reg_aria_disp_set_none_di_hevc_flag_cur_top_hevc_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_hevc_flag_cur_top_hevc_flag_0(void);
+
+/*!
+  register REGARIA_DISP_none_di_progressive_flag_2nd (read/write)
+  */
+void reg_aria_disp_set_none_di_progressive_flag_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_none_di_progressive_flag_2nd(void);
+void reg_aria_disp_set_none_di_progressive_flag_2nd_progressive_frame_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_progressive_flag_2nd_progressive_frame_2(void);
+void reg_aria_disp_set_none_di_progressive_flag_2nd_progressive_frame_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_progressive_flag_2nd_progressive_frame_0(void);
+
+/*!
+  register REGARIA_DISP_none_di_fields_flag_2nd (read/write)
+  */
+void reg_aria_disp_set_none_di_fields_flag_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_none_di_fields_flag_2nd(void);
+void reg_aria_disp_set_none_di_fields_flag_2nd_cur_bot_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_fields_flag_2nd_cur_bot_field_flag_2(void);
+void reg_aria_disp_set_none_di_fields_flag_2nd_cur_top_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_fields_flag_2nd_cur_top_field_flag_2(void);
+void reg_aria_disp_set_none_di_fields_flag_2nd_cur_bot_field_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_fields_flag_2nd_cur_bot_field_flag_0(void);
+void reg_aria_disp_set_none_di_fields_flag_2nd_cur_top_field_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_fields_flag_2nd_cur_top_field_flag_0(void);
+
+/*!
+  register REGARIA_DISP_none_di_hevc_flag_2nd (read/write)
+  */
+void reg_aria_disp_set_none_di_hevc_flag_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_none_di_hevc_flag_2nd(void);
+void reg_aria_disp_set_none_di_hevc_flag_2nd_cur_bot_hevc_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_hevc_flag_2nd_cur_bot_hevc_flag_2(void);
+void reg_aria_disp_set_none_di_hevc_flag_2nd_cur_top_hevc_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_hevc_flag_2nd_cur_top_hevc_flag_2(void);
+void reg_aria_disp_set_none_di_hevc_flag_2nd_cur_bot_hevc_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_hevc_flag_2nd_cur_bot_hevc_flag_0(void);
+void reg_aria_disp_set_none_di_hevc_flag_2nd_cur_top_hevc_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_none_di_hevc_flag_2nd_cur_top_hevc_flag_0(void);
+
+/*!
+  register REGARIA_DISP_motion_pre_addr_0 (read/write)
+  */
+void reg_aria_disp_set_motion_pre_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_pre_addr_0(void);
+void reg_aria_disp_set_motion_pre_addr_0_motion_pre_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_pre_addr_0_motion_pre_addr_0(void);
+
+/*!
+  register REGARIA_DISP_motion_cur_addr_0 (read/write)
+  */
+void reg_aria_disp_set_motion_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_cur_addr_0(void);
+void reg_aria_disp_set_motion_cur_addr_0_motion_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_cur_addr_0_motion_cur_addr_0(void);
+
+/*!
+  register REGARIA_DISP_motion_pre_addr_2 (read/write)
+  */
+void reg_aria_disp_set_motion_pre_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_pre_addr_2(void);
+void reg_aria_disp_set_motion_pre_addr_2_motion_pre_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_pre_addr_2_motion_pre_addr_2(void);
+
+/*!
+  register REGARIA_DISP_motion_cur_addr_2 (read/write)
+  */
+void reg_aria_disp_set_motion_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_cur_addr_2(void);
+void reg_aria_disp_set_motion_cur_addr_2_motion_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_cur_addr_2_motion_cur_addr_2(void);
+
+/*!
+  register REGARIA_DISP_luma_pre_addr_0 (read/write)
+  */
+void reg_aria_disp_set_luma_pre_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_pre_addr_0(void);
+void reg_aria_disp_set_luma_pre_addr_0_luma_pre_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_pre_addr_0_luma_pre_addr_0(void);
+
+/*!
+  register REGARIA_DISP_luma_top_cur_addr_0 (read/write)
+  */
+void reg_aria_disp_set_luma_top_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_top_cur_addr_0(void);
+void reg_aria_disp_set_luma_top_cur_addr_0_luma_top_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_top_cur_addr_0_luma_top_cur_addr_0(void);
+
+/*!
+  register REGARIA_DISP_luma_bot_cur_addr_0 (read/write)
+  */
+void reg_aria_disp_set_luma_bot_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_bot_cur_addr_0(void);
+void reg_aria_disp_set_luma_bot_cur_addr_0_luma_bot_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_bot_cur_addr_0_luma_bot_cur_addr_0(void);
+
+/*!
+  register REGARIA_DISP_luma_nxt_addr_0 (read/write)
+  */
+void reg_aria_disp_set_luma_nxt_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_nxt_addr_0(void);
+void reg_aria_disp_set_luma_nxt_addr_0_luma_nxt_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_nxt_addr_0_luma_nxt_addr_0(void);
+
+/*!
+  register REGARIA_DISP_luma_top_cur_addr_2nd_0 (read/write)
+  */
+void reg_aria_disp_set_luma_top_cur_addr_2nd_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_top_cur_addr_2nd_0(void);
+void reg_aria_disp_set_luma_top_cur_addr_2nd_0_luma_top_cur_addr_2nd_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_top_cur_addr_2nd_0_luma_top_cur_addr_2nd_0(void);
+
+/*!
+  register REGARIA_DISP_luma_bot_cur_addr_2nd_0 (read/write)
+  */
+void reg_aria_disp_set_luma_bot_cur_addr_2nd_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_bot_cur_addr_2nd_0(void);
+void reg_aria_disp_set_luma_bot_cur_addr_2nd_0_luma_bot_cur_addr_2nd_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_bot_cur_addr_2nd_0_luma_bot_cur_addr_2nd_0(void);
+
+/*!
+  register REGARIA_DISP_luma_pre_addr_2 (read/write)
+  */
+void reg_aria_disp_set_luma_pre_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_pre_addr_2(void);
+void reg_aria_disp_set_luma_pre_addr_2_luma_pre_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_pre_addr_2_luma_pre_addr_2(void);
+
+/*!
+  register REGARIA_DISP_luma_top_cur_addr_2 (read/write)
+  */
+void reg_aria_disp_set_luma_top_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_top_cur_addr_2(void);
+void reg_aria_disp_set_luma_top_cur_addr_2_luma_top_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_top_cur_addr_2_luma_top_cur_addr_2(void);
+
+/*!
+  register REGARIA_DISP_luma_bot_cur_addr_2 (read/write)
+  */
+void reg_aria_disp_set_luma_bot_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_bot_cur_addr_2(void);
+void reg_aria_disp_set_luma_bot_cur_addr_2_luma_bot_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_bot_cur_addr_2_luma_bot_cur_addr_2(void);
+
+/*!
+  register REGARIA_DISP_luma_nxt_addr_2 (read/write)
+  */
+void reg_aria_disp_set_luma_nxt_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_nxt_addr_2(void);
+void reg_aria_disp_set_luma_nxt_addr_2_luma_nxt_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_nxt_addr_2_luma_nxt_addr_2(void);
+
+/*!
+  register REGARIA_DISP_luma_top_cur_addr_2nd_2 (read/write)
+  */
+void reg_aria_disp_set_luma_top_cur_addr_2nd_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_top_cur_addr_2nd_2(void);
+void reg_aria_disp_set_luma_top_cur_addr_2nd_2_luma_top_cur_addr_2nd_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_top_cur_addr_2nd_2_luma_top_cur_addr_2nd_2(void);
+
+/*!
+  register REGARIA_DISP_luma_bot_cur_addr_2nd_2 (read/write)
+  */
+void reg_aria_disp_set_luma_bot_cur_addr_2nd_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_bot_cur_addr_2nd_2(void);
+void reg_aria_disp_set_luma_bot_cur_addr_2nd_2_luma_bot_cur_addr_2nd_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_luma_bot_cur_addr_2nd_2_luma_bot_cur_addr_2nd_2(void);
+
+/*!
+  register REGARIA_DISP_chroma_ppre_addr_0 (read/write)
+  */
+void reg_aria_disp_set_chroma_ppre_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_ppre_addr_0(void);
+void reg_aria_disp_set_chroma_ppre_addr_0_chroma_ppre_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_ppre_addr_0_chroma_ppre_addr_0(void);
+
+/*!
+  register REGARIA_DISP_chroma_pre_addr_0 (read/write)
+  */
+void reg_aria_disp_set_chroma_pre_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_pre_addr_0(void);
+void reg_aria_disp_set_chroma_pre_addr_0_chroma_pre_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_pre_addr_0_chroma_pre_addr_0(void);
+
+/*!
+  register REGARIA_DISP_chroma_top_cur_addr_0 (read/write)
+  */
+void reg_aria_disp_set_chroma_top_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_top_cur_addr_0(void);
+void reg_aria_disp_set_chroma_top_cur_addr_0_chroma_top_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_top_cur_addr_0_chroma_top_cur_addr_0(void);
+
+/*!
+  register REGARIA_DISP_chroma_bot_cur_addr_0 (read/write)
+  */
+void reg_aria_disp_set_chroma_bot_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_bot_cur_addr_0(void);
+void reg_aria_disp_set_chroma_bot_cur_addr_0_chroma_bot_cur_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_bot_cur_addr_0_chroma_bot_cur_addr_0(void);
+
+/*!
+  register REGARIA_DISP_chroma_nxt_addr_0 (read/write)
+  */
+void reg_aria_disp_set_chroma_nxt_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_nxt_addr_0(void);
+void reg_aria_disp_set_chroma_nxt_addr_0_chroma_nxt_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_nxt_addr_0_chroma_nxt_addr_0(void);
+
+/*!
+  register REGARIA_DISP_chroma_top_cur_addr_2nd_0 (read/write)
+  */
+void reg_aria_disp_set_chroma_top_cur_addr_2nd_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_top_cur_addr_2nd_0(void);
+void reg_aria_disp_set_chroma_top_cur_addr_2nd_0_chroma_top_cur_addr_2nd_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_top_cur_addr_2nd_0_chroma_top_cur_addr_2nd_0(void);
+
+/*!
+  register REGARIA_DISP_chroma_bot_cur_addr_2nd_0 (read/write)
+  */
+void reg_aria_disp_set_chroma_bot_cur_addr_2nd_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_bot_cur_addr_2nd_0(void);
+void reg_aria_disp_set_chroma_bot_cur_addr_2nd_0_chroma_bot_cur_addr_2nd_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_bot_cur_addr_2nd_0_chroma_bot_cur_addr_2nd_0(void);
+
+/*!
+  register REGARIA_DISP_chroma_ppre_addr_2 (read/write)
+  */
+void reg_aria_disp_set_chroma_ppre_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_ppre_addr_2(void);
+void reg_aria_disp_set_chroma_ppre_addr_2_chroma_ppre_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_ppre_addr_2_chroma_ppre_addr_2(void);
+
+/*!
+  register REGARIA_DISP_chroma_pre_addr_2 (read/write)
+  */
+void reg_aria_disp_set_chroma_pre_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_pre_addr_2(void);
+void reg_aria_disp_set_chroma_pre_addr_2_chroma_pre_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_pre_addr_2_chroma_pre_addr_2(void);
+
+/*!
+  register REGARIA_DISP_chroma_top_cur_addr_2 (read/write)
+  */
+void reg_aria_disp_set_chroma_top_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_top_cur_addr_2(void);
+void reg_aria_disp_set_chroma_top_cur_addr_2_chroma_top_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_top_cur_addr_2_chroma_top_cur_addr_2(void);
+
+/*!
+  register REGARIA_DISP_chroma_bot_cur_addr_2 (read/write)
+  */
+void reg_aria_disp_set_chroma_bot_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_bot_cur_addr_2(void);
+void reg_aria_disp_set_chroma_bot_cur_addr_2_chroma_bot_cur_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_bot_cur_addr_2_chroma_bot_cur_addr_2(void);
+
+/*!
+  register REGARIA_DISP_chroma_nxt_addr_2 (read/write)
+  */
+void reg_aria_disp_set_chroma_nxt_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_nxt_addr_2(void);
+void reg_aria_disp_set_chroma_nxt_addr_2_chroma_nxt_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_nxt_addr_2_chroma_nxt_addr_2(void);
+
+/*!
+  register REGARIA_DISP_chroma_top_cur_addr_2nd_2 (read/write)
+  */
+void reg_aria_disp_set_chroma_top_cur_addr_2nd_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_top_cur_addr_2nd_2(void);
+void reg_aria_disp_set_chroma_top_cur_addr_2nd_2_chroma_top_cur_addr_2nd_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_top_cur_addr_2nd_2_chroma_top_cur_addr_2nd_2(void);
+
+/*!
+  register REGARIA_DISP_chroma_bot_cur_addr_2nd_2 (read/write)
+  */
+void reg_aria_disp_set_chroma_bot_cur_addr_2nd_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_bot_cur_addr_2nd_2(void);
+void reg_aria_disp_set_chroma_bot_cur_addr_2nd_2_chroma_bot_cur_addr_2nd_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_chroma_bot_cur_addr_2nd_2_chroma_bot_cur_addr_2nd_2(void);
+
+/*!
+  register REGARIA_DISP_down_scale_ctrl (read/write)
+  */
+void reg_aria_disp_set_down_scale_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_ctrl(void);
+void reg_aria_disp_set_down_scale_ctrl_down_scale_wr_en_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_down_scale_wr_en_2(void);
+void reg_aria_disp_set_down_scale_ctrl_down_scale_wr_en_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_down_scale_wr_en_0(void);
+void reg_aria_disp_set_down_scale_ctrl_wr_top_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_wr_top_field_flag_2(void);
+void reg_aria_disp_set_down_scale_ctrl_wr_top_field_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_wr_top_field_flag_0(void);
+void reg_aria_disp_set_down_scale_ctrl_wr_progressive_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_wr_progressive_flag_2(void);
+void reg_aria_disp_set_down_scale_ctrl_wr_progressive_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_wr_progressive_flag_0(void);
+void reg_aria_disp_set_down_scale_ctrl_cbcr_fifo_full_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_cbcr_fifo_full_thr(void);
+void reg_aria_disp_set_down_scale_ctrl_luma_fifo_full_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_luma_fifo_full_thr(void);
+
+/*!
+  register REGARIA_DISP_down_scale_out_size (read/write)
+  */
+void reg_aria_disp_set_down_scale_out_size(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_out_size(void);
+void reg_aria_disp_set_down_scale_out_size_down_scale_output_height(mt_u16 data);
+mt_u16  reg_aria_disp_get_down_scale_out_size_down_scale_output_height(void);
+void reg_aria_disp_set_down_scale_out_size_down_scale_output_width(mt_u16 data);
+mt_u16  reg_aria_disp_get_down_scale_out_size_down_scale_output_width(void);
+
+/*!
+  register REGARIA_DISP_down_scale_wr_stride (read/write)
+  */
+void reg_aria_disp_set_down_scale_wr_stride(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_wr_stride(void);
+void reg_aria_disp_set_down_scale_wr_stride_down_scale_wr_stride(mt_u16 data);
+mt_u16  reg_aria_disp_get_down_scale_wr_stride_down_scale_wr_stride(void);
+
+/*!
+  register REGARIA_DISP_down_scale_luma_wr_addr_0 (read/write)
+  */
+void reg_aria_disp_set_down_scale_luma_wr_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_luma_wr_addr_0(void);
+void reg_aria_disp_set_down_scale_luma_wr_addr_0_down_scale_luma_wr_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_luma_wr_addr_0_down_scale_luma_wr_addr_0(void);
+
+/*!
+  register REGARIA_DISP_down_scale_cbcr_wr_addr_0 (read/write)
+  */
+void reg_aria_disp_set_down_scale_cbcr_wr_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_cbcr_wr_addr_0(void);
+void reg_aria_disp_set_down_scale_cbcr_wr_addr_0_down_scale_cbcr_wr_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_cbcr_wr_addr_0_down_scale_cbcr_wr_addr_0(void);
+
+/*!
+  register REGARIA_DISP_down_scale_luma_wr_addr_2 (read/write)
+  */
+void reg_aria_disp_set_down_scale_luma_wr_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_luma_wr_addr_2(void);
+void reg_aria_disp_set_down_scale_luma_wr_addr_2_down_scale_luma_wr_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_luma_wr_addr_2_down_scale_luma_wr_addr_2(void);
+
+/*!
+  register REGARIA_DISP_down_scale_cbcr_wr_addr_2 (read/write)
+  */
+void reg_aria_disp_set_down_scale_cbcr_wr_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_cbcr_wr_addr_2(void);
+void reg_aria_disp_set_down_scale_cbcr_wr_addr_2_down_scale_cbcr_wr_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_cbcr_wr_addr_2_down_scale_cbcr_wr_addr_2(void);
+
+/*!
+  register REGARIA_DISP_down_scale_ctrl_2nd (read/write)
+  */
+void reg_aria_disp_set_down_scale_ctrl_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_ctrl_2nd(void);
+void reg_aria_disp_set_down_scale_ctrl_2nd_down_scale_wr_en_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_2nd_down_scale_wr_en_2(void);
+void reg_aria_disp_set_down_scale_ctrl_2nd_down_scale_wr_en_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_2nd_down_scale_wr_en_0(void);
+void reg_aria_disp_set_down_scale_ctrl_2nd_wr_top_field_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_2nd_wr_top_field_flag_2(void);
+void reg_aria_disp_set_down_scale_ctrl_2nd_wr_top_field_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_2nd_wr_top_field_flag_0(void);
+void reg_aria_disp_set_down_scale_ctrl_2nd_wr_progressive_flag_2(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_2nd_wr_progressive_flag_2(void);
+void reg_aria_disp_set_down_scale_ctrl_2nd_wr_progressive_flag_0(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_2nd_wr_progressive_flag_0(void);
+void reg_aria_disp_set_down_scale_ctrl_2nd_cbcr_fifo_full_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_2nd_cbcr_fifo_full_thr(void);
+void reg_aria_disp_set_down_scale_ctrl_2nd_luma_fifo_full_thr(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_ctrl_2nd_luma_fifo_full_thr(void);
+
+/*!
+  register REGARIA_DISP_down_scale_out_size_2nd (read/write)
+  */
+void reg_aria_disp_set_down_scale_out_size_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_out_size_2nd(void);
+void reg_aria_disp_set_down_scale_out_size_2nd_down_scale_output_height(mt_u16 data);
+mt_u16  reg_aria_disp_get_down_scale_out_size_2nd_down_scale_output_height(void);
+void reg_aria_disp_set_down_scale_out_size_2nd_down_scale_output_width(mt_u16 data);
+mt_u16  reg_aria_disp_get_down_scale_out_size_2nd_down_scale_output_width(void);
+
+/*!
+  register REGARIA_DISP_down_scale_wr_stride_2nd (read/write)
+  */
+void reg_aria_disp_set_down_scale_wr_stride_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_wr_stride_2nd(void);
+void reg_aria_disp_set_down_scale_wr_stride_2nd_down_scale_wr_stride(mt_u16 data);
+mt_u16  reg_aria_disp_get_down_scale_wr_stride_2nd_down_scale_wr_stride(void);
+
+/*!
+  register REGARIA_DISP_down_scale_luma_wr_addr_0_2nd (read/write)
+  */
+void reg_aria_disp_set_down_scale_luma_wr_addr_0_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_luma_wr_addr_0_2nd(void);
+void reg_aria_disp_set_down_scale_luma_wr_addr_0_2nd_down_scale_luma_wr_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_luma_wr_addr_0_2nd_down_scale_luma_wr_addr_0(void);
+
+/*!
+  register REGARIA_DISP_down_scale_cbcr_wr_addr_0_2nd (read/write)
+  */
+void reg_aria_disp_set_down_scale_cbcr_wr_addr_0_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_cbcr_wr_addr_0_2nd(void);
+void reg_aria_disp_set_down_scale_cbcr_wr_addr_0_2nd_down_scale_cbcr_wr_addr_0(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_cbcr_wr_addr_0_2nd_down_scale_cbcr_wr_addr_0(void);
+
+/*!
+  register REGARIA_DISP_down_scale_luma_wr_addr_2_2nd (read/write)
+  */
+void reg_aria_disp_set_down_scale_luma_wr_addr_2_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_luma_wr_addr_2_2nd(void);
+void reg_aria_disp_set_down_scale_luma_wr_addr_2_2nd_down_scale_luma_wr_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_luma_wr_addr_2_2nd_down_scale_luma_wr_addr_2(void);
+
+/*!
+  register REGARIA_DISP_down_scale_cbcr_wr_addr_2_2nd (read/write)
+  */
+void reg_aria_disp_set_down_scale_cbcr_wr_addr_2_2nd(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_cbcr_wr_addr_2_2nd(void);
+void reg_aria_disp_set_down_scale_cbcr_wr_addr_2_2nd_down_scale_cbcr_wr_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_cbcr_wr_addr_2_2nd_down_scale_cbcr_wr_addr_2(void);
+
+/*!
+  register REGARIA_DISP_down_scale_data_endian_ctrl (read/write)
+  */
+void reg_aria_disp_set_down_scale_data_endian_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_down_scale_data_endian_ctrl(void);
+void reg_aria_disp_set_down_scale_data_endian_ctrl_wr_data_endian_ctrl_2nd(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_data_endian_ctrl_wr_data_endian_ctrl_2nd(void);
+void reg_aria_disp_set_down_scale_data_endian_ctrl_cbcr_swap_2nd(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_data_endian_ctrl_cbcr_swap_2nd(void);
+void reg_aria_disp_set_down_scale_data_endian_ctrl_wr_data_endian_ctrl(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_data_endian_ctrl_wr_data_endian_ctrl(void);
+void reg_aria_disp_set_down_scale_data_endian_ctrl_cbcr_swap(mt_u8 data);
+mt_u8   reg_aria_disp_get_down_scale_data_endian_ctrl_cbcr_swap(void);
+
+/*!
+  register REGARIA_DISP_hd_csc_ctrl (read/write)
+  */
+void reg_aria_disp_set_hd_csc_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_csc_ctrl(void);
+void reg_aria_disp_set_hd_csc_ctrl_hd_csc_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_csc_ctrl_hd_csc_en(void);
+void reg_aria_disp_set_hd_csc_ctrl_hd_bound_output_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_csc_ctrl_hd_bound_output_en(void);
+void reg_aria_disp_set_hd_csc_ctrl_hd_bound_input_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_hd_csc_ctrl_hd_bound_input_en(void);
+
+/*!
+  register REGARIA_DISP_hd_csc_coef_1 (read/write)
+  */
+void reg_aria_disp_set_hd_csc_coef_1(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_csc_coef_1(void);
+void reg_aria_disp_set_hd_csc_coef_1_csc_a01(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_1_csc_a01(void);
+void reg_aria_disp_set_hd_csc_coef_1_csc_a00(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_1_csc_a00(void);
+
+/*!
+  register REGARIA_DISP_hd_csc_coef_2 (read/write)
+  */
+void reg_aria_disp_set_hd_csc_coef_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_csc_coef_2(void);
+void reg_aria_disp_set_hd_csc_coef_2_csc_a10(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_2_csc_a10(void);
+void reg_aria_disp_set_hd_csc_coef_2_csc_a02(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_2_csc_a02(void);
+
+/*!
+  register REGARIA_DISP_hd_csc_coef_3 (read/write)
+  */
+void reg_aria_disp_set_hd_csc_coef_3(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_csc_coef_3(void);
+void reg_aria_disp_set_hd_csc_coef_3_csc_a12(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_3_csc_a12(void);
+void reg_aria_disp_set_hd_csc_coef_3_csc_a11(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_3_csc_a11(void);
+
+/*!
+  register REGARIA_DISP_hd_csc_coef_4 (read/write)
+  */
+void reg_aria_disp_set_hd_csc_coef_4(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_csc_coef_4(void);
+void reg_aria_disp_set_hd_csc_coef_4_csc_a21(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_4_csc_a21(void);
+void reg_aria_disp_set_hd_csc_coef_4_csc_a20(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_4_csc_a20(void);
+
+/*!
+  register REGARIA_DISP_hd_csc_coef_5 (read/write)
+  */
+void reg_aria_disp_set_hd_csc_coef_5(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_csc_coef_5(void);
+void reg_aria_disp_set_hd_csc_coef_5_csc_a22(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_csc_coef_5_csc_a22(void);
+
+/*!
+  register REGARIA_DISP_tile_para (read/write)
+  */
+void reg_aria_disp_set_tile_para(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_para(void);
+void reg_aria_disp_set_tile_para_col_size_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_tile_para_col_size_mode(void);
+void reg_aria_disp_set_tile_para_field_picture(mt_u8 data);
+mt_u8   reg_aria_disp_get_tile_para_field_picture(void);
+void reg_aria_disp_set_tile_para_hd_map_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_tile_para_hd_map_mode(void);
+void reg_aria_disp_set_tile_para_tile_config(mt_u8 data);
+mt_u8   reg_aria_disp_get_tile_para_tile_config(void);
+
+/*!
+  register REGARIA_DISP_tile_rowjump_00 (read/write)
+  */
+void reg_aria_disp_set_tile_rowjump_00(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_rowjump_00(void);
+void reg_aria_disp_set_tile_rowjump_00_tile_rowjump_00(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_rowjump_00_tile_rowjump_00(void);
+
+/*!
+  register REGARIA_DISP_tile_rowjump_01 (read/write)
+  */
+void reg_aria_disp_set_tile_rowjump_01(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_rowjump_01(void);
+void reg_aria_disp_set_tile_rowjump_01_tile_rowjump_01(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_rowjump_01_tile_rowjump_01(void);
+
+/*!
+  register REGARIA_DISP_tile_rowjump_10 (read/write)
+  */
+void reg_aria_disp_set_tile_rowjump_10(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_rowjump_10(void);
+void reg_aria_disp_set_tile_rowjump_10_tile_rowjump_10(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_rowjump_10_tile_rowjump_10(void);
+
+/*!
+  register REGARIA_DISP_tile_rowjump_11 (read/write)
+  */
+void reg_aria_disp_set_tile_rowjump_11(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_rowjump_11(void);
+void reg_aria_disp_set_tile_rowjump_11_tile_rowjump_11(mt_u32 data);
+mt_u32  reg_aria_disp_get_tile_rowjump_11_tile_rowjump_11(void);
+
+/*!
+  register REGARIA_DISP_denoise_ctrl (read/write)
+  */
+void reg_aria_disp_set_denoise_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_denoise_ctrl(void);
+void reg_aria_disp_set_denoise_ctrl_denoise_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_denoise_ctrl_denoise_en(void);
+void reg_aria_disp_set_denoise_ctrl_denoise_thrd(mt_u8 data);
+mt_u8   reg_aria_disp_get_denoise_ctrl_denoise_thrd(void);
+void reg_aria_disp_set_denoise_ctrl_denoise_thrg(mt_u8 data);
+mt_u8   reg_aria_disp_get_denoise_ctrl_denoise_thrg(void);
+
+/*!
+  register REGARIA_DISP_denoise_para_1 (read/write)
+  */
+void reg_aria_disp_set_denoise_para_1(mt_u32 data);
+mt_u32  reg_aria_disp_get_denoise_para_1(void);
+void reg_aria_disp_set_denoise_para_1_denoise_a2(mt_u16 data);
+mt_u16  reg_aria_disp_get_denoise_para_1_denoise_a2(void);
+void reg_aria_disp_set_denoise_para_1_denoise_a1(mt_u16 data);
+mt_u16  reg_aria_disp_get_denoise_para_1_denoise_a1(void);
+
+/*!
+  register REGARIA_DISP_denoise_para_2 (read/write)
+  */
+void reg_aria_disp_set_denoise_para_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_denoise_para_2(void);
+void reg_aria_disp_set_denoise_para_2_denoise_b1(mt_u16 data);
+mt_u16  reg_aria_disp_get_denoise_para_2_denoise_b1(void);
+void reg_aria_disp_set_denoise_para_2_denoise_a3(mt_u16 data);
+mt_u16  reg_aria_disp_get_denoise_para_2_denoise_a3(void);
+
+/*!
+  register REGARIA_DISP_denoise_para_3 (read/write)
+  */
+void reg_aria_disp_set_denoise_para_3(mt_u32 data);
+mt_u32  reg_aria_disp_get_denoise_para_3(void);
+void reg_aria_disp_set_denoise_para_3_denoise_b3(mt_u16 data);
+mt_u16  reg_aria_disp_get_denoise_para_3_denoise_b3(void);
+void reg_aria_disp_set_denoise_para_3_denoise_b2(mt_u16 data);
+mt_u16  reg_aria_disp_get_denoise_para_3_denoise_b2(void);
+
+/*!
+  register REGARIA_DISP_background_color (read/write)
+  */
+void reg_aria_disp_set_background_color(mt_u32 data);
+mt_u32  reg_aria_disp_get_background_color(void);
+void reg_aria_disp_set_background_color_background_cr(mt_u8 data);
+mt_u8   reg_aria_disp_get_background_color_background_cr(void);
+void reg_aria_disp_set_background_color_background_cb(mt_u8 data);
+mt_u8   reg_aria_disp_get_background_color_background_cb(void);
+void reg_aria_disp_set_background_color_background_luma(mt_u8 data);
+mt_u8   reg_aria_disp_get_background_color_background_luma(void);
+void reg_aria_disp_set_background_color_background_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_background_color_background_sel(void);
+
+/*!
+  register REGARIA_DISP_hdenc_test_cmd (read/write)
+  */
+void reg_aria_disp_set_hdenc_test_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_hdenc_test_cmd(void);
+void reg_aria_disp_set_hdenc_test_cmd_test_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_hdenc_test_cmd_test_en(void);
+void reg_aria_disp_set_hdenc_test_cmd_wr_data_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_hdenc_test_cmd_wr_data_en(void);
+void reg_aria_disp_set_hdenc_test_cmd_test_length_minus_1(mt_u16 data);
+mt_u16  reg_aria_disp_get_hdenc_test_cmd_test_length_minus_1(void);
+
+/*!
+  register REGARIA_DISP_hdenc_test_data (read/write)
+  */
+void reg_aria_disp_set_hdenc_test_data(mt_u32 data);
+mt_u32  reg_aria_disp_get_hdenc_test_data(void);
+void reg_aria_disp_set_hdenc_test_data_test_data(mt_u32 data);
+mt_u32  reg_aria_disp_get_hdenc_test_data_test_data(void);
+
+/*!
+  register REGARIA_DISP_video_axi_monitor_clr (read/write)
+  */
+void reg_aria_disp_set_video_axi_monitor_clr(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_axi_monitor_clr(void);
+void reg_aria_disp_set_video_axi_monitor_clr_video_read_cmd_lantency_cnt_clr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_axi_monitor_clr_video_read_cmd_lantency_cnt_clr(void);
+void reg_aria_disp_set_video_axi_monitor_clr_video_read_data_lantency_cnt_clr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_axi_monitor_clr_video_read_data_lantency_cnt_clr(void);
+void reg_aria_disp_set_video_axi_monitor_clr_motion_write_cmd_lantency_cnt_clr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_axi_monitor_clr_motion_write_cmd_lantency_cnt_clr(void);
+void reg_aria_disp_set_video_axi_monitor_clr_motion_write_data_lantency_cnt_clr(mt_u8 data);
+mt_u8   reg_aria_disp_get_video_axi_monitor_clr_motion_write_data_lantency_cnt_clr(void);
+
+/*!
+  register REGARIA_DISP_video_read_cmd_latency_cnt_max (read/write)
+  */
+void reg_aria_disp_set_video_read_cmd_latency_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_cmd_latency_cnt_max(void);
+void reg_aria_disp_set_video_read_cmd_latency_cnt_max_video_read_cmd_latency_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_cmd_latency_cnt_max_video_read_cmd_latency_cnt_max(void);
+
+/*!
+  register REGARIA_DISP_video_read_cmd_latency_cnt_sum (read/write)
+  */
+void reg_aria_disp_set_video_read_cmd_latency_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_cmd_latency_cnt_sum(void);
+void reg_aria_disp_set_video_read_cmd_latency_cnt_sum_video_read_cmd_latency_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_cmd_latency_cnt_sum_video_read_cmd_latency_cnt_sum(void);
+
+/*!
+  register REGARIA_DISP_video_read_cmd_req_cnt_sum (read/write)
+  */
+void reg_aria_disp_set_video_read_cmd_req_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_cmd_req_cnt_sum(void);
+void reg_aria_disp_set_video_read_cmd_req_cnt_sum_video_read_cmd_req_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_cmd_req_cnt_sum_video_read_cmd_req_cnt_sum(void);
+
+/*!
+  register REGARIA_DISP_video_read_data_latency_cnt_max (read/write)
+  */
+void reg_aria_disp_set_video_read_data_latency_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_data_latency_cnt_max(void);
+void reg_aria_disp_set_video_read_data_latency_cnt_max_video_read_data_latency_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_data_latency_cnt_max_video_read_data_latency_cnt_max(void);
+
+/*!
+  register REGARIA_DISP_video_read_data_latency_cnt_sum (read/write)
+  */
+void reg_aria_disp_set_video_read_data_latency_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_data_latency_cnt_sum(void);
+void reg_aria_disp_set_video_read_data_latency_cnt_sum_video_read_data_latency_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_data_latency_cnt_sum_video_read_data_latency_cnt_sum(void);
+
+/*!
+  register REGARIA_DISP_video_read_data_req_cnt_sum (read/write)
+  */
+void reg_aria_disp_set_video_read_data_req_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_data_req_cnt_sum(void);
+void reg_aria_disp_set_video_read_data_req_cnt_sum_video_read_data_req_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_video_read_data_req_cnt_sum_video_read_data_req_cnt_sum(void);
+
+/*!
+  register REGARIA_DISP_motion_write_cmd_latency_cnt_max (read/write)
+  */
+void reg_aria_disp_set_motion_write_cmd_latency_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_cmd_latency_cnt_max(void);
+void reg_aria_disp_set_motion_write_cmd_latency_cnt_max_motion_write_cmd_latency_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_cmd_latency_cnt_max_motion_write_cmd_latency_cnt_max(void);
+
+/*!
+  register REGARIA_DISP_motion_write_cmd_latency_cnt_sum (read/write)
+  */
+void reg_aria_disp_set_motion_write_cmd_latency_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_cmd_latency_cnt_sum(void);
+void reg_aria_disp_set_motion_write_cmd_latency_cnt_sum_motion_write_cmd_latency_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_cmd_latency_cnt_sum_motion_write_cmd_latency_cnt_sum(void);
+
+/*!
+  register REGARIA_DISP_motion_write_cmd_req_cnt_sum (read/write)
+  */
+void reg_aria_disp_set_motion_write_cmd_req_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_cmd_req_cnt_sum(void);
+void reg_aria_disp_set_motion_write_cmd_req_cnt_sum_motion_write_cmd_req_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_cmd_req_cnt_sum_motion_write_cmd_req_cnt_sum(void);
+
+/*!
+  register REGARIA_DISP_motion_write_data_latency_cnt_max (read/write)
+  */
+void reg_aria_disp_set_motion_write_data_latency_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_data_latency_cnt_max(void);
+void reg_aria_disp_set_motion_write_data_latency_cnt_max_motion_write_data_latency_cnt_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_data_latency_cnt_max_motion_write_data_latency_cnt_max(void);
+
+/*!
+  register REGARIA_DISP_motion_write_data_latency_cnt_sum (read/write)
+  */
+void reg_aria_disp_set_motion_write_data_latency_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_data_latency_cnt_sum(void);
+void reg_aria_disp_set_motion_write_data_latency_cnt_sum_motion_write_data_latency_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_data_latency_cnt_sum_motion_write_data_latency_cnt_sum(void);
+
+/*!
+  register REGARIA_DISP_motion_write_data_req_cnt_sum (read/write)
+  */
+void reg_aria_disp_set_motion_write_data_req_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_data_req_cnt_sum(void);
+void reg_aria_disp_set_motion_write_data_req_cnt_sum_motion_write_data_req_cnt_sum(mt_u32 data);
+mt_u32  reg_aria_disp_get_motion_write_data_req_cnt_sum_motion_write_data_req_cnt_sum(void);
+
+/*!
+  register REGARIA_DISP_osdl_osd0_cmd (read/write)
+  */
+void reg_aria_disp_set_osdl_osd0_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_osd0_cmd(void);
+void reg_aria_disp_set_osdl_osd0_cmd_osd_layer_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd0_cmd_osd_layer_en(void);
+void reg_aria_disp_set_osdl_osd0_cmd_force_progressive_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd0_cmd_force_progressive_mode(void);
+void reg_aria_disp_set_osdl_osd0_cmd_osd_plane_alpha_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd0_cmd_osd_plane_alpha_en(void);
+void reg_aria_disp_set_osdl_osd0_cmd_osd0_reduce_framerate(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd0_cmd_osd0_reduce_framerate(void);
+void reg_aria_disp_set_osdl_osd0_cmd_plane_alpha(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd0_cmd_plane_alpha(void);
+void reg_aria_disp_set_osdl_osd0_cmd_weak_edge_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd0_cmd_weak_edge_enable(void);
+
+/*!
+  register REGARIA_DISP_osdl_osd1_cmd (read/write)
+  */
+void reg_aria_disp_set_osdl_osd1_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_osd1_cmd(void);
+void reg_aria_disp_set_osdl_osd1_cmd_osd_layer_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd1_cmd_osd_layer_en(void);
+void reg_aria_disp_set_osdl_osd1_cmd_force_progressive_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd1_cmd_force_progressive_mode(void);
+void reg_aria_disp_set_osdl_osd1_cmd_osd_plane_alpha_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd1_cmd_osd_plane_alpha_en(void);
+void reg_aria_disp_set_osdl_osd1_cmd_osd1_reduce_framerate(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd1_cmd_osd1_reduce_framerate(void);
+void reg_aria_disp_set_osdl_osd1_cmd_plane_alpha(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd1_cmd_plane_alpha(void);
+void reg_aria_disp_set_osdl_osd1_cmd_weak_edge_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd1_cmd_weak_edge_enable(void);
+
+/*!
+  register REGARIA_DISP_osdl_sub_cmd (read/write)
+  */
+void reg_aria_disp_set_osdl_sub_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_sub_cmd(void);
+void reg_aria_disp_set_osdl_sub_cmd_osd_layer(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_sub_cmd_osd_layer(void);
+void reg_aria_disp_set_osdl_sub_cmd_force_progressive_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_sub_cmd_force_progressive_mode(void);
+void reg_aria_disp_set_osdl_sub_cmd_osd_plane_alpha_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_sub_cmd_osd_plane_alpha_en(void);
+void reg_aria_disp_set_osdl_sub_cmd_sub_reduce_framerate(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_sub_cmd_sub_reduce_framerate(void);
+void reg_aria_disp_set_osdl_sub_cmd_plane_alpha(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_sub_cmd_plane_alpha(void);
+void reg_aria_disp_set_osdl_sub_cmd_weak_edge_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_sub_cmd_weak_edge_enable(void);
+
+/*!
+  register REGARIA_DISP_osdl_cmd (read/write)
+  */
+void reg_aria_disp_set_osdl_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_cmd(void);
+void reg_aria_disp_set_osdl_cmd_osd0_decomp_sync(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_osd0_decomp_sync(void);
+void reg_aria_disp_set_osdl_cmd_osd1_decomp_sync(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_osd1_decomp_sync(void);
+void reg_aria_disp_set_osdl_cmd_sub_decomp_sync(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_sub_decomp_sync(void);
+void reg_aria_disp_set_osdl_cmd_osdl_monitor_reload(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_osdl_monitor_reload(void);
+void reg_aria_disp_set_osdl_cmd_osd_latch_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_osd_latch_top(void);
+void reg_aria_disp_set_osdl_cmd_osd_latch_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_osd_latch_bot(void);
+void reg_aria_disp_set_osdl_cmd_osd_latch_3d_1st(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_osd_latch_3d_1st(void);
+void reg_aria_disp_set_osdl_cmd_osd_latch_3d_2nd(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_osd_latch_3d_2nd(void);
+void reg_aria_disp_set_osdl_cmd_osd_latch_or_not(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_cmd_osd_latch_or_not(void);
+
+/*!
+  register REGARIA_DISP_osdl_osd0_ini_addr (read/write)
+  */
+void reg_aria_disp_set_osdl_osd0_ini_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_osd0_ini_addr(void);
+void reg_aria_disp_set_osdl_osd0_ini_addr_osd0_ini_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_osd0_ini_addr_osd0_ini_addr(void);
+
+/*!
+  register REGARIA_DISP_osdl_osd1_ini_addr (read/write)
+  */
+void reg_aria_disp_set_osdl_osd1_ini_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_osd1_ini_addr(void);
+void reg_aria_disp_set_osdl_osd1_ini_addr_osd1_ini_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_osd1_ini_addr_osd1_ini_addr(void);
+
+/*!
+  register REGARIA_DISP_osdl_sub_ini_addr (read/write)
+  */
+void reg_aria_disp_set_osdl_sub_ini_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_sub_ini_addr(void);
+void reg_aria_disp_set_osdl_sub_ini_addr_sub_ini_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_sub_ini_addr_sub_ini_addr(void);
+
+/*!
+  register REGARIA_DISP_osdl_ff_threshold (read/write)
+  */
+void reg_aria_disp_set_osdl_ff_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_ff_threshold(void);
+void reg_aria_disp_set_osdl_ff_threshold_osdl_ff_urgent_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_ff_threshold_osdl_ff_urgent_num(void);
+
+/*!
+  register REGARIA_DISP_osdl_rgb2y_coeff (read/write)
+  */
+void reg_aria_disp_set_osdl_rgb2y_coeff(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_rgb2y_coeff(void);
+void reg_aria_disp_set_osdl_rgb2y_coeff_r2y_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2y_coeff_r2y_coeff(void);
+void reg_aria_disp_set_osdl_rgb2y_coeff_g2y_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2y_coeff_g2y_coeff(void);
+void reg_aria_disp_set_osdl_rgb2y_coeff_b2y_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2y_coeff_b2y_coeff(void);
+
+/*!
+  register REGARIA_DISP_osdl_rgb2cb_coeff (read/write)
+  */
+void reg_aria_disp_set_osdl_rgb2cb_coeff(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_rgb2cb_coeff(void);
+void reg_aria_disp_set_osdl_rgb2cb_coeff_r2cb_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2cb_coeff_r2cb_coeff(void);
+void reg_aria_disp_set_osdl_rgb2cb_coeff_g2cb_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2cb_coeff_g2cb_coeff(void);
+void reg_aria_disp_set_osdl_rgb2cb_coeff_b2cb_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2cb_coeff_b2cb_coeff(void);
+
+/*!
+  register REGARIA_DISP_osdl_rgb2cr_coeff (read/write)
+  */
+void reg_aria_disp_set_osdl_rgb2cr_coeff(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_rgb2cr_coeff(void);
+void reg_aria_disp_set_osdl_rgb2cr_coeff_r2cr_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2cr_coeff_r2cr_coeff(void);
+void reg_aria_disp_set_osdl_rgb2cr_coeff_g2cr_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2cr_coeff_g2cr_coeff(void);
+void reg_aria_disp_set_osdl_rgb2cr_coeff_b2cr_coeff(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_rgb2cr_coeff_b2cr_coeff(void);
+
+/*!
+  register REGARIA_DISP_osdl_y_offset (read/write)
+  */
+void reg_aria_disp_set_osdl_y_offset(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_y_offset(void);
+void reg_aria_disp_set_osdl_y_offset_y_offset(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_y_offset_y_offset(void);
+
+/*!
+  register REGARIA_DISP_osdl_cbcr_offset (read/write)
+  */
+void reg_aria_disp_set_osdl_cbcr_offset(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_cbcr_offset(void);
+void reg_aria_disp_set_osdl_cbcr_offset_cbcr_offset(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_cbcr_offset_cbcr_offset(void);
+
+/*!
+  register REGARIA_DISP_osdl_osd0_debug (read/write)
+  */
+void reg_aria_disp_set_osdl_osd0_debug(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_osd0_debug(void);
+void reg_aria_disp_set_osdl_osd0_debug_osd0_decff_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd0_debug_osd0_decff_full(void);
+void reg_aria_disp_set_osdl_osd0_debug_osd0_decff_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd0_debug_osd0_decff_empty(void);
+
+/*!
+  register REGARIA_DISP_osdl_osd1_debug (read/write)
+  */
+void reg_aria_disp_set_osdl_osd1_debug(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_osd1_debug(void);
+void reg_aria_disp_set_osdl_osd1_debug_osd1_decff_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd1_debug_osd1_decff_full(void);
+void reg_aria_disp_set_osdl_osd1_debug_osd1_decff_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_osd1_debug_osd1_decff_empty(void);
+
+/*!
+  register REGARIA_DISP_osdl_sub_debug (read/write)
+  */
+void reg_aria_disp_set_osdl_sub_debug(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_sub_debug(void);
+void reg_aria_disp_set_osdl_sub_debug_sub_decff_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_sub_debug_sub_decff_full(void);
+void reg_aria_disp_set_osdl_sub_debug_sub_decff_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdl_sub_debug_sub_decff_empty(void);
+
+/*!
+  register REGARIA_DISP_osdl_cmd_ack_latency (read/write)
+  */
+void reg_aria_disp_set_osdl_cmd_ack_latency(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_cmd_ack_latency(void);
+void reg_aria_disp_set_osdl_cmd_ack_latency_cmd_ack_latency_max(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_cmd_ack_latency_cmd_ack_latency_max(void);
+void reg_aria_disp_set_osdl_cmd_ack_latency_cmd_ack_latency_avg(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_cmd_ack_latency_cmd_ack_latency_avg(void);
+
+/*!
+  register REGARIA_DISP_osdl_cmd_dat_latency (read/write)
+  */
+void reg_aria_disp_set_osdl_cmd_dat_latency(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_cmd_dat_latency(void);
+void reg_aria_disp_set_osdl_cmd_dat_latency_cmd_dat_latency_max(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_cmd_dat_latency_cmd_dat_latency_max(void);
+void reg_aria_disp_set_osdl_cmd_dat_latency_cmd_dat_latency_avg(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_cmd_dat_latency_cmd_dat_latency_avg(void);
+
+/*!
+  register REGARIA_DISP_osdl_datlast_latency (read/write)
+  */
+void reg_aria_disp_set_osdl_datlast_latency(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdl_datlast_latency(void);
+void reg_aria_disp_set_osdl_datlast_latency_datlast_latency_max(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_datlast_latency_datlast_latency_max(void);
+void reg_aria_disp_set_osdl_datlast_latency_datlast_latency_avg(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdl_datlast_latency_datlast_latency_avg(void);
+
+/*!
+  register REGARIA_DISP_osdm_cmd (read/write)
+  */
+void reg_aria_disp_set_osdm_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdm_cmd(void);
+void reg_aria_disp_set_osdm_cmd_osd_sub_mux_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdm_cmd_osd_sub_mux_sel(void);
+void reg_aria_disp_set_osdm_cmd_osd_sub_mix_first(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdm_cmd_osd_sub_mix_first(void);
+
+/*!
+  register REGARIA_DISP_osdm_threshold (read/write)
+  */
+void reg_aria_disp_set_osdm_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdm_threshold(void);
+void reg_aria_disp_set_osdm_threshold_osdm_full_threshold(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdm_threshold_osdm_full_threshold(void);
+void reg_aria_disp_set_osdm_threshold_osdm_empty_threshold(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdm_threshold_osdm_empty_threshold(void);
+
+/*!
+  register REGARIA_DISP_osdm_osd0_ckey (read/write)
+  */
+void reg_aria_disp_set_osdm_osd0_ckey(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdm_osd0_ckey(void);
+void reg_aria_disp_set_osdm_osd0_ckey_colorkey_value(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdm_osd0_ckey_colorkey_value(void);
+void reg_aria_disp_set_osdm_osd0_ckey_osd0_colorkey_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdm_osd0_ckey_osd0_colorkey_en(void);
+
+/*!
+  register REGARIA_DISP_osdm_osd1_ckey (read/write)
+  */
+void reg_aria_disp_set_osdm_osd1_ckey(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdm_osd1_ckey(void);
+void reg_aria_disp_set_osdm_osd1_ckey_colorkey_value(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdm_osd1_ckey_colorkey_value(void);
+void reg_aria_disp_set_osdm_osd1_ckey_osd1_colorkey_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdm_osd1_ckey_osd1_colorkey_en(void);
+
+/*!
+  register REGARIA_DISP_osds_cmd (read/write)
+  */
+void reg_aria_disp_set_osds_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_cmd(void);
+void reg_aria_disp_set_osds_cmd_osd_vphase_type(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_cmd_osd_vphase_type(void);
+void reg_aria_disp_set_osds_cmd_osd_vert_no_filter(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_cmd_osd_vert_no_filter(void);
+void reg_aria_disp_set_osds_cmd_osd_vert_no_filter_alpha(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_cmd_osd_vert_no_filter_alpha(void);
+void reg_aria_disp_set_osds_cmd_osd_vert_no_boundary(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_cmd_osd_vert_no_boundary(void);
+void reg_aria_disp_set_osds_cmd_osd_vert_bypass_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_cmd_osd_vert_bypass_en(void);
+void reg_aria_disp_set_osds_cmd_osd_hori_no_filter_alpha(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_cmd_osd_hori_no_filter_alpha(void);
+void reg_aria_disp_set_osds_cmd_osd_hori_do_boundary(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_cmd_osd_hori_do_boundary(void);
+void reg_aria_disp_set_osds_cmd_osd_hori_start_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_cmd_osd_hori_start_fra(void);
+void reg_aria_disp_set_osds_cmd_osd_hori_no_filter(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_cmd_osd_hori_no_filter(void);
+
+/*!
+  register REGARIA_DISP_osds_hsize (read/write)
+  */
+void reg_aria_disp_set_osds_hsize(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_hsize(void);
+void reg_aria_disp_set_osds_hsize_osd_dst_hsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_hsize_osd_dst_hsize(void);
+void reg_aria_disp_set_osds_hsize_osd_ori_hsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_hsize_osd_ori_hsize(void);
+
+/*!
+  register REGARIA_DISP_osds_hratio (read/write)
+  */
+void reg_aria_disp_set_osds_hratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_hratio(void);
+void reg_aria_disp_set_osds_hratio_osd_hori_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_hratio_osd_hori_ratio_fra(void);
+void reg_aria_disp_set_osds_hratio_osd_hori_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_hratio_osd_hori_ratio_int(void);
+
+/*!
+  register REGARIA_DISP_osds_hf_coeff_addr (read/write)
+  */
+void reg_aria_disp_set_osds_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_hf_coeff_addr(void);
+void reg_aria_disp_set_osds_hf_coeff_addr_osd_hf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_hf_coeff_addr_osd_hf_coeff_addr(void);
+
+/*!
+  register REGARIA_DISP_osds_vsize (read/write)
+  */
+void reg_aria_disp_set_osds_vsize(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_vsize(void);
+void reg_aria_disp_set_osds_vsize_osd_dst_vsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_vsize_osd_dst_vsize(void);
+void reg_aria_disp_set_osds_vsize_osd_ori_vsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_vsize_osd_ori_vsize(void);
+
+/*!
+  register REGARIA_DISP_osds_vratio (read/write)
+  */
+void reg_aria_disp_set_osds_vratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_vratio(void);
+void reg_aria_disp_set_osds_vratio_osd_vert_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_vratio_osd_vert_ratio_fra(void);
+void reg_aria_disp_set_osds_vratio_osd_vert_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_vratio_osd_vert_ratio_int(void);
+
+/*!
+  register REGARIA_DISP_osds_vf_coeff_addr (read/write)
+  */
+void reg_aria_disp_set_osds_vf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_vf_coeff_addr(void);
+void reg_aria_disp_set_osds_vf_coeff_addr_osd_vf_coeff_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_vf_coeff_addr_osd_vf_coeff_addr(void);
+
+/*!
+  register REGARIA_DISP_osds_v_start_line (read/write)
+  */
+void reg_aria_disp_set_osds_v_start_line(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_v_start_line(void);
+void reg_aria_disp_set_osds_v_start_line_osd_odd_start_line(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_v_start_line_osd_odd_start_line(void);
+void reg_aria_disp_set_osds_v_start_line_osd_even_start_line(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_v_start_line_osd_even_start_line(void);
+
+/*!
+  register REGARIA_DISP_osds_v_start_fra (read/write)
+  */
+void reg_aria_disp_set_osds_v_start_fra(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_v_start_fra(void);
+void reg_aria_disp_set_osds_v_start_fra_osd_vert_start_fra_odd(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_v_start_fra_osd_vert_start_fra_odd(void);
+void reg_aria_disp_set_osds_v_start_fra_osd_vert_start_fra_even(mt_u16 data);
+mt_u16  reg_aria_disp_get_osds_v_start_fra_osd_vert_start_fra_even(void);
+
+/*!
+  register REGARIA_DISP_osds_v_tap (read/write)
+  */
+void reg_aria_disp_set_osds_v_tap(mt_u32 data);
+mt_u32  reg_aria_disp_get_osds_v_tap(void);
+void reg_aria_disp_set_osds_v_tap_osd_vert_tap_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osds_v_tap_osd_vert_tap_num(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_cmd (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_cmd(void);
+void reg_aria_disp_set_osdd_osd0_cmd_compress_en_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_cmd_compress_en_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_length_a (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_length_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_length_a(void);
+void reg_aria_disp_set_osdd_osd0_length_a_a_compress_bits_osd0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_length_a_a_compress_bits_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_length_r (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_length_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_length_r(void);
+void reg_aria_disp_set_osdd_osd0_length_r_r_compress_bits_osd0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_length_r_r_compress_bits_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_length_g (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_length_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_length_g(void);
+void reg_aria_disp_set_osdd_osd0_length_g_g_compress_bits_osd0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_length_g_g_compress_bits_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_length_b (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_length_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_length_b(void);
+void reg_aria_disp_set_osdd_osd0_length_b_b_compress_bits_osd0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_length_b_b_compress_bits_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_addr_a (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_addr_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_addr_a(void);
+void reg_aria_disp_set_osdd_osd0_addr_a_ff0_ddr_addr_base_osd0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_addr_a_ff0_ddr_addr_base_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_addr_r (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_addr_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_addr_r(void);
+void reg_aria_disp_set_osdd_osd0_addr_r_ff1_ddr_addr_base_osd0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_addr_r_ff1_ddr_addr_base_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_addr_g (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_addr_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_addr_g(void);
+void reg_aria_disp_set_osdd_osd0_addr_g_ff2_ddr_addr_base_osd0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_addr_g_ff2_ddr_addr_base_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_addr_b (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_addr_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_addr_b(void);
+void reg_aria_disp_set_osdd_osd0_addr_b_ff3_ddr_addr_base_osd0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_addr_b_ff3_ddr_addr_base_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_ctl (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_ctl(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_ctl(void);
+void reg_aria_disp_set_osdd_osd0_ctl_runl_diff_num_a_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl_runl_diff_num_a_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl_runl_diff_num_r_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl_runl_diff_num_r_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl_runl_diff_num_g_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl_runl_diff_num_g_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl_runl_diff_num_b_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl_runl_diff_num_b_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd0_ctl2 (read/write)
+  */
+void reg_aria_disp_set_osdd_osd0_ctl2(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd0_ctl2(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_a_osdd_arith_adapt_en_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_a_osdd_arith_adapt_en_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_r_osdd_arith_adapt_en_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_r_osdd_arith_adapt_en_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_g_osdd_arith_adapt_en_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_g_osdd_arith_adapt_en_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_b_osdd_arith_adapt_en_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_b_osdd_arith_adapt_en_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_lossy_a_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_lossy_a_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_lossy_r_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_lossy_r_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_lossy_g_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_lossy_g_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_lossy_b_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_lossy_b_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_a_osdd_init_arith_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_a_osdd_init_arith_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_r_osdd_init_arith_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_r_osdd_init_arith_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_g_osdd_init_arith_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_g_osdd_init_arith_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_b_osdd_init_arith_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_b_osdd_init_arith_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_a_dpcm_quanmode_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_a_dpcm_quanmode_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_r_dpcm_quanmode_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_r_dpcm_quanmode_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_g_dpcm_quanmode_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_g_dpcm_quanmode_osd0(void);
+void reg_aria_disp_set_osdd_osd0_ctl2_b_dpcm_quanmode_osd0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd0_ctl2_b_dpcm_quanmode_osd0(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_cmd (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_cmd(void);
+void reg_aria_disp_set_osdd_osd1_cmd_compress_en_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_cmd_compress_en_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_length_a (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_length_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_length_a(void);
+void reg_aria_disp_set_osdd_osd1_length_a_a_compress_bits_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_length_a_a_compress_bits_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_length_r (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_length_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_length_r(void);
+void reg_aria_disp_set_osdd_osd1_length_r_r_compress_bits_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_length_r_r_compress_bits_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_length_g (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_length_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_length_g(void);
+void reg_aria_disp_set_osdd_osd1_length_g_g_compress_bits_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_length_g_g_compress_bits_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_length_b (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_length_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_length_b(void);
+void reg_aria_disp_set_osdd_osd1_length_b_b_compress_bits_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_length_b_b_compress_bits_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_addr_a (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_addr_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_addr_a(void);
+void reg_aria_disp_set_osdd_osd1_addr_a_ff0_ddr_addr_base_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_addr_a_ff0_ddr_addr_base_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_addr_r (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_addr_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_addr_r(void);
+void reg_aria_disp_set_osdd_osd1_addr_r_ff1_ddr_addr_base_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_addr_r_ff1_ddr_addr_base_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_addr_g (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_addr_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_addr_g(void);
+void reg_aria_disp_set_osdd_osd1_addr_g_ff2_ddr_addr_base_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_addr_g_ff2_ddr_addr_base_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_addr_b (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_addr_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_addr_b(void);
+void reg_aria_disp_set_osdd_osd1_addr_b_ff3_ddr_addr_base_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_addr_b_ff3_ddr_addr_base_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_ctl (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_ctl(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_ctl(void);
+void reg_aria_disp_set_osdd_osd1_ctl_runl_diff_num_a_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl_runl_diff_num_a_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl_runl_diff_num_r_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl_runl_diff_num_r_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl_runl_diff_num_g_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl_runl_diff_num_g_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl_runl_diff_num_b_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl_runl_diff_num_b_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_osd1_ctl2 (read/write)
+  */
+void reg_aria_disp_set_osdd_osd1_ctl2(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_osd1_ctl2(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_a_osdd_arith_adapt_en_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_a_osdd_arith_adapt_en_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_r_osdd_arith_adapt_en_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_r_osdd_arith_adapt_en_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_g_osdd_arith_adapt_en_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_g_osdd_arith_adapt_en_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_b_osdd_arith_adapt_en_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_b_osdd_arith_adapt_en_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_lossy_a_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_lossy_a_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_lossy_r_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_lossy_r_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_lossy_g_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_lossy_g_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_lossy_b_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_lossy_b_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_a_osdd_init_arith_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_a_osdd_init_arith_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_r_osdd_init_arith_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_r_osdd_init_arith_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_g_osdd_init_arith_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_g_osdd_init_arith_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_b_osdd_init_arith_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_b_osdd_init_arith_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_a_dpcm_quanmode_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_a_dpcm_quanmode_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_r_dpcm_quanmode_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_r_dpcm_quanmode_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_g_dpcm_quanmode_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_g_dpcm_quanmode_osd1(void);
+void reg_aria_disp_set_osdd_osd1_ctl2_b_dpcm_quanmode_osd1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_osd1_ctl2_b_dpcm_quanmode_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_cmd (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_cmd(void);
+void reg_aria_disp_set_osdd_sub_cmd_compress_en_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_cmd_compress_en_sub(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_length_a (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_length_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_length_a(void);
+void reg_aria_disp_set_osdd_sub_length_a_a_compress_bits_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_length_a_a_compress_bits_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_length_r (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_length_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_length_r(void);
+void reg_aria_disp_set_osdd_sub_length_r_r_compress_bits_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_length_r_r_compress_bits_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_lenght_g (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_lenght_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_lenght_g(void);
+void reg_aria_disp_set_osdd_sub_lenght_g_g_compress_bits_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_lenght_g_g_compress_bits_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_length_b (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_length_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_length_b(void);
+void reg_aria_disp_set_osdd_sub_length_b_b_compress_bits_osd1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_length_b_b_compress_bits_osd1(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_addr_a (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_addr_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_addr_a(void);
+void reg_aria_disp_set_osdd_sub_addr_a_ff0_ddr_addr_base_sub(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_addr_a_ff0_ddr_addr_base_sub(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_addr_r (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_addr_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_addr_r(void);
+void reg_aria_disp_set_osdd_sub_addr_r_ff1_ddr_addr_base_sub(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_addr_r_ff1_ddr_addr_base_sub(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_addr_g (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_addr_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_addr_g(void);
+void reg_aria_disp_set_osdd_sub_addr_g_ff2_ddr_addr_base_sub(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_addr_g_ff2_ddr_addr_base_sub(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_addr_b (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_addr_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_addr_b(void);
+void reg_aria_disp_set_osdd_sub_addr_b_ff3_ddr_addr_base_sub(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_addr_b_ff3_ddr_addr_base_sub(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_ctl (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_ctl(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_ctl(void);
+void reg_aria_disp_set_osdd_sub_ctl_runl_diff_num_a_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl_runl_diff_num_a_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl_runl_diff_num_r_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl_runl_diff_num_r_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl_runl_diff_num_g_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl_runl_diff_num_g_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl_runl_diff_num_b_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl_runl_diff_num_b_sub(void);
+
+/*!
+  register REGARIA_DISP_osdd_sub_ctl2 (read/write)
+  */
+void reg_aria_disp_set_osdd_sub_ctl2(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdd_sub_ctl2(void);
+void reg_aria_disp_set_osdd_sub_ctl2_a_osdd_arith_adapt_en_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_a_osdd_arith_adapt_en_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_r_osdd_arith_adapt_en_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_r_osdd_arith_adapt_en_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_g_osdd_arith_adapt_en_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_g_osdd_arith_adapt_en_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_b_osdd_arith_adapt_en_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_b_osdd_arith_adapt_en_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_lossy_a_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_lossy_a_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_lossy_r_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_lossy_r_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_lossy_g_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_lossy_g_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_lossy_b_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_lossy_b_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_a_osdd_init_arith_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_a_osdd_init_arith_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_r_osdd_init_arith_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_r_osdd_init_arith_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_g_osdd_init_arith_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_g_osdd_init_arith_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_b_osdd_init_arith_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_b_osdd_init_arith_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_a_dpcm_quanmode_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_a_dpcm_quanmode_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_r_dpcm_quanmode_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_r_dpcm_quanmode_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_g_dpcm_quanmode_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_g_dpcm_quanmode_sub(void);
+void reg_aria_disp_set_osdd_sub_ctl2_b_dpcm_quanmode_sub(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdd_sub_ctl2_b_dpcm_quanmode_sub(void);
+
+/*!
+  register REGARIA_DISP_osdc_cmd (read/write)
+  */
+void reg_aria_disp_set_osdc_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_cmd(void);
+void reg_aria_disp_set_osdc_cmd_osdc_osd_width(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_osdc_osd_width(void);
+void reg_aria_disp_set_osdc_cmd_osdc_endian(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_cmd_osdc_endian(void);
+void reg_aria_disp_set_osdc_cmd_osdc_osd_height(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_osdc_osd_height(void);
+void reg_aria_disp_set_osdc_cmd_osdc_pre_judge(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_cmd_osdc_pre_judge(void);
+void reg_aria_disp_set_osdc_cmd_osdc_osdcomp_start(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_cmd_osdc_osdcomp_start(void);
+
+/*!
+  register REGARIA_DISP_osdc_rst (read/write)
+  */
+void reg_aria_disp_set_osdc_rst(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_rst(void);
+void reg_aria_disp_set_osdc_rst_osdc_rst_h(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_rst_h(void);
+void reg_aria_disp_set_osdc_rst_osdc_terminate(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_terminate(void);
+void reg_aria_disp_set_osdc_rst_osdc_monitor_reload(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_monitor_reload(void);
+void reg_aria_disp_set_osdc_rst_osdc_rdndt_latch_sdb(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_rdndt_latch_sdb(void);
+void reg_aria_disp_set_osdc_rst_osdc_rdndt_latch_osd(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_rdndt_latch_osd(void);
+void reg_aria_disp_set_osdc_rst_osdc_rdndt_latch_pre(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_rdndt_latch_pre(void);
+void reg_aria_disp_set_osdc_rst_osdc_rdndt_latch_sti(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_rdndt_latch_sti(void);
+void reg_aria_disp_set_osdc_rst_osdc_axi_w_limit(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_axi_w_limit(void);
+void reg_aria_disp_set_osdc_rst_osdc_axi_r_limit(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_rst_osdc_axi_r_limit(void);
+
+/*!
+  register REGARIA_DISP_osdc_ctl (read/write)
+  */
+void reg_aria_disp_set_osdc_ctl(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ctl(void);
+void reg_aria_disp_set_osdc_ctl_osdc_a_value_diff_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl_osdc_a_value_diff_num(void);
+void reg_aria_disp_set_osdc_ctl_osdc_r_value_diff_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl_osdc_r_value_diff_num(void);
+void reg_aria_disp_set_osdc_ctl_osdc_g_value_diff_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl_osdc_g_value_diff_num(void);
+void reg_aria_disp_set_osdc_ctl_osdc_b_value_diff_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl_osdc_b_value_diff_num(void);
+void reg_aria_disp_set_osdc_ctl_osdc_a_dn_same_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl_osdc_a_dn_same_num(void);
+void reg_aria_disp_set_osdc_ctl_osdc_r_dn_same_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl_osdc_r_dn_same_num(void);
+void reg_aria_disp_set_osdc_ctl_osdc_g_dn_same_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl_osdc_g_dn_same_num(void);
+void reg_aria_disp_set_osdc_ctl_osdc_b_dn_same_num(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl_osdc_b_dn_same_num(void);
+
+/*!
+  register REGARIA_DISP_osdc_ctl2 (read/write)
+  */
+void reg_aria_disp_set_osdc_ctl2(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ctl2(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_a_arith_adapt_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_a_arith_adapt_en(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_r_arith_adapt_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_r_arith_adapt_en(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_g_arith_adapt_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_g_arith_adapt_en(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_b_arith_adapt_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_b_arith_adapt_en(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_a_lossy(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_a_lossy(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_r_lossy(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_r_lossy(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_g_lossy(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_g_lossy(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_b_lossy(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_b_lossy(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_a_init_arith(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_a_init_arith(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_r_init_arith(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_r_init_arith(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_g_init_arith(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_g_init_arith(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_b_init_arith(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_b_init_arith(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_a_dpcm_quanmode(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_a_dpcm_quanmode(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_r_dpcm_quanmode(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_r_dpcm_quanmode(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_g_dpcm_quanmode(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_g_dpcm_quanmode(void);
+void reg_aria_disp_set_osdc_ctl2_osdc_b_dpcm_quanmode(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ctl2_osdc_b_dpcm_quanmode(void);
+
+/*!
+  register REGARIA_DISP_osdc_ffrd_threshold (read/write)
+  */
+void reg_aria_disp_set_osdc_ffrd_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ffrd_threshold(void);
+void reg_aria_disp_set_osdc_ffrd_threshold_osdc_urgent_num_ddr_rd(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffrd_threshold_osdc_urgent_num_ddr_rd(void);
+void reg_aria_disp_set_osdc_ffrd_threshold_osdc_weight_num_ddr_rd(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffrd_threshold_osdc_weight_num_ddr_rd(void);
+
+/*!
+  register REGARIA_DISP_osdc_ffwr_threshold (read/write)
+  */
+void reg_aria_disp_set_osdc_ffwr_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ffwr_threshold(void);
+void reg_aria_disp_set_osdc_ffwr_threshold_osdc_urgent_num_ddr_wr0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffwr_threshold_osdc_urgent_num_ddr_wr0(void);
+void reg_aria_disp_set_osdc_ffwr_threshold_osdc_weight_num_ddr_wr0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffwr_threshold_osdc_weight_num_ddr_wr0(void);
+void reg_aria_disp_set_osdc_ffwr_threshold_osdc_urgent_num_ddr_wr1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffwr_threshold_osdc_urgent_num_ddr_wr1(void);
+void reg_aria_disp_set_osdc_ffwr_threshold_osdc_weight_num_ddr_wr1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffwr_threshold_osdc_weight_num_ddr_wr1(void);
+void reg_aria_disp_set_osdc_ffwr_threshold_osdc_urgent_num_ddr_wr2(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffwr_threshold_osdc_urgent_num_ddr_wr2(void);
+void reg_aria_disp_set_osdc_ffwr_threshold_osdc_weight_num_ddr_wr2(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffwr_threshold_osdc_weight_num_ddr_wr2(void);
+void reg_aria_disp_set_osdc_ffwr_threshold_osdc_urgent_num_ddr_wr3(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffwr_threshold_osdc_urgent_num_ddr_wr3(void);
+void reg_aria_disp_set_osdc_ffwr_threshold_osdc_weight_num_ddr_wr3(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_ffwr_threshold_osdc_weight_num_ddr_wr3(void);
+
+/*!
+  register REGARIA_DISP_osdc_ddr_rd_addr (read/write)
+  */
+void reg_aria_disp_set_osdc_ddr_rd_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_rd_addr(void);
+void reg_aria_disp_set_osdc_ddr_rd_addr_osdc_ddr_rd_base_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_rd_addr_osdc_ddr_rd_base_addr(void);
+
+/*!
+  register REGARIA_DISP_osdc_width_stride (read/write)
+  */
+void reg_aria_disp_set_osdc_width_stride(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_width_stride(void);
+void reg_aria_disp_set_osdc_width_stride_osdc_osd_width_stride(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_width_stride_osdc_osd_width_stride(void);
+
+/*!
+  register REGARIA_DISP_osdc_ddr_wr_addr_a (read/write)
+  */
+void reg_aria_disp_set_osdc_ddr_wr_addr_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_wr_addr_a(void);
+void reg_aria_disp_set_osdc_ddr_wr_addr_a_osdc_ddr_wr_base_addr0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_wr_addr_a_osdc_ddr_wr_base_addr0(void);
+
+/*!
+  register REGARIA_DISP_osdc_ddr_wr_addr_r (read/write)
+  */
+void reg_aria_disp_set_osdc_ddr_wr_addr_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_wr_addr_r(void);
+void reg_aria_disp_set_osdc_ddr_wr_addr_r_osdc_ddr_wr_base_addr1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_wr_addr_r_osdc_ddr_wr_base_addr1(void);
+
+/*!
+  register REGARIA_DISP_osdc_ddr_wr_addr_g (read/write)
+  */
+void reg_aria_disp_set_osdc_ddr_wr_addr_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_wr_addr_g(void);
+void reg_aria_disp_set_osdc_ddr_wr_addr_g_osdc_ddr_wr_base_addr2(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_wr_addr_g_osdc_ddr_wr_base_addr2(void);
+
+/*!
+  register REGARIA_DISP_osdc_ddr_wr_addr_b (read/write)
+  */
+void reg_aria_disp_set_osdc_ddr_wr_addr_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_wr_addr_b(void);
+void reg_aria_disp_set_osdc_ddr_wr_addr_b_osdc_ddr_wr_base_addr3(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_ddr_wr_addr_b_osdc_ddr_wr_base_addr3(void);
+
+/*!
+  register REGARIA_DISP_osdc_status (read/write)
+  */
+void reg_aria_disp_set_osdc_status(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_status(void);
+void reg_aria_disp_set_osdc_status_osdc_soft_rst_done(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_soft_rst_done(void);
+void reg_aria_disp_set_osdc_status_osdc_terminate_done(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_terminate_done(void);
+void reg_aria_disp_set_osdc_status_osdc_axi_w_done(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_axi_w_done(void);
+void reg_aria_disp_set_osdc_status_osdc_axi_r_done(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_axi_r_done(void);
+void reg_aria_disp_set_osdc_status_osdc_rdfifo_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_rdfifo_full(void);
+void reg_aria_disp_set_osdc_status_osdc_rdfifo_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_rdfifo_empty(void);
+void reg_aria_disp_set_osdc_status_osdc_wrfifo0_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrfifo0_full(void);
+void reg_aria_disp_set_osdc_status_osdc_wrfifo0_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrfifo0_empty(void);
+void reg_aria_disp_set_osdc_status_osdc_wrfifo1_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrfifo1_full(void);
+void reg_aria_disp_set_osdc_status_osdc_wrfifo1_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrfifo1_empty(void);
+void reg_aria_disp_set_osdc_status_osdc_wrfifo2_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrfifo2_full(void);
+void reg_aria_disp_set_osdc_status_osdc_wrfifo2_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrfifo2_empty(void);
+void reg_aria_disp_set_osdc_status_osdc_wrfifo3_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrfifo3_full(void);
+void reg_aria_disp_set_osdc_status_osdc_wrfifo3_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrfifo3_empty(void);
+void reg_aria_disp_set_osdc_status_osdc_wrddr_error0(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrddr_error0(void);
+void reg_aria_disp_set_osdc_status_osdc_wrddr_error1(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrddr_error1(void);
+void reg_aria_disp_set_osdc_status_osdc_wrddr_error2(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrddr_error2(void);
+void reg_aria_disp_set_osdc_status_osdc_wrddr_error3(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_wrddr_error3(void);
+void reg_aria_disp_set_osdc_status_osdc_latency_overflow_rd(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_latency_overflow_rd(void);
+void reg_aria_disp_set_osdc_status_osdc_latency_overflow_wr(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_latency_overflow_wr(void);
+void reg_aria_disp_set_osdc_status_osdc_free(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_status_osdc_free(void);
+
+/*!
+  register REGARIA_DISP_osdc_irq_en (read/write)
+  */
+void reg_aria_disp_set_osdc_irq_en(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_irq_en(void);
+void reg_aria_disp_set_osdc_irq_en_osdc_end_irq_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_irq_en_osdc_end_irq_en(void);
+
+/*!
+  register REGARIA_DISP_osdc_irq (read/write)
+  */
+void reg_aria_disp_set_osdc_irq(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_irq(void);
+void reg_aria_disp_set_osdc_irq_osdc_end_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_irq_osdc_end_irq(void);
+void reg_aria_disp_set_osdc_irq_osdc_bits_exceed_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_irq_osdc_bits_exceed_irq(void);
+void reg_aria_disp_set_osdc_irq_osdc_terminate_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_irq_osdc_terminate_irq(void);
+void reg_aria_disp_set_osdc_irq_osdc_end0_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_irq_osdc_end0_irq(void);
+void reg_aria_disp_set_osdc_irq_osdc_end1_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_irq_osdc_end1_irq(void);
+void reg_aria_disp_set_osdc_irq_osdc_end2_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_irq_osdc_end2_irq(void);
+void reg_aria_disp_set_osdc_irq_osdc_end3_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_osdc_irq_osdc_end3_irq(void);
+
+/*!
+  register REGARIA_DISP_osdc_compress_bit_a (read/write)
+  */
+void reg_aria_disp_set_osdc_compress_bit_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_compress_bit_a(void);
+void reg_aria_disp_set_osdc_compress_bit_a_osdc_compress_bit_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_compress_bit_a_osdc_compress_bit_a(void);
+
+/*!
+  register REGARIA_DISP_osdc_compress_bit_r (read/write)
+  */
+void reg_aria_disp_set_osdc_compress_bit_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_compress_bit_r(void);
+void reg_aria_disp_set_osdc_compress_bit_r_osdc_compress_bit_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_compress_bit_r_osdc_compress_bit_r(void);
+
+/*!
+  register REGARIA_DISP_osdc_compress_bit_g (read/write)
+  */
+void reg_aria_disp_set_osdc_compress_bit_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_compress_bit_g(void);
+void reg_aria_disp_set_osdc_compress_bit_g_osdc_compress_bit_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_compress_bit_g_osdc_compress_bit_g(void);
+
+/*!
+  register REGARIA_DISP_osdc_compress_bit_b (read/write)
+  */
+void reg_aria_disp_set_osdc_compress_bit_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_compress_bit_b(void);
+void reg_aria_disp_set_osdc_compress_bit_b_osdc_compress_bit_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_compress_bit_b_osdc_compress_bit_b(void);
+
+/*!
+  register REGARIA_DISP_osdc_bits_max_a (read/write)
+  */
+void reg_aria_disp_set_osdc_bits_max_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_bits_max_a(void);
+void reg_aria_disp_set_osdc_bits_max_a_osdc_bits_max_a(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_bits_max_a_osdc_bits_max_a(void);
+
+/*!
+  register REGARIA_DISP_osdc_bits_max_r (read/write)
+  */
+void reg_aria_disp_set_osdc_bits_max_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_bits_max_r(void);
+void reg_aria_disp_set_osdc_bits_max_r_osdc_bits_max_r(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_bits_max_r_osdc_bits_max_r(void);
+
+/*!
+  register REGARIA_DISP_osdc_bits_max_g (read/write)
+  */
+void reg_aria_disp_set_osdc_bits_max_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_bits_max_g(void);
+void reg_aria_disp_set_osdc_bits_max_g_osdc_bits_max_g(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_bits_max_g_osdc_bits_max_g(void);
+
+/*!
+  register REGARIA_DISP_osdc_bits_max_b (read/write)
+  */
+void reg_aria_disp_set_osdc_bits_max_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_bits_max_b(void);
+void reg_aria_disp_set_osdc_bits_max_b_osdc_bits_max_b(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_bits_max_b_osdc_bits_max_b(void);
+
+/*!
+  register REGARIA_DISP_osdc_cmd_ack_latency_avg (read/write)
+  */
+void reg_aria_disp_set_osdc_cmd_ack_latency_avg(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_cmd_ack_latency_avg(void);
+void reg_aria_disp_set_osdc_cmd_ack_latency_avg_osdc_cmd_ack_latency_avg_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_ack_latency_avg_osdc_cmd_ack_latency_avg_rd(void);
+void reg_aria_disp_set_osdc_cmd_ack_latency_avg_osdc_cmd_ack_latency_avg_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_ack_latency_avg_osdc_cmd_ack_latency_avg_wr(void);
+
+/*!
+  register REGARIA_DISP_osdc_cmd_dat_latency_avg (read/write)
+  */
+void reg_aria_disp_set_osdc_cmd_dat_latency_avg(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_cmd_dat_latency_avg(void);
+void reg_aria_disp_set_osdc_cmd_dat_latency_avg_osdc_cmd_dat_latency_avg_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_dat_latency_avg_osdc_cmd_dat_latency_avg_rd(void);
+void reg_aria_disp_set_osdc_cmd_dat_latency_avg_osdc_cmd_dat_latency_avg_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_dat_latency_avg_osdc_cmd_dat_latency_avg_wr(void);
+
+/*!
+  register REGARIA_DISP_osdc_datlast_latency_avg (read/write)
+  */
+void reg_aria_disp_set_osdc_datlast_latency_avg(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_datlast_latency_avg(void);
+void reg_aria_disp_set_osdc_datlast_latency_avg_osdc_cmd_dat_latency_avg_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_datlast_latency_avg_osdc_cmd_dat_latency_avg_rd(void);
+void reg_aria_disp_set_osdc_datlast_latency_avg_osdc_cmd_dat_latency_avg_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_datlast_latency_avg_osdc_cmd_dat_latency_avg_wr(void);
+
+/*!
+  register REGARIA_DISP_osdc_cmd_ack_latency_max (read/write)
+  */
+void reg_aria_disp_set_osdc_cmd_ack_latency_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_cmd_ack_latency_max(void);
+void reg_aria_disp_set_osdc_cmd_ack_latency_max_osdc_cmd_ack_latency_max_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_ack_latency_max_osdc_cmd_ack_latency_max_rd(void);
+void reg_aria_disp_set_osdc_cmd_ack_latency_max_osdc_cmd_ack_latency_max_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_ack_latency_max_osdc_cmd_ack_latency_max_wr(void);
+
+/*!
+  register REGARIA_DISP_osdc_cmd_dat_latency_max (read/write)
+  */
+void reg_aria_disp_set_osdc_cmd_dat_latency_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_cmd_dat_latency_max(void);
+void reg_aria_disp_set_osdc_cmd_dat_latency_max_osdc_cmd_dat_latency_max_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_dat_latency_max_osdc_cmd_dat_latency_max_rd(void);
+void reg_aria_disp_set_osdc_cmd_dat_latency_max_osdc_cmd_dat_latency_max_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_cmd_dat_latency_max_osdc_cmd_dat_latency_max_wr(void);
+
+/*!
+  register REGARIA_DISP_osdc_datlast_latency_max (read/write)
+  */
+void reg_aria_disp_set_osdc_datlast_latency_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_datlast_latency_max(void);
+void reg_aria_disp_set_osdc_datlast_latency_max_osdc_datlast_latency_max_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_datlast_latency_max_osdc_datlast_latency_max_rd(void);
+void reg_aria_disp_set_osdc_datlast_latency_max_osdc_datlast_latency_max_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_osdc_datlast_latency_max_osdc_datlast_latency_max_wr(void);
+
+/*!
+  register REGARIA_DISP_osdc_redundant0 (read/write)
+  */
+void reg_aria_disp_set_osdc_redundant0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant0(void);
+void reg_aria_disp_set_osdc_redundant0_osdc_redundant0(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant0_osdc_redundant0(void);
+
+/*!
+  register REGARIA_DISP_osdc_redundant1 (read/write)
+  */
+void reg_aria_disp_set_osdc_redundant1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant1(void);
+void reg_aria_disp_set_osdc_redundant1_osdc_redundant1(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant1_osdc_redundant1(void);
+
+/*!
+  register REGARIA_DISP_osdc_redundant2 (read/write)
+  */
+void reg_aria_disp_set_osdc_redundant2(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant2(void);
+void reg_aria_disp_set_osdc_redundant2_osdc_redundant2(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant2_osdc_redundant2(void);
+
+/*!
+  register REGARIA_DISP_osdc_redundant3 (read/write)
+  */
+void reg_aria_disp_set_osdc_redundant3(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant3(void);
+void reg_aria_disp_set_osdc_redundant3_osdc_redundant3(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant3_osdc_redundant3(void);
+
+/*!
+  register REGARIA_DISP_osdc_redundant4 (read/write)
+  */
+void reg_aria_disp_set_osdc_redundant4(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant4(void);
+void reg_aria_disp_set_osdc_redundant4_osdc_redundant4(mt_u32 data);
+mt_u32  reg_aria_disp_get_osdc_redundant4_osdc_redundant4(void);
+
+/*!
+  register REGARIA_DISP_still_control (read/write)
+  */
+void reg_aria_disp_set_still_control(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_control(void);
+void reg_aria_disp_set_still_control_progressive_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_progressive_mode(void);
+void reg_aria_disp_set_still_control_still_select(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_still_select(void);
+void reg_aria_disp_set_still_control_still_format(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_still_format(void);
+void reg_aria_disp_set_still_control_tile_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_tile_mode(void);
+void reg_aria_disp_set_still_control_tile_burst_length_select(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_tile_burst_length_select(void);
+void reg_aria_disp_set_still_control_still_cr_select(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_still_cr_select(void);
+void reg_aria_disp_set_still_control_still_cb_select(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_still_cb_select(void);
+void reg_aria_disp_set_still_control_still_y_select(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_still_y_select(void);
+void reg_aria_disp_set_still_control_still_endian_change(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_still_endian_change(void);
+void reg_aria_disp_set_still_control_still_cr_first(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_control_still_cr_first(void);
+
+/*!
+  register REGARIA_DISP_still_latch_command (read/write)
+  */
+void reg_aria_disp_set_still_latch_command(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_latch_command(void);
+void reg_aria_disp_set_still_latch_command_still_latch_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_latch_command_still_latch_top(void);
+void reg_aria_disp_set_still_latch_command_still_latch_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_latch_command_still_latch_bot(void);
+void reg_aria_disp_set_still_latch_command_still_latch_3d_1st(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_latch_command_still_latch_3d_1st(void);
+void reg_aria_disp_set_still_latch_command_still_latch_3d_2nd(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_latch_command_still_latch_3d_2nd(void);
+void reg_aria_disp_set_still_latch_command_still_latch_or_not(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_latch_command_still_latch_or_not(void);
+
+/*!
+  register REGARIA_DISP_still_read_x_cfg (read/write)
+  */
+void reg_aria_disp_set_still_read_x_cfg(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_read_x_cfg(void);
+void reg_aria_disp_set_still_read_x_cfg_still_read_x_start(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_read_x_cfg_still_read_x_start(void);
+void reg_aria_disp_set_still_read_x_cfg_still_read_x_end(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_read_x_cfg_still_read_x_end(void);
+
+/*!
+  register REGARIA_DISP_still_read_y_cfg (read/write)
+  */
+void reg_aria_disp_set_still_read_y_cfg(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_read_y_cfg(void);
+void reg_aria_disp_set_still_read_y_cfg_still_read_y_start(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_read_y_cfg_still_read_y_start(void);
+void reg_aria_disp_set_still_read_y_cfg_still_read_y_end(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_read_y_cfg_still_read_y_end(void);
+
+/*!
+  register REGARIA_DISP_still_stride (read/write)
+  */
+void reg_aria_disp_set_still_stride(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_stride(void);
+void reg_aria_disp_set_still_stride_still_stride(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_stride_still_stride(void);
+
+/*!
+  register REGARIA_DISP_still_luma_baseaddr (read/write)
+  */
+void reg_aria_disp_set_still_luma_baseaddr(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_luma_baseaddr(void);
+void reg_aria_disp_set_still_luma_baseaddr_still_luma_baseaddr(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_luma_baseaddr_still_luma_baseaddr(void);
+
+/*!
+  register REGARIA_DISP_still_cbcr_baseaddr (read/write)
+  */
+void reg_aria_disp_set_still_cbcr_baseaddr(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_cbcr_baseaddr(void);
+void reg_aria_disp_set_still_cbcr_baseaddr_still_cbcr_baseaddr(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_cbcr_baseaddr_still_cbcr_baseaddr(void);
+
+/*!
+  register REGARIA_DISP_still_fifo_threshold (read/write)
+  */
+void reg_aria_disp_set_still_fifo_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_fifo_threshold(void);
+void reg_aria_disp_set_still_fifo_threshold_still_fifo_low_threshold(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_fifo_threshold_still_fifo_low_threshold(void);
+void reg_aria_disp_set_still_fifo_threshold_still_fifo_high_threshold(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_fifo_threshold_still_fifo_high_threshold(void);
+
+/*!
+  register REGARIA_DISP_still_tile_parameter (read/write)
+  */
+void reg_aria_disp_set_still_tile_parameter(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_parameter(void);
+void reg_aria_disp_set_still_tile_parameter_tile_col_size_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_tile_parameter_tile_col_size_mode(void);
+void reg_aria_disp_set_still_tile_parameter_still_field_picture(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_tile_parameter_still_field_picture(void);
+void reg_aria_disp_set_still_tile_parameter_still_hd_map_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_tile_parameter_still_hd_map_mode(void);
+void reg_aria_disp_set_still_tile_parameter_still_tile_config(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_tile_parameter_still_tile_config(void);
+
+/*!
+  register REGARIA_DISP_still_tile_rowjump_00 (read/write)
+  */
+void reg_aria_disp_set_still_tile_rowjump_00(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_rowjump_00(void);
+void reg_aria_disp_set_still_tile_rowjump_00_still_tile_rowjump_00(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_rowjump_00_still_tile_rowjump_00(void);
+
+/*!
+  register REGARIA_DISP_still_tile_rowjump_01 (read/write)
+  */
+void reg_aria_disp_set_still_tile_rowjump_01(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_rowjump_01(void);
+void reg_aria_disp_set_still_tile_rowjump_01_still_tile_rowjump_01(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_rowjump_01_still_tile_rowjump_01(void);
+
+/*!
+  register REGARIA_DISP_still_tile_rowjump_10 (read/write)
+  */
+void reg_aria_disp_set_still_tile_rowjump_10(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_rowjump_10(void);
+void reg_aria_disp_set_still_tile_rowjump_10_still_tile_rowjump_10(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_rowjump_10_still_tile_rowjump_10(void);
+
+/*!
+  register REGARIA_DISP_still_tile_rowjump_11 (read/write)
+  */
+void reg_aria_disp_set_still_tile_rowjump_11(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_rowjump_11(void);
+void reg_aria_disp_set_still_tile_rowjump_11_still_tile_rowjump_11(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_tile_rowjump_11_still_tile_rowjump_11(void);
+
+/*!
+  register REGARIA_DISP_still_status (read/write)
+  */
+void reg_aria_disp_set_still_status(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_status(void);
+void reg_aria_disp_set_still_status_still_axi_rready_error(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_status_still_axi_rready_error(void);
+void reg_aria_disp_set_still_status_still_fifo_uv_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_status_still_fifo_uv_full(void);
+void reg_aria_disp_set_still_status_still_fifo_y_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_status_still_fifo_y_full(void);
+void reg_aria_disp_set_still_status_still_fifo_uv_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_status_still_fifo_uv_empty(void);
+void reg_aria_disp_set_still_status_still_fifo_y_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_status_still_fifo_y_empty(void);
+
+/*!
+  register REGARIA_DISP_still_axi_monitor_ctrl (read/write)
+  */
+void reg_aria_disp_set_still_axi_monitor_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_axi_monitor_ctrl(void);
+void reg_aria_disp_set_still_axi_monitor_ctrl_still_axi_monitor_reload(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_axi_monitor_ctrl_still_axi_monitor_reload(void);
+
+/*!
+  register REGARIA_DISP_still_cmd_ack_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_still_cmd_ack_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_cmd_ack_latency_monitor(void);
+void reg_aria_disp_set_still_cmd_ack_latency_monitor_cmd_ack_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_cmd_ack_latency_monitor_cmd_ack_latency_max_value(void);
+void reg_aria_disp_set_still_cmd_ack_latency_monitor_cmd_ack_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_cmd_ack_latency_monitor_cmd_ack_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_still_data_ack_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_still_data_ack_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_data_ack_latency_monitor(void);
+void reg_aria_disp_set_still_data_ack_latency_monitor_cmd_data_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_data_ack_latency_monitor_cmd_data_latency_max_value(void);
+void reg_aria_disp_set_still_data_ack_latency_monitor_cmd_data_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_data_ack_latency_monitor_cmd_data_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_still_data_last_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_still_data_last_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_data_last_latency_monitor(void);
+void reg_aria_disp_set_still_data_last_latency_monitor_last_data_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_data_last_latency_monitor_last_data_latency_max_value(void);
+void reg_aria_disp_set_still_data_last_latency_monitor_last_data_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_data_last_latency_monitor_last_data_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_still_scale_ctrl (read/write)
+  */
+void reg_aria_disp_set_still_scale_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_ctrl(void);
+void reg_aria_disp_set_still_scale_ctrl_still_h_filter_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scale_ctrl_still_h_filter_en(void);
+void reg_aria_disp_set_still_scale_ctrl_still_v_filter_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scale_ctrl_still_v_filter_en(void);
+void reg_aria_disp_set_still_scale_ctrl_downsample_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scale_ctrl_downsample_en(void);
+void reg_aria_disp_set_still_scale_ctrl_v_phase_type(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scale_ctrl_v_phase_type(void);
+void reg_aria_disp_set_still_scale_ctrl_odd_start_line_number(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scale_ctrl_odd_start_line_number(void);
+void reg_aria_disp_set_still_scale_ctrl_even_start_line_number(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scale_ctrl_even_start_line_number(void);
+
+/*!
+  register REGARIA_DISP_still_scale_h_ratio (read/write)
+  */
+void reg_aria_disp_set_still_scale_h_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_h_ratio(void);
+void reg_aria_disp_set_still_scale_h_ratio_h_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scale_h_ratio_h_ratio_int(void);
+void reg_aria_disp_set_still_scale_h_ratio_h_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_scale_h_ratio_h_ratio_fra(void);
+
+/*!
+  register REGARIA_DISP_still_scale_v_ratio (read/write)
+  */
+void reg_aria_disp_set_still_scale_v_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_v_ratio(void);
+void reg_aria_disp_set_still_scale_v_ratio_v_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scale_v_ratio_v_ratio_int(void);
+void reg_aria_disp_set_still_scale_v_ratio_v_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_scale_v_ratio_v_ratio_fra(void);
+
+/*!
+  register REGARIA_DISP_still_scale_h_start_fra (read/write)
+  */
+void reg_aria_disp_set_still_scale_h_start_fra(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_h_start_fra(void);
+void reg_aria_disp_set_still_scale_h_start_fra_still_scale_h_start_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_scale_h_start_fra_still_scale_h_start_fra(void);
+
+/*!
+  register REGARIA_DISP_still_scale_v_start_fra (read/write)
+  */
+void reg_aria_disp_set_still_scale_v_start_fra(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_v_start_fra(void);
+void reg_aria_disp_set_still_scale_v_start_fra_still_scale_v_start_fra_odd(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_scale_v_start_fra_still_scale_v_start_fra_odd(void);
+void reg_aria_disp_set_still_scale_v_start_fra_still_scale_v_start_fra_even(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_scale_v_start_fra_still_scale_v_start_fra_even(void);
+
+/*!
+  register REGARIA_DISP_still_scale_hsize (read/write)
+  */
+void reg_aria_disp_set_still_scale_hsize(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_hsize(void);
+void reg_aria_disp_set_still_scale_hsize_dst_hsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_scale_hsize_dst_hsize(void);
+
+/*!
+  register REGARIA_DISP_still_scale_vsize (read/write)
+  */
+void reg_aria_disp_set_still_scale_vsize(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_vsize(void);
+void reg_aria_disp_set_still_scale_vsize_dst_vsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_scale_vsize_dst_vsize(void);
+
+/*!
+  register REGARIA_DISP_still_x_config (read/write)
+  */
+void reg_aria_disp_set_still_x_config(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_x_config(void);
+void reg_aria_disp_set_still_x_config_x_start(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_x_config_x_start(void);
+
+/*!
+  register REGARIA_DISP_still_y_config (read/write)
+  */
+void reg_aria_disp_set_still_y_config(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_y_config(void);
+void reg_aria_disp_set_still_y_config_y_start(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_y_config_y_start(void);
+
+/*!
+  register REGARIA_DISP_still_scale_y_coeff_address (read/write)
+  */
+void reg_aria_disp_set_still_scale_y_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_y_coeff_address(void);
+void reg_aria_disp_set_still_scale_y_coeff_address_still_scale_y_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_y_coeff_address_still_scale_y_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_still_scale_uv_coeff_address (read/write)
+  */
+void reg_aria_disp_set_still_scale_uv_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_uv_coeff_address(void);
+void reg_aria_disp_set_still_scale_uv_coeff_address_still_scale_uv_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_uv_coeff_address_still_scale_uv_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_still_scale_fifo1_threshold (read/write)
+  */
+void reg_aria_disp_set_still_scale_fifo1_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_fifo1_threshold(void);
+void reg_aria_disp_set_still_scale_fifo1_threshold_still_scale_fifo1_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_fifo1_threshold_still_scale_fifo1_threshold(void);
+
+/*!
+  register REGARIA_DISP_still_scale_fifo2_threshold (read/write)
+  */
+void reg_aria_disp_set_still_scale_fifo2_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_fifo2_threshold(void);
+void reg_aria_disp_set_still_scale_fifo2_threshold_still_scale_fifo2_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scale_fifo2_threshold_still_scale_fifo2_threshold(void);
+
+/*!
+  register REGARIA_DISP_still_scaler_status (read/write)
+  */
+void reg_aria_disp_set_still_scaler_status(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_scaler_status(void);
+void reg_aria_disp_set_still_scaler_status_still_saler_fifo_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scaler_status_still_saler_fifo_full(void);
+void reg_aria_disp_set_still_scaler_status_still_scaler_fifo_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_scaler_status_still_scaler_fifo_empty(void);
+
+/*!
+  register REGARIA_DISP_still_csc_ctrl (read/write)
+  */
+void reg_aria_disp_set_still_csc_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_csc_ctrl(void);
+void reg_aria_disp_set_still_csc_ctrl_still_bound_output_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_csc_ctrl_still_bound_output_en(void);
+void reg_aria_disp_set_still_csc_ctrl_still_bound_input_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_csc_ctrl_still_bound_input_en(void);
+void reg_aria_disp_set_still_csc_ctrl_still_csc_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_still_csc_ctrl_still_csc_en(void);
+
+/*!
+  register REGARIA_DISP_still_csc_coeff1 (read/write)
+  */
+void reg_aria_disp_set_still_csc_coeff1(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_csc_coeff1(void);
+void reg_aria_disp_set_still_csc_coeff1_still_csc_a01(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff1_still_csc_a01(void);
+void reg_aria_disp_set_still_csc_coeff1_still_csc_a00(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff1_still_csc_a00(void);
+
+/*!
+  register REGARIA_DISP_still_csc_coeff2 (read/write)
+  */
+void reg_aria_disp_set_still_csc_coeff2(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_csc_coeff2(void);
+void reg_aria_disp_set_still_csc_coeff2_still_csc_a10(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff2_still_csc_a10(void);
+void reg_aria_disp_set_still_csc_coeff2_still_csc_a02(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff2_still_csc_a02(void);
+
+/*!
+  register REGARIA_DISP_still_csc_coeff3 (read/write)
+  */
+void reg_aria_disp_set_still_csc_coeff3(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_csc_coeff3(void);
+void reg_aria_disp_set_still_csc_coeff3_still_csc_a12(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff3_still_csc_a12(void);
+void reg_aria_disp_set_still_csc_coeff3_still_csc_a11(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff3_still_csc_a11(void);
+
+/*!
+  register REGARIA_DISP_still_csc_coeff4 (read/write)
+  */
+void reg_aria_disp_set_still_csc_coeff4(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_csc_coeff4(void);
+void reg_aria_disp_set_still_csc_coeff4_still_csc_a21(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff4_still_csc_a21(void);
+void reg_aria_disp_set_still_csc_coeff4_still_csc_a20(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff4_still_csc_a20(void);
+
+/*!
+  register REGARIA_DISP_still_csc_coeff5 (read/write)
+  */
+void reg_aria_disp_set_still_csc_coeff5(mt_u32 data);
+mt_u32  reg_aria_disp_get_still_csc_coeff5(void);
+void reg_aria_disp_set_still_csc_coeff5_still_csc_a22(mt_u16 data);
+mt_u16  reg_aria_disp_get_still_csc_coeff5_still_csc_a22(void);
+
+/*!
+  register REGARIA_DISP_pres_cmd (read/write)
+  */
+void reg_aria_disp_set_pres_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_cmd(void);
+void reg_aria_disp_set_pres_cmd_pres_hcoeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_hcoeff_load_en(void);
+void reg_aria_disp_set_pres_cmd_pres_vcoeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_vcoeff_load_en(void);
+void reg_aria_disp_set_pres_cmd_pres_input_interlace(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_input_interlace(void);
+void reg_aria_disp_set_pres_cmd_pres_output_interlace(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_output_interlace(void);
+void reg_aria_disp_set_pres_cmd_pres_2_picture(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_2_picture(void);
+void reg_aria_disp_set_pres_cmd_pres_top_bot_inverse(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_top_bot_inverse(void);
+void reg_aria_disp_set_pres_cmd_pres_endian_input(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_endian_input(void);
+void reg_aria_disp_set_pres_cmd_pres_endian_output(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_endian_output(void);
+void reg_aria_disp_set_pres_cmd_pres_wr_stride_sel(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_wr_stride_sel(void);
+void reg_aria_disp_set_pres_cmd_pres_uv_change(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_uv_change(void);
+void reg_aria_disp_set_pres_cmd_field0007(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_field0007(void);
+void reg_aria_disp_set_pres_cmd_pres_hf_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_hf_flag(void);
+void reg_aria_disp_set_pres_cmd_pres_vf_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_vf_flag(void);
+void reg_aria_disp_set_pres_cmd_pres_ddr_rd_qos(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_ddr_rd_qos(void);
+void reg_aria_disp_set_pres_cmd_pres_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd_pres_enable(void);
+
+/*!
+  register REGARIA_DISP_pres_id (read/write)
+  */
+void reg_aria_disp_set_pres_id(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_id(void);
+void reg_aria_disp_set_pres_id_pres_id(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_id_pres_id(void);
+
+/*!
+  register REGARIA_DISP_pres_cmd2 (read/write)
+  */
+void reg_aria_disp_set_pres_cmd2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_cmd2(void);
+void reg_aria_disp_set_pres_cmd2_pres_off_line(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_off_line(void);
+void reg_aria_disp_set_pres_cmd2_pres_latch_or_not(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_latch_or_not(void);
+void reg_aria_disp_set_pres_cmd2_pres_swrst_h(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_swrst_h(void);
+void reg_aria_disp_set_pres_cmd2_pres_terminate(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_terminate(void);
+void reg_aria_disp_set_pres_cmd2_pres_work_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_work_top(void);
+void reg_aria_disp_set_pres_cmd2_pres_work_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_work_bot(void);
+void reg_aria_disp_set_pres_cmd2_pres_work_3d_1st(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_work_3d_1st(void);
+void reg_aria_disp_set_pres_cmd2_pres_work_3d_2nd(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_work_3d_2nd(void);
+void reg_aria_disp_set_pres_cmd2_pres_latch_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_latch_top(void);
+void reg_aria_disp_set_pres_cmd2_pres_latch_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_latch_bot(void);
+void reg_aria_disp_set_pres_cmd2_pres_latch_3d_1st(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_latch_3d_1st(void);
+void reg_aria_disp_set_pres_cmd2_pres_latch_3d_2nd(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_latch_3d_2nd(void);
+void reg_aria_disp_set_pres_cmd2_pres_axi_w_limit(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_axi_w_limit(void);
+void reg_aria_disp_set_pres_cmd2_pres_axi_r_limit(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_axi_r_limit(void);
+void reg_aria_disp_set_pres_cmd2_pres_monitor_reload(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_cmd2_pres_monitor_reload(void);
+
+/*!
+  register REGARIA_DISP_pres_lum_raddr (read/write)
+  */
+void reg_aria_disp_set_pres_lum_raddr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_lum_raddr(void);
+void reg_aria_disp_set_pres_lum_raddr_pres_luma_rd_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_lum_raddr_pres_luma_rd_addr(void);
+
+/*!
+  register REGARIA_DISP_pres_lum_raddr_2 (read/write)
+  */
+void reg_aria_disp_set_pres_lum_raddr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_lum_raddr_2(void);
+void reg_aria_disp_set_pres_lum_raddr_2_pres_luma_rd_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_lum_raddr_2_pres_luma_rd_addr_2(void);
+
+/*!
+  register REGARIA_DISP_pres_lum_waddr (read/write)
+  */
+void reg_aria_disp_set_pres_lum_waddr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_lum_waddr(void);
+void reg_aria_disp_set_pres_lum_waddr_pres_luma_wr_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_lum_waddr_pres_luma_wr_addr(void);
+
+/*!
+  register REGARIA_DISP_pres_lum_waddr_2 (read/write)
+  */
+void reg_aria_disp_set_pres_lum_waddr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_lum_waddr_2(void);
+void reg_aria_disp_set_pres_lum_waddr_2_pres_luma_wr_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_lum_waddr_2_pres_luma_wr_addr_2(void);
+
+/*!
+  register REGARIA_DISP_pres_chm_raddr (read/write)
+  */
+void reg_aria_disp_set_pres_chm_raddr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_chm_raddr(void);
+void reg_aria_disp_set_pres_chm_raddr_pres_chroma_rd_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_chm_raddr_pres_chroma_rd_addr(void);
+
+/*!
+  register REGARIA_DISP_pres_chm_raddr_2 (read/write)
+  */
+void reg_aria_disp_set_pres_chm_raddr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_chm_raddr_2(void);
+void reg_aria_disp_set_pres_chm_raddr_2_pres_chroma_rd_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_chm_raddr_2_pres_chroma_rd_addr_2(void);
+
+/*!
+  register REGARIA_DISP_pres_chm_waddr (read/write)
+  */
+void reg_aria_disp_set_pres_chm_waddr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_chm_waddr(void);
+void reg_aria_disp_set_pres_chm_waddr_pres_chroma_wr_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_chm_waddr_pres_chroma_wr_addr(void);
+
+/*!
+  register REGARIA_DISP_pres_chm_waddr_2 (read/write)
+  */
+void reg_aria_disp_set_pres_chm_waddr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_chm_waddr_2(void);
+void reg_aria_disp_set_pres_chm_waddr_2_pres_chroma_wr_addr_2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_chm_waddr_2_pres_chroma_wr_addr_2(void);
+
+/*!
+  register REGARIA_DISP_pres_hcoeff_lum_addr (read/write)
+  */
+void reg_aria_disp_set_pres_hcoeff_lum_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_hcoeff_lum_addr(void);
+void reg_aria_disp_set_pres_hcoeff_lum_addr_pres_hcoeff_lum_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_hcoeff_lum_addr_pres_hcoeff_lum_addr(void);
+
+/*!
+  register REGARIA_DISP_pres_vcoeff_lum_addr (read/write)
+  */
+void reg_aria_disp_set_pres_vcoeff_lum_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_vcoeff_lum_addr(void);
+void reg_aria_disp_set_pres_vcoeff_lum_addr_pres_vcoeff_lum_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_vcoeff_lum_addr_pres_vcoeff_lum_addr(void);
+
+/*!
+  register REGARIA_DISP_pres_hcoeff_chm_addr (read/write)
+  */
+void reg_aria_disp_set_pres_hcoeff_chm_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_hcoeff_chm_addr(void);
+void reg_aria_disp_set_pres_hcoeff_chm_addr_pres_hcoeff_chm_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_hcoeff_chm_addr_pres_hcoeff_chm_addr(void);
+
+/*!
+  register REGARIA_DISP_pres_vcoeff_chm_addr (read/write)
+  */
+void reg_aria_disp_set_pres_vcoeff_chm_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_vcoeff_chm_addr(void);
+void reg_aria_disp_set_pres_vcoeff_chm_addr_pres_vcoeff_chm_addr(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_vcoeff_chm_addr_pres_vcoeff_chm_addr(void);
+
+/*!
+  register REGARIA_DISP_pres_ffr_threshold (read/write)
+  */
+void reg_aria_disp_set_pres_ffr_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_ffr_threshold(void);
+void reg_aria_disp_set_pres_ffr_threshold_pres_urgent_num_ddr_wr(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_ffr_threshold_pres_urgent_num_ddr_wr(void);
+void reg_aria_disp_set_pres_ffr_threshold_pres_weight_num_ddr_wr(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_ffr_threshold_pres_weight_num_ddr_wr(void);
+void reg_aria_disp_set_pres_ffr_threshold_pres_urgent_num_ddr_rd(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_ffr_threshold_pres_urgent_num_ddr_rd(void);
+void reg_aria_disp_set_pres_ffr_threshold_pres_weight_num_ddr_rd(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_ffr_threshold_pres_weight_num_ddr_rd(void);
+
+/*!
+  register REGARIA_DISP_pres_ffw_threshold (read/write)
+  */
+void reg_aria_disp_set_pres_ffw_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_ffw_threshold(void);
+void reg_aria_disp_set_pres_ffw_threshold_field0000(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_ffw_threshold_field0000(void);
+
+/*!
+  register REGARIA_DISP_pres_ddr_wr_stride (read/write)
+  */
+void reg_aria_disp_set_pres_ddr_wr_stride(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_ddr_wr_stride(void);
+void reg_aria_disp_set_pres_ddr_wr_stride_pres_ddr_wr_line_stride(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_ddr_wr_stride_pres_ddr_wr_line_stride(void);
+
+/*!
+  register REGARIA_DISP_pres_irq_en (read/write)
+  */
+void reg_aria_disp_set_pres_irq_en(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_irq_en(void);
+void reg_aria_disp_set_pres_irq_en_pres_end_irq_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_irq_en_pres_end_irq_en(void);
+
+/*!
+  register REGARIA_DISP_pres_irq (read/write)
+  */
+void reg_aria_disp_set_pres_irq(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_irq(void);
+void reg_aria_disp_set_pres_irq_pres_end_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_irq_pres_end_irq(void);
+
+/*!
+  register REGARIA_DISP_pres_src_size (read/write)
+  */
+void reg_aria_disp_set_pres_src_size(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_src_size(void);
+void reg_aria_disp_set_pres_src_size_pres_src_vsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_src_size_pres_src_vsize(void);
+void reg_aria_disp_set_pres_src_size_pres_src_hsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_src_size_pres_src_hsize(void);
+
+/*!
+  register REGARIA_DISP_pres_dst_size (read/write)
+  */
+void reg_aria_disp_set_pres_dst_size(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_dst_size(void);
+void reg_aria_disp_set_pres_dst_size_pres_dst_vsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_dst_size_pres_dst_vsize(void);
+void reg_aria_disp_set_pres_dst_size_pres_dst_hsize(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_dst_size_pres_dst_hsize(void);
+
+/*!
+  register REGARIA_DISP_pres_hratio (read/write)
+  */
+void reg_aria_disp_set_pres_hratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_hratio(void);
+void reg_aria_disp_set_pres_hratio_pres_h_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_hratio_pres_h_ratio_fra(void);
+void reg_aria_disp_set_pres_hratio_pres_h_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_hratio_pres_h_ratio_int(void);
+
+/*!
+  register REGARIA_DISP_pres_vratio (read/write)
+  */
+void reg_aria_disp_set_pres_vratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_vratio(void);
+void reg_aria_disp_set_pres_vratio_pres_v_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_vratio_pres_v_ratio_fra(void);
+void reg_aria_disp_set_pres_vratio_pres_v_ratio_int(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_vratio_pres_v_ratio_int(void);
+
+/*!
+  register REGARIA_DISP_pres_hinit (read/write)
+  */
+void reg_aria_disp_set_pres_hinit(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_hinit(void);
+void reg_aria_disp_set_pres_hinit_pres_h_start_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_hinit_pres_h_start_fra(void);
+
+/*!
+  register REGARIA_DISP_pres_vinit (read/write)
+  */
+void reg_aria_disp_set_pres_vinit(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_vinit(void);
+void reg_aria_disp_set_pres_vinit_pres_v_start_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_vinit_pres_v_start_fra(void);
+void reg_aria_disp_set_pres_vinit_pres_v_start_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_vinit_pres_v_start_int(void);
+void reg_aria_disp_set_pres_vinit_pres_v_start_fra_bot(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_vinit_pres_v_start_fra_bot(void);
+void reg_aria_disp_set_pres_vinit_pres_v_start_int_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_vinit_pres_v_start_int_bot(void);
+
+/*!
+  register REGARIA_DISP_pres_status (read/write)
+  */
+void reg_aria_disp_set_pres_status(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_status(void);
+void reg_aria_disp_set_pres_status_pres_end_irq(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_end_irq(void);
+void reg_aria_disp_set_pres_status_pres_wrddr_error(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_wrddr_error(void);
+void reg_aria_disp_set_pres_status_pres_wrfifo_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_wrfifo_full(void);
+void reg_aria_disp_set_pres_status_pres_wrfifo_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_wrfifo_empty(void);
+void reg_aria_disp_set_pres_status_pres_soft_rst_done(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_soft_rst_done(void);
+void reg_aria_disp_set_pres_status_pres_axi_w_done(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_axi_w_done(void);
+void reg_aria_disp_set_pres_status_pres_axi_r_done(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_axi_r_done(void);
+void reg_aria_disp_set_pres_status_pres_latency_overflow_rd(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_latency_overflow_rd(void);
+void reg_aria_disp_set_pres_status_pres_latency_overflow_wr(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_latency_overflow_wr(void);
+void reg_aria_disp_set_pres_status_pres_free(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status_pres_free(void);
+
+/*!
+  register REGARIA_DISP_pres_tile_rowjump_00 (read/write)
+  */
+void reg_aria_disp_set_pres_tile_rowjump_00(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_rowjump_00(void);
+void reg_aria_disp_set_pres_tile_rowjump_00_pres_tile_rowjump_00(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_rowjump_00_pres_tile_rowjump_00(void);
+
+/*!
+  register REGARIA_DISP_pres_tile_rowjump_01 (read/write)
+  */
+void reg_aria_disp_set_pres_tile_rowjump_01(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_rowjump_01(void);
+void reg_aria_disp_set_pres_tile_rowjump_01_pres_tile_rowjump_01(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_rowjump_01_pres_tile_rowjump_01(void);
+
+/*!
+  register REGARIA_DISP_pres_tile_rowjump_10 (read/write)
+  */
+void reg_aria_disp_set_pres_tile_rowjump_10(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_rowjump_10(void);
+void reg_aria_disp_set_pres_tile_rowjump_10_pres_tile_rowjump_10(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_rowjump_10_pres_tile_rowjump_10(void);
+
+/*!
+  register REGARIA_DISP_pres_tile_rowjump_11 (read/write)
+  */
+void reg_aria_disp_set_pres_tile_rowjump_11(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_rowjump_11(void);
+void reg_aria_disp_set_pres_tile_rowjump_11_pres_tile_rowjump_11(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_rowjump_11_pres_tile_rowjump_11(void);
+
+/*!
+  register REGARIA_DISP_pres_tile_para (read/write)
+  */
+void reg_aria_disp_set_pres_tile_para(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_tile_para(void);
+void reg_aria_disp_set_pres_tile_para_pres_col_size_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_tile_para_pres_col_size_mode(void);
+void reg_aria_disp_set_pres_tile_para_pres_field_picture(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_tile_para_pres_field_picture(void);
+void reg_aria_disp_set_pres_tile_para_pres_hd_map_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_tile_para_pres_hd_map_mode(void);
+void reg_aria_disp_set_pres_tile_para_pres_tile_config(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_tile_para_pres_tile_config(void);
+
+/*!
+  register REGARIA_DISP_pres_cmd_ack_latency_avg (read/write)
+  */
+void reg_aria_disp_set_pres_cmd_ack_latency_avg(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_cmd_ack_latency_avg(void);
+void reg_aria_disp_set_pres_cmd_ack_latency_avg_pres_cmd_ack_latency_avg_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_cmd_ack_latency_avg_pres_cmd_ack_latency_avg_rd(void);
+void reg_aria_disp_set_pres_cmd_ack_latency_avg_pres_cmd_ack_latency_avg_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_cmd_ack_latency_avg_pres_cmd_ack_latency_avg_wr(void);
+
+/*!
+  register REGARIA_DISP_pres_cmd_dat_latency_avg (read/write)
+  */
+void reg_aria_disp_set_pres_cmd_dat_latency_avg(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_cmd_dat_latency_avg(void);
+void reg_aria_disp_set_pres_cmd_dat_latency_avg_pres_cmd_dat_latency_avg_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_cmd_dat_latency_avg_pres_cmd_dat_latency_avg_rd(void);
+void reg_aria_disp_set_pres_cmd_dat_latency_avg_pres_cmd_dat_latency_avg_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_cmd_dat_latency_avg_pres_cmd_dat_latency_avg_wr(void);
+
+/*!
+  register REGARIA_DISP_pres_datlast_latency_avg (read/write)
+  */
+void reg_aria_disp_set_pres_datlast_latency_avg(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_datlast_latency_avg(void);
+void reg_aria_disp_set_pres_datlast_latency_avg_pres_datlast_latency_avg_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_datlast_latency_avg_pres_datlast_latency_avg_rd(void);
+void reg_aria_disp_set_pres_datlast_latency_avg_pres_datlast_latency_avg_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_datlast_latency_avg_pres_datlast_latency_avg_wr(void);
+
+/*!
+  register REGARIA_DISP_pres_cmd_ack_latency_max (read/write)
+  */
+void reg_aria_disp_set_pres_cmd_ack_latency_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_cmd_ack_latency_max(void);
+void reg_aria_disp_set_pres_cmd_ack_latency_max_pres_cmd_ack_latency_max_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_cmd_ack_latency_max_pres_cmd_ack_latency_max_rd(void);
+void reg_aria_disp_set_pres_cmd_ack_latency_max_pres_cmd_ack_latency_max_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_cmd_ack_latency_max_pres_cmd_ack_latency_max_wr(void);
+
+/*!
+  register REGARIA_DISP_pres_cmd_dat_latency_max (read/write)
+  */
+void reg_aria_disp_set_pres_cmd_dat_latency_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_cmd_dat_latency_max(void);
+void reg_aria_disp_set_pres_cmd_dat_latency_max_pres_cmd_dat_latency_max_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_cmd_dat_latency_max_pres_cmd_dat_latency_max_rd(void);
+void reg_aria_disp_set_pres_cmd_dat_latency_max_pres_cmd_dat_latency_max_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_cmd_dat_latency_max_pres_cmd_dat_latency_max_wr(void);
+
+/*!
+  register REGARIA_DISP_pres_datlast_latency_max (read/write)
+  */
+void reg_aria_disp_set_pres_datlast_latency_max(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_datlast_latency_max(void);
+void reg_aria_disp_set_pres_datlast_latency_max_pres_datlast_latency_max_rd(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_datlast_latency_max_pres_datlast_latency_max_rd(void);
+void reg_aria_disp_set_pres_datlast_latency_max_pres_datlast_latency_max_wr(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_datlast_latency_max_pres_datlast_latency_max_wr(void);
+
+/*!
+  register REGARIA_DISP_pres_status1 (read/write)
+  */
+void reg_aria_disp_set_pres_status1(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_status1(void);
+void reg_aria_disp_set_pres_status1_pres_vf_line_cnt(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_status1_pres_vf_line_cnt(void);
+void reg_aria_disp_set_pres_status1_pres_hf_line_cnt(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_status1_pres_hf_line_cnt(void);
+
+/*!
+  register REGARIA_DISP_pres_status2 (read/write)
+  */
+void reg_aria_disp_set_pres_status2(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_status2(void);
+void reg_aria_disp_set_pres_status2_pres_ffwr_lne_cnt(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_status2_pres_ffwr_lne_cnt(void);
+void reg_aria_disp_set_pres_status2_pres_ffwr_pxl_cnt(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status2_pres_ffwr_pxl_cnt(void);
+
+/*!
+  register REGARIA_DISP_pres_status3 (read/write)
+  */
+void reg_aria_disp_set_pres_status3(mt_u32 data);
+mt_u32  reg_aria_disp_get_pres_status3(void);
+void reg_aria_disp_set_pres_status3_pres_ffrd_data_cnt(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status3_pres_ffrd_data_cnt(void);
+void reg_aria_disp_set_pres_status3_pres_rdreq_stt(mt_u16 data);
+mt_u16  reg_aria_disp_get_pres_status3_pres_rdreq_stt(void);
+void reg_aria_disp_set_pres_status3_pres_flt_stt(mt_u8 data);
+mt_u8   reg_aria_disp_get_pres_status3_pres_flt_stt(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_ctrl (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_ctrl(void);
+void reg_aria_disp_set_gra_scale0_ctrl_h_filter_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_h_filter_enable(void);
+void reg_aria_disp_set_gra_scale0_ctrl_v_filter_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_v_filter_enable(void);
+void reg_aria_disp_set_gra_scale0_ctrl_h_phase(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_h_phase(void);
+void reg_aria_disp_set_gra_scale0_ctrl_v_phase(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_v_phase(void);
+void reg_aria_disp_set_gra_scale0_ctrl_hscaler_alpha_bypass(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_hscaler_alpha_bypass(void);
+void reg_aria_disp_set_gra_scale0_ctrl_hscaler_tapnum(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_hscaler_tapnum(void);
+void reg_aria_disp_set_gra_scale0_ctrl_odd_startline(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_odd_startline(void);
+void reg_aria_disp_set_gra_scale0_ctrl_even_startline(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_even_startline(void);
+void reg_aria_disp_set_gra_scale0_ctrl_v_scale_border_disable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_v_scale_border_disable(void);
+void reg_aria_disp_set_gra_scale0_ctrl_h_scale_border_disable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_h_scale_border_disable(void);
+void reg_aria_disp_set_gra_scale0_ctrl_h_scaler_startnum(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_ctrl_h_scaler_startnum(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_h_ratio (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_h_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_h_ratio(void);
+void reg_aria_disp_set_gra_scale0_h_ratio_h_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_h_ratio_h_ratio_int(void);
+void reg_aria_disp_set_gra_scale0_h_ratio_h_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale0_h_ratio_h_ratio_fra(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_v_ratio (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_v_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_v_ratio(void);
+void reg_aria_disp_set_gra_scale0_v_ratio_v_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_v_ratio_v_ratio_int(void);
+void reg_aria_disp_set_gra_scale0_v_ratio_v_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale0_v_ratio_v_ratio_fra(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_h_start_fra (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_h_start_fra(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_h_start_fra(void);
+void reg_aria_disp_set_gra_scale0_h_start_fra_gra_scale0_h_start_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale0_h_start_fra_gra_scale0_h_start_fra(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_v_start_fra (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_v_start_fra(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_v_start_fra(void);
+void reg_aria_disp_set_gra_scale0_v_start_fra_gra_scale0_v_start_fra_odd(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale0_v_start_fra_gra_scale0_v_start_fra_odd(void);
+void reg_aria_disp_set_gra_scale0_v_start_fra_gra_scale0_v_start_fra_even(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale0_v_start_fra_gra_scale0_v_start_fra_even(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_postprocess (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_postprocess(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_postprocess(void);
+void reg_aria_disp_set_gra_scale0_postprocess_shoot_chg(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_postprocess_shoot_chg(void);
+void reg_aria_disp_set_gra_scale0_postprocess_hp_enha(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale0_postprocess_hp_enha(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_hscaler_alpha_coeff_address (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_hscaler_alpha_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_hscaler_alpha_coeff_address(void);
+void reg_aria_disp_set_gra_scale0_hscaler_alpha_coeff_address_gra_scale0_hscaler_alpha_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_hscaler_alpha_coeff_address_gra_scale0_hscaler_alpha_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_hscaler_luma_coeff_address (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_hscaler_luma_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_hscaler_luma_coeff_address(void);
+void reg_aria_disp_set_gra_scale0_hscaler_luma_coeff_address_gra_scale0_hscaler_luma_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_hscaler_luma_coeff_address_gra_scale0_hscaler_luma_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_hscaler_cbcr_coeff_address (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_hscaler_cbcr_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_hscaler_cbcr_coeff_address(void);
+void reg_aria_disp_set_gra_scale0_hscaler_cbcr_coeff_address_gra_scale0_hscaler_cbcr_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_hscaler_cbcr_coeff_address_gra_scale0_hscaler_cbcr_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_vscaler_luma_coeff_address (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_vscaler_luma_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_vscaler_luma_coeff_address(void);
+void reg_aria_disp_set_gra_scale0_vscaler_luma_coeff_address_gra_scale0_vscaler_luma_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_vscaler_luma_coeff_address_gra_scale0_vscaler_luma_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_gra_scale0_output_size (read/write)
+  */
+void reg_aria_disp_set_gra_scale0_output_size(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale0_output_size(void);
+void reg_aria_disp_set_gra_scale0_output_size_gra_scale0_height_out(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale0_output_size_gra_scale0_height_out(void);
+void reg_aria_disp_set_gra_scale0_output_size_gra_scale0_width_out(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale0_output_size_gra_scale0_width_out(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_ctrl (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_ctrl(void);
+void reg_aria_disp_set_gra_scale1_ctrl_h_filter_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_h_filter_enable(void);
+void reg_aria_disp_set_gra_scale1_ctrl_v_filter_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_v_filter_enable(void);
+void reg_aria_disp_set_gra_scale1_ctrl_h_phase(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_h_phase(void);
+void reg_aria_disp_set_gra_scale1_ctrl_v_phase(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_v_phase(void);
+void reg_aria_disp_set_gra_scale1_ctrl_hscaler_alpha_bypass(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_hscaler_alpha_bypass(void);
+void reg_aria_disp_set_gra_scale1_ctrl_hscaler_tapnum(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_hscaler_tapnum(void);
+void reg_aria_disp_set_gra_scale1_ctrl_odd_startline(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_odd_startline(void);
+void reg_aria_disp_set_gra_scale1_ctrl_even_startline(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_even_startline(void);
+void reg_aria_disp_set_gra_scale1_ctrl_v_scale_border_disable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_v_scale_border_disable(void);
+void reg_aria_disp_set_gra_scale1_ctrl_h_scale_border_disable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_h_scale_border_disable(void);
+void reg_aria_disp_set_gra_scale1_ctrl_h_scaler_startnum(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_h_scaler_startnum(void);
+void reg_aria_disp_set_gra_scale1_ctrl_downsample_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_ctrl_downsample_enable(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_h_ratio (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_h_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_h_ratio(void);
+void reg_aria_disp_set_gra_scale1_h_ratio_h_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_h_ratio_h_ratio_int(void);
+void reg_aria_disp_set_gra_scale1_h_ratio_h_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale1_h_ratio_h_ratio_fra(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_v_ratio (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_v_ratio(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_v_ratio(void);
+void reg_aria_disp_set_gra_scale1_v_ratio_v_ratio_int(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_v_ratio_v_ratio_int(void);
+void reg_aria_disp_set_gra_scale1_v_ratio_v_ratio_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale1_v_ratio_v_ratio_fra(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_h_start_fra (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_h_start_fra(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_h_start_fra(void);
+void reg_aria_disp_set_gra_scale1_h_start_fra_gra_scale1_h_start_fra(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale1_h_start_fra_gra_scale1_h_start_fra(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_v_start_fra (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_v_start_fra(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_v_start_fra(void);
+void reg_aria_disp_set_gra_scale1_v_start_fra_gra_scale1_v_start_fra_odd(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale1_v_start_fra_gra_scale1_v_start_fra_odd(void);
+void reg_aria_disp_set_gra_scale1_v_start_fra_gra_scale1_v_start_fra_even(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale1_v_start_fra_gra_scale1_v_start_fra_even(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_postprocess (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_postprocess(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_postprocess(void);
+void reg_aria_disp_set_gra_scale1_postprocess_shoot_chg(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_postprocess_shoot_chg(void);
+void reg_aria_disp_set_gra_scale1_postprocess_hp_enha(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scale1_postprocess_hp_enha(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_hscaler_alpha_coeff_address (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_hscaler_alpha_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_hscaler_alpha_coeff_address(void);
+void reg_aria_disp_set_gra_scale1_hscaler_alpha_coeff_address_gra_scale1_hscaler_alpha_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_hscaler_alpha_coeff_address_gra_scale1_hscaler_alpha_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_hscaler_luma_coeff_address (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_hscaler_luma_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_hscaler_luma_coeff_address(void);
+void reg_aria_disp_set_gra_scale1_hscaler_luma_coeff_address_gra_scale1_hscaler_luma_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_hscaler_luma_coeff_address_gra_scale1_hscaler_luma_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_hscaler_cbcr_coeff_address (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_hscaler_cbcr_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_hscaler_cbcr_coeff_address(void);
+void reg_aria_disp_set_gra_scale1_hscaler_cbcr_coeff_address_gra_scale1_hscaler_cbcr_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_hscaler_cbcr_coeff_address_gra_scale1_hscaler_cbcr_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_gra_scale1_vscaler_luma_coeff_address (read/write)
+  */
+void reg_aria_disp_set_gra_scale1_vscaler_luma_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_vscaler_luma_coeff_address(void);
+void reg_aria_disp_set_gra_scale1_vscaler_luma_coeff_address_gra_scale1_vscaler_luma_coeff_address(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale1_vscaler_luma_coeff_address_gra_scale1_vscaler_luma_coeff_address(void);
+
+/*!
+  register REGARIA_DISP_gra_scale_fifo_threshold (read/write)
+  */
+void reg_aria_disp_set_gra_scale_fifo_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scale_fifo_threshold(void);
+void reg_aria_disp_set_gra_scale_fifo_threshold_gra_scale0_fifo_threshold(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale_fifo_threshold_gra_scale0_fifo_threshold(void);
+void reg_aria_disp_set_gra_scale_fifo_threshold_gra_scale1_fifo_threshold(mt_u16 data);
+mt_u16  reg_aria_disp_get_gra_scale_fifo_threshold_gra_scale1_fifo_threshold(void);
+
+/*!
+  register REGARIA_DISP_gra_scaler_status (read/write)
+  */
+void reg_aria_disp_set_gra_scaler_status(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_scaler_status(void);
+void reg_aria_disp_set_gra_scaler_status_gra_scaler1_fifo_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scaler_status_gra_scaler1_fifo_full(void);
+void reg_aria_disp_set_gra_scaler_status_gra_scaler1_fifo_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scaler_status_gra_scaler1_fifo_empty(void);
+void reg_aria_disp_set_gra_scaler_status_gra_scaler0_fifo_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scaler_status_gra_scaler0_fifo_full(void);
+void reg_aria_disp_set_gra_scaler_status_gra_scaler0_fifo_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_scaler_status_gra_scaler0_fifo_empty(void);
+
+/*!
+  register REGARIA_DISP_gra_saler_latch_cmd (read/write)
+  */
+void reg_aria_disp_set_gra_saler_latch_cmd(mt_u32 data);
+mt_u32  reg_aria_disp_get_gra_saler_latch_cmd(void);
+void reg_aria_disp_set_gra_saler_latch_cmd_gra_latch_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_saler_latch_cmd_gra_latch_top(void);
+void reg_aria_disp_set_gra_saler_latch_cmd_gra_latch_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_saler_latch_cmd_gra_latch_bot(void);
+void reg_aria_disp_set_gra_saler_latch_cmd_gra_latch_3d_1st(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_saler_latch_cmd_gra_latch_3d_1st(void);
+void reg_aria_disp_set_gra_saler_latch_cmd_gra_latch_3d_2nd(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_saler_latch_cmd_gra_latch_3d_2nd(void);
+void reg_aria_disp_set_gra_saler_latch_cmd_gra_latch_or_not(mt_u8 data);
+mt_u8   reg_aria_disp_get_gra_saler_latch_cmd_gra_latch_or_not(void);
+
+/*!
+  register REGARIA_DISP_sd_wr_ctrl (read/write)
+  */
+void reg_aria_disp_set_sd_wr_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_wr_ctrl(void);
+void reg_aria_disp_set_sd_wr_ctrl_cfg_sd_startlines(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_wr_ctrl_cfg_sd_startlines(void);
+void reg_aria_disp_set_sd_wr_ctrl_sd_pal_format(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_wr_ctrl_sd_pal_format(void);
+void reg_aria_disp_set_sd_wr_ctrl_cfg_sd_onefield_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_wr_ctrl_cfg_sd_onefield_mode(void);
+void reg_aria_disp_set_sd_wr_ctrl_cfg_rate_conversion_enable(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_wr_ctrl_cfg_rate_conversion_enable(void);
+void reg_aria_disp_set_sd_wr_ctrl_sd_buffer_number(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_wr_ctrl_sd_buffer_number(void);
+void reg_aria_disp_set_sd_wr_ctrl_sd_wr_back_forbidden(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_wr_ctrl_sd_wr_back_forbidden(void);
+void reg_aria_disp_set_sd_wr_ctrl_sd_wrback_yuv444(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_wr_ctrl_sd_wrback_yuv444(void);
+void reg_aria_disp_set_sd_wr_ctrl_sdbuf_softctrl_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_wr_ctrl_sdbuf_softctrl_en(void);
+
+/*!
+  register REGARIA_DISP_sd_latch_command (read/write)
+  */
+void reg_aria_disp_set_sd_latch_command(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_latch_command(void);
+void reg_aria_disp_set_sd_latch_command_sd_latch_top(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_latch_command_sd_latch_top(void);
+void reg_aria_disp_set_sd_latch_command_sd_latch_bot(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_latch_command_sd_latch_bot(void);
+void reg_aria_disp_set_sd_latch_command_sd_latch_3d_1st(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_latch_command_sd_latch_3d_1st(void);
+void reg_aria_disp_set_sd_latch_command_sd_latch_3d_2nd(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_latch_command_sd_latch_3d_2nd(void);
+void reg_aria_disp_set_sd_latch_command_sd_latch_or_not(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_latch_command_sd_latch_or_not(void);
+
+/*!
+  register REGARIA_DISP_sd_wrback_addr_odd (read/write)
+  */
+void reg_aria_disp_set_sd_wrback_addr_odd(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_wrback_addr_odd(void);
+void reg_aria_disp_set_sd_wrback_addr_odd_sd_wrback_addr_odd(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_wrback_addr_odd_sd_wrback_addr_odd(void);
+
+/*!
+  register REGARIA_DISP_sd_wrback_addr_even (read/write)
+  */
+void reg_aria_disp_set_sd_wrback_addr_even(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_wrback_addr_even(void);
+void reg_aria_disp_set_sd_wrback_addr_even_sd_wrback_addr_odd(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_wrback_addr_even_sd_wrback_addr_odd(void);
+
+/*!
+  register REGARIA_DISP_sd_rdback_addr_odd (read/write)
+  */
+void reg_aria_disp_set_sd_rdback_addr_odd(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_rdback_addr_odd(void);
+void reg_aria_disp_set_sd_rdback_addr_odd_sd_rdback_addr_odd(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_rdback_addr_odd_sd_rdback_addr_odd(void);
+
+/*!
+  register REGARIA_DISP_sd_rdback_addr_even (read/write)
+  */
+void reg_aria_disp_set_sd_rdback_addr_even(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_rdback_addr_even(void);
+void reg_aria_disp_set_sd_rdback_addr_even_sd_rdback_addr_even(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_rdback_addr_even_sd_rdback_addr_even(void);
+
+/*!
+  register REGARIA_DISP_sd_wrback_fifo_threshold (read/write)
+  */
+void reg_aria_disp_set_sd_wrback_fifo_threshold(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_wrback_fifo_threshold(void);
+void reg_aria_disp_set_sd_wrback_fifo_threshold_sd_wrback_fifo_threshold(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_wrback_fifo_threshold_sd_wrback_fifo_threshold(void);
+
+/*!
+  register REGARIA_DISP_sd_blankscreen_mode (read/write)
+  */
+void reg_aria_disp_set_sd_blankscreen_mode(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_blankscreen_mode(void);
+void reg_aria_disp_set_sd_blankscreen_mode_sd_blankscreen_cr_color(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_blankscreen_mode_sd_blankscreen_cr_color(void);
+void reg_aria_disp_set_sd_blankscreen_mode_sd_blankscreen_cb_color(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_blankscreen_mode_sd_blankscreen_cb_color(void);
+void reg_aria_disp_set_sd_blankscreen_mode_sd_blankscreen_luma(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_blankscreen_mode_sd_blankscreen_luma(void);
+void reg_aria_disp_set_sd_blankscreen_mode_cfg_sd_blankscreen_mode(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_blankscreen_mode_cfg_sd_blankscreen_mode(void);
+
+/*!
+  register REGARIA_DISP_sd_status (read/write)
+  */
+void reg_aria_disp_set_sd_status(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_status(void);
+void reg_aria_disp_set_sd_status_sdrd_fifo_empty(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_sdrd_fifo_empty(void);
+void reg_aria_disp_set_sd_status_sdwr_fifo_full(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_sdwr_fifo_full(void);
+void reg_aria_disp_set_sd_status_sdbuf_empty_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_sdbuf_empty_flag(void);
+void reg_aria_disp_set_sd_status_sdbuf_full_flag(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_sdbuf_full_flag(void);
+void reg_aria_disp_set_sd_status_sdbuf_rdptr(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_sdbuf_rdptr(void);
+void reg_aria_disp_set_sd_status_sdbuf_wrptr(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_sdbuf_wrptr(void);
+void reg_aria_disp_set_sd_status_disable_sdenv(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_disable_sdenv(void);
+void reg_aria_disp_set_sd_status_sdwr_axi_bresp_error(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_sdwr_axi_bresp_error(void);
+void reg_aria_disp_set_sd_status_sdrd_axi_rready_error(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_status_sdrd_axi_rready_error(void);
+
+/*!
+  register REGARIA_DISP_sd_axi_monitor_ctrl (read/write)
+  */
+void reg_aria_disp_set_sd_axi_monitor_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_axi_monitor_ctrl(void);
+void reg_aria_disp_set_sd_axi_monitor_ctrl_sd_rd_axi_monitor_restart(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_axi_monitor_ctrl_sd_rd_axi_monitor_restart(void);
+void reg_aria_disp_set_sd_axi_monitor_ctrl_sd_wr_axi_monitor_restart(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_axi_monitor_ctrl_sd_wr_axi_monitor_restart(void);
+
+/*!
+  register REGARIA_DISP_sdrd_cmd_ack_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_sdrd_cmd_ack_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_sdrd_cmd_ack_latency_monitor(void);
+void reg_aria_disp_set_sdrd_cmd_ack_latency_monitor_cmd_ack_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdrd_cmd_ack_latency_monitor_cmd_ack_latency_max_value(void);
+void reg_aria_disp_set_sdrd_cmd_ack_latency_monitor_cmd_ack_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdrd_cmd_ack_latency_monitor_cmd_ack_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_sdrd_data_ack_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_sdrd_data_ack_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_sdrd_data_ack_latency_monitor(void);
+void reg_aria_disp_set_sdrd_data_ack_latency_monitor_cmd_data_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdrd_data_ack_latency_monitor_cmd_data_latency_max_value(void);
+void reg_aria_disp_set_sdrd_data_ack_latency_monitor_cmd_data_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdrd_data_ack_latency_monitor_cmd_data_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_sdrd_data_last_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_sdrd_data_last_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_sdrd_data_last_latency_monitor(void);
+void reg_aria_disp_set_sdrd_data_last_latency_monitor_last_data_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdrd_data_last_latency_monitor_last_data_latency_max_value(void);
+void reg_aria_disp_set_sdrd_data_last_latency_monitor_last_data_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdrd_data_last_latency_monitor_last_data_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_sdwr_cmd_ack_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_sdwr_cmd_ack_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_sdwr_cmd_ack_latency_monitor(void);
+void reg_aria_disp_set_sdwr_cmd_ack_latency_monitor_cmd_ack_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdwr_cmd_ack_latency_monitor_cmd_ack_latency_max_value(void);
+void reg_aria_disp_set_sdwr_cmd_ack_latency_monitor_cmd_ack_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdwr_cmd_ack_latency_monitor_cmd_ack_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_sdwr_data_ack_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_sdwr_data_ack_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_sdwr_data_ack_latency_monitor(void);
+void reg_aria_disp_set_sdwr_data_ack_latency_monitor_cmd_data_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdwr_data_ack_latency_monitor_cmd_data_latency_max_value(void);
+void reg_aria_disp_set_sdwr_data_ack_latency_monitor_cmd_data_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdwr_data_ack_latency_monitor_cmd_data_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_sdwr_data_bready_latency_monitor (read/write)
+  */
+void reg_aria_disp_set_sdwr_data_bready_latency_monitor(mt_u32 data);
+mt_u32  reg_aria_disp_get_sdwr_data_bready_latency_monitor(void);
+void reg_aria_disp_set_sdwr_data_bready_latency_monitor_data_bready_latency_max_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdwr_data_bready_latency_monitor_data_bready_latency_max_value(void);
+void reg_aria_disp_set_sdwr_data_bready_latency_monitor_data_bready_latency_average_value(mt_u16 data);
+mt_u16  reg_aria_disp_get_sdwr_data_bready_latency_monitor_data_bready_latency_average_value(void);
+
+/*!
+  register REGARIA_DISP_sd_video_hue_adjust (read/write)
+  */
+void reg_aria_disp_set_sd_video_hue_adjust(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_video_hue_adjust(void);
+void reg_aria_disp_set_sd_video_hue_adjust_sd_sina(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_video_hue_adjust_sd_sina(void);
+void reg_aria_disp_set_sd_video_hue_adjust_sd_cosa(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_video_hue_adjust_sd_cosa(void);
+void reg_aria_disp_set_sd_video_hue_adjust_sd_hue_adjust_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_hue_adjust_sd_hue_adjust_en(void);
+
+/*!
+  register REGARIA_DISP_sd_video_effect_coef (read/write)
+  */
+void reg_aria_disp_set_sd_video_effect_coef(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_video_effect_coef(void);
+void reg_aria_disp_set_sd_video_effect_coef_sd_bright_coeff(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_effect_coef_sd_bright_coeff(void);
+void reg_aria_disp_set_sd_video_effect_coef_sd_contrast_coeff(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_effect_coef_sd_contrast_coeff(void);
+void reg_aria_disp_set_sd_video_effect_coef_sd_saturation_coeff(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_video_effect_coef_sd_saturation_coeff(void);
+
+/*!
+  register REGARIA_DISP_sd_csc_ctrl (read/write)
+  */
+void reg_aria_disp_set_sd_csc_ctrl(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_csc_ctrl(void);
+void reg_aria_disp_set_sd_csc_ctrl_sd_bound_output_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_csc_ctrl_sd_bound_output_en(void);
+void reg_aria_disp_set_sd_csc_ctrl_sd_bound_input_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_csc_ctrl_sd_bound_input_en(void);
+void reg_aria_disp_set_sd_csc_ctrl_sd_csc_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_sd_csc_ctrl_sd_csc_en(void);
+
+/*!
+  register REGARIA_DISP_sd_csc_coeff1 (read/write)
+  */
+void reg_aria_disp_set_sd_csc_coeff1(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_csc_coeff1(void);
+void reg_aria_disp_set_sd_csc_coeff1_sd_csc_a01(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff1_sd_csc_a01(void);
+void reg_aria_disp_set_sd_csc_coeff1_sd_csc_a00(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff1_sd_csc_a00(void);
+
+/*!
+  register REGARIA_DISP_sd_csc_coeff2 (read/write)
+  */
+void reg_aria_disp_set_sd_csc_coeff2(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_csc_coeff2(void);
+void reg_aria_disp_set_sd_csc_coeff2_sd_csc_a10(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff2_sd_csc_a10(void);
+void reg_aria_disp_set_sd_csc_coeff2_sd_csc_a02(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff2_sd_csc_a02(void);
+
+/*!
+  register REGARIA_DISP_sd_csc_coeff3 (read/write)
+  */
+void reg_aria_disp_set_sd_csc_coeff3(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_csc_coeff3(void);
+void reg_aria_disp_set_sd_csc_coeff3_sd_csc_a12(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff3_sd_csc_a12(void);
+void reg_aria_disp_set_sd_csc_coeff3_sd_csc_a11(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff3_sd_csc_a11(void);
+
+/*!
+  register REGARIA_DISP_sd_csc_coeff4 (read/write)
+  */
+void reg_aria_disp_set_sd_csc_coeff4(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_csc_coeff4(void);
+void reg_aria_disp_set_sd_csc_coeff4_sd_csc_a21(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff4_sd_csc_a21(void);
+void reg_aria_disp_set_sd_csc_coeff4_sd_csc_a20(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff4_sd_csc_a20(void);
+
+/*!
+  register REGARIA_DISP_sd_csc_coeff5 (read/write)
+  */
+void reg_aria_disp_set_sd_csc_coeff5(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_csc_coeff5(void);
+void reg_aria_disp_set_sd_csc_coeff5_sd_csc_a22(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_csc_coeff5_sd_csc_a22(void);
+
+/*!
+  register REGARIA_DISP_hd_screen_out_size (read/write)
+  */
+void reg_aria_disp_set_hd_screen_out_size(mt_u32 data);
+mt_u32  reg_aria_disp_get_hd_screen_out_size(void);
+void reg_aria_disp_set_hd_screen_out_size_hd_screen_height(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_screen_out_size_hd_screen_height(void);
+void reg_aria_disp_set_hd_screen_out_size_hd_screen_width(mt_u16 data);
+mt_u16  reg_aria_disp_get_hd_screen_out_size_hd_screen_width(void);
+
+/*!
+  register REGARIA_DISP_sd_screen_out_size (read/write)
+  */
+void reg_aria_disp_set_sd_screen_out_size(mt_u32 data);
+mt_u32  reg_aria_disp_get_sd_screen_out_size(void);
+void reg_aria_disp_set_sd_screen_out_size_sd_screen_height(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_screen_out_size_sd_screen_height(void);
+void reg_aria_disp_set_sd_screen_out_size_sd_screen_width(mt_u16 data);
+mt_u16  reg_aria_disp_get_sd_screen_out_size_sd_screen_width(void);
+
+/*!
+  register REGARIA_DISP_coeff_table_sel (read/write)
+  */
+void reg_aria_disp_set_coeff_table_sel(mt_u32 data);
+mt_u32  reg_aria_disp_get_coeff_table_sel(void);
+void reg_aria_disp_set_coeff_table_sel_video_dce_map_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_video_dce_map_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_gra1_alpha_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_gra1_alpha_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_gra1_chroma_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_gra1_chroma_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_gra1_luma_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_gra1_luma_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_gra1_luma_vf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_gra1_luma_vf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_gra0_alpha_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_gra0_alpha_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_gra0_chroma_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_gra0_chroma_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_gra0_luma_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_gra0_luma_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_gra0_luma_vf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_gra0_luma_vf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_stillscalar_chroma_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_stillscalar_chroma_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_stillscalar_luma_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_stillscalar_luma_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_osd_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_osd_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_osd_vf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_osd_vf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_sd_chroma_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_sd_chroma_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_sd_luma_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_sd_luma_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_sd_luma_vf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_sd_luma_vf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_hd_chroma_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_hd_chroma_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_hd_luma_hf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_hd_luma_hf_coeff_load_en(void);
+void reg_aria_disp_set_coeff_table_sel_hd_luma_vf_coeff_load_en(mt_u8 data);
+mt_u8   reg_aria_disp_get_coeff_table_sel_hd_luma_vf_coeff_load_en(void);
+
+/*!
+  register REGARIA_DISP_display_ctrl_limit (read/write)
+  */
+void reg_aria_disp_set_display_ctrl_limit(mt_u32 data);
+mt_u32  reg_aria_disp_get_display_ctrl_limit(void);
+void reg_aria_disp_set_display_ctrl_limit_wseccpu(mt_u16 data);
+mt_u16  reg_aria_disp_get_display_ctrl_limit_wseccpu(void);
+void reg_aria_disp_set_display_ctrl_limit_rseccpu(mt_u16 data);
+mt_u16  reg_aria_disp_get_display_ctrl_limit_rseccpu(void);
+
+/*!
+  ARIA_DISP reg init function
+  */
+void reg_aria_disp_init(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _DISP_AP_ARIA_REG_H */
+

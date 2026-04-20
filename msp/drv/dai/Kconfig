@@ -1,0 +1,114 @@
+config SYMPHONY_SMART_SPEAKER
+       bool "Enable kernel configurations for smart speaker applications"
+       default n
+
+config PANTHER_SND
+	tristate "Sound driver"
+	depends on SYMPHONY_SMART_SPEAKER
+	select SOUND
+	select SND
+	select SND_SOC
+	default n
+
+config PANTHER_SND_ENABLE_NETLINK
+	bool "Send netlink event on output silence"
+	depends on PANTHER_SND
+	default n
+
+config PANTHER_SND_LPSD
+	bool "Low Power Sound Detector"
+	depends on PANTHER_SND
+	default n
+	help
+	  This enables a Low Power Sound Detector for 16KHz 16bit stream
+
+config PANTHER_SND_LPSD_TARGET
+	int "monitor target selection Rx(0/1)"
+	depends on PANTHER_SND_LPSD
+	range 0 1
+	default 0
+
+choice
+	prompt "PDM interface"
+	depends on PANTHER_SND
+	default PANTHER_SND_PDM_RX0
+
+config PANTHER_SND_PDM_RX0
+	bool "RX0"
+config PANTHER_SND_PDM_RX1
+	bool "RX1"
+endchoice
+
+config PANTHER_SND_TX_EXT_CARD
+	bool "TX External Card"
+	depends on PANTHER_SND
+	select I2C
+	select I2C_MT_SYMPHONY
+	default y
+
+choice
+	prompt "Tx Codec select"
+	depends on PANTHER_SND_TX_EXT_CARD
+	default PANTHER_SND_TX_ES8311
+
+config PANTHER_SND_TX_DUMMY
+	bool "DUMMY codec"
+	select PANTHER_SND_CODEC_DUMMY
+config PANTHER_SND_TX_PCM1681
+	bool "TI PCM1681"
+	select PANTHER_SND_CODEC_PCM1681
+config PANTHER_SND_TX_ES8311
+	bool "Everest ES8311"
+	select PANTHER_SND_CODEC_ES8311
+endchoice
+
+config PANTHER_SND_TX_I2C_BUS
+	int "I2C bus number of TX codec"
+	depends on PANTHER_SND_TX_EXT_CARD
+	default 1
+
+config PANTHER_SND_RX_EXT_CARD
+	bool "RX External Card"
+	depends on PANTHER_SND
+	select I2C
+	select I2C_MT_SYMPHONY
+	default y
+
+choice
+	prompt "Rx Codec select"
+	depends on PANTHER_SND_RX_EXT_CARD
+	default PANTHER_SND_RX_ES7210
+
+config PANTHER_SND_RX_DUMMY
+	bool "DUMMY codec"
+	select PANTHER_SND_CODEC_DUMMY
+config PANTHER_SND_RX_ES7210
+	bool "Everest ES7210"
+	select PANTHER_SND_CODEC_ES7210
+endchoice
+
+config PANTHER_SND_RX_I2C_BUS
+	int "I2C bus number of RX codec"
+	depends on PANTHER_SND_RX_EXT_CARD
+	default 1
+
+config PANTHER_SND_BCLK_SHARED
+	bool "Tx and Rx use the same bit clock pin"
+	depends on PANTHER_SND_TX_EXT_CARD && PANTHER_SND_RX_EXT_CARD
+	default 0
+
+config PANTHER_SND_FS_SHARED
+	bool "Tx and Rx use the same frame sync pin"
+	depends on PANTHER_SND_TX_EXT_CARD && PANTHER_SND_RX_EXT_CARD
+	select PANTHER_SND_BCLK_SHARED
+	default 0
+
+config PANTHER_SND_CODEC_DUMMY
+	bool
+config PANTHER_SND_CODEC_ES7210
+	bool
+config PANTHER_SND_CODEC_PCM1681
+	bool
+config PANTHER_SND_CODEC_ES8311
+	bool
+

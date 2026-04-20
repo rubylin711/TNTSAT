@@ -1,0 +1,14 @@
+1e704768b48ac98cd1777eef538f333c *./doc/bsd_api.chm
+a837b33183d37199d88b5ac91c078150 *./doc/cert_api.chm
+0e3cd2c783b8b7f3b59278f9fe4c84a8 *./doc/csd_api.chm
+909e549de579cea280418c5180eec83a *./doc/sec_api.chm
+673992891a4e6586e4d9c37a52fbc8f1 *./inc/ca_cert.h
+f9e32308c689178024d7d6796ca96305 *./inc/ca_defs.h
+26fa633664589a69e4a705836ae1c68e *./inc/ca_defsx.h
+2c0b59a61c3fed24115cd2b26b1285c0 *./inc/ca_dvb.h
+db542555a0414b440f620655538f9221 *./inc/ca_mpeg.h
+e5d2f685c3e321b36c6be357fe6f71d7 *./inc/ca_sec.h
+17edbceedccf4de68007aac4ff4423d4 *./inc/ca_types.h
+109a317549ceaacb37a69bec2fc40fc0 *./inc/nocs_bsd.h
+4bd50c7baac0a9b9db35e6c19291ef11 *./inc/nocs_csd.h
+e75240744f9d4733ee3dc5a3da3b75d6 *./version.txt

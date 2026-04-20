@@ -1,0 +1,7 @@
+copy these file into fs
+cp -af pub/bin_striped/nbench pub/rootfs_striped/usr/bin or usrfs/bin/
+cp -af pub/resource/NNET.DAT pub/resource/COM.DAT pub/resource/debugbit.good.gz pub/rootfs_striped/root/
+make flash
+
+cd /root
+nbench

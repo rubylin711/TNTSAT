@@ -1,0 +1,1 @@
+savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/jill/drv/jill/jill-m.mod := printf '%s\n'   jill.o | awk '!x[$$0]++ { print("/home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/jill/drv/jill/"$$0) }' > /home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/jill/drv/jill/jill-m.mod

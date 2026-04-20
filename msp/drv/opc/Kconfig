@@ -1,0 +1,16 @@
+menuconfig MT_OPC
+	bool "OPC"
+	default y
+	depends on MT_SECURITY  && (MT_CHIP_SYMPHONY6)
+	help
+	Montage Vendor Specific Security Subsystem
+
+if MT_OPC
+
+config MT_OUTPUT_POLICY
+	bool "Output Policy"
+	default y
+	help
+	Montage SMP Output Policy
+
+endif #MT_OPC

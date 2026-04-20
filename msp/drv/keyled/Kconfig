@@ -1,0 +1,46 @@
+
+menuconfig MT_KEYLED
+	bool "Keyled"
+	default y
+	depends on MT_MSP
+	help
+	  Montage Frontpanel Keyled Driver
+
+if MT_KEYLED
+
+config MT_KEYLED_CT1642
+	bool "CT1642 Keyled"
+	default y
+	help
+	  Montage CT1642 Keyled
+
+config MT_KEYLED_FD650
+	bool "FD650 Keyled"
+	default y
+	help
+	  Montage FD650 Keyled
+
+config MT_KEYLED_ADC
+	bool "ADC Keyled"
+	default y
+	help
+	  Montage ADC Keyled
+
+config MT_KEYLED_TT1629B
+	bool "TT1629B Keyled"
+	default y
+	help
+	  Montage TT1629B Keyled
+
+config MT_KEYLED_PT6393
+	bool "PT6393 Keyled"
+	default y
+	help
+	  Montage PT6393 Keyled
+
+config MT_KEYLED_FD612
+	bool "FD612 Keyled"
+	default y
+	help
+	  Montage FD612
+endif #MT_KEYLED

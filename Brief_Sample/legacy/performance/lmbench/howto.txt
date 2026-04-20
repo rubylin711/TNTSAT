@@ -1,0 +1,20 @@
+http://www.bitmover.com/lmbench/run_lmbench.html
+
+./lat_pipe
+./lat_usleep 100
+./lat_sem
+./lat_unix
+./lat_pagefault file		file must large than 3M
+./lat_syscall null
+./lat_syscall stat file
+./lat_syscall fstat file
+./lat_syscall open file
+./lat_syscall read file
+./lat_syscall write file
+./lat_sig catch
+./lat_sig install
+./lat_sig prot file
+./lat_rand
+./lat_proc fork
+./lat_proc exec
+./lat_ops

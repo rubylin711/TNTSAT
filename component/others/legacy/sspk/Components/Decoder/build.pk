@@ -1,0 +1,32 @@
+#*****************************************************************
+#
+# Copyright (C) Microsoft Corporation. All rights reserved.
+#
+#*****************************************************************
+
+MSPK_TARGETMODULE = Components
+MSPK_TARGETNAME = Decoder
+MSPK_TARGETPATH = Components/Decoder
+
+MSPK_CDEFINES = \
+	-DMSPK_USING_STD_TEMPLATE_LIBS \
+
+MSPK_DBG_CDEFINES = \
+
+MSPK_SOURCES = \
+	CDecoderConfiguration.cpp \
+	CHalDecoder.cpp \
+	CHalDecoderFactory.cpp \
+	CPUDHandlerStub.cpp \
+	Decoder.cpp \
+	Decoder_Audio.cpp \
+	Decoder_DRM.cpp \
+	Decoder_Video.cpp \
+
+MSPK_INCLUDES = \
+	$(MSPK_PAL_INCLUDES); \
+	$(MSPK_ROOT)/Components/inc; \
+	$(MSPK_ROOT)/Components/Receiver; \
+	$(MSPK_ROOT)/Components/Renderer; \
+	$(MSPK_ROOT)/Components/Utilities; \
+

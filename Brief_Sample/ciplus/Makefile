@@ -1,0 +1,111 @@
+include ${SDK_DIR}/build/script/base.mk
+
+include $(SAMPLE_DIR)/base.mk
+
+EXTRA_CFLAGS = $(CFG_MT_SAMPLE_CFLAGS) -DCI_SAS_RES -DHAVE_CISTACK
+
+ifeq ($(CFG_MT_CI_DEV_CIMAX),y)
+EXTRA_CFLAGS += -DMT_CI_DEV_CIMAX
+endif
+ifeq ($(CFG_MT_CI_DEV_CIMAXPLUS),y)
+EXTRA_CFLAGS += -DMT_CI_DEV_CIMAXPLUS 
+endif
+ifeq ($(CFG_MT_CI_DEV_HICI),y)
+EXTRA_CFLAGS += -DMT_CI_DEV_HICI
+endif
+ifeq ($(CFG_MT_DSS),y)
+EXTRA_CFLAGS += -DMT_SYM4_DSS
+endif
+ifeq ($(CFG_MT_SAMPLE_DEBUG),y)
+EXTRA_CFLAGS += -DMT_SAMPLE_USBCAM_DEBUG
+endif
+
+INCLUDE_PATH = -I$(SAMPLE_DIR)/common \
+	-I$(COMMON_DIR)/inc \
+	-I$(COMMON_DIR)/drv/inc \
+	-I$(INCLUDE_DIR)/ \
+	-I$(MSP_DIR)/inc \
+	-I$(MSP_DIR)/drv/inc \
+	-I$(MSP_DIR)/api/inc \
+	-I$(KWARE_DIR)/ci_route_ts/include \
+	-I$(SAMPLE_DIR)/ciplus \
+	-I$(INCLUDE_DIR)/mtos \
+	-I$(EXTERNAL_BINARY_PREFIX_DIR)/include
+
+
+OBJS = ci_api_test.o
+OBJS += sample_usbcam.o
+
+ifeq ($(CFG_MT_SAMPLE), y)
+
+EXTRA_CFLAGS += -DMT_SAMPLE_APP
+LIB = libsample_usbcam
+
+include ${SDK_DIR}/build/script/Makefile-lib.rule
+
+else
+
+DEPEND_LIBS := $(SYS_LIBS) $(MT_LIBS) -lmt_sample_common
+ifeq ($(CONFIG_MT_DOLBY_SUPPORT),y)
+DEPEND_LIBS += -ldummy
+endif
+
+ifeq ($(CONFIG_MT_STATIC_LINK),y)
+DEPEND_LIBS_PATH = -L$(STATIC_LIB_DIR)
+else
+DEPEND_LIBS_PATH = -L$(SHARED_LIB_DIR)
+endif
+DEPEND_LIBS_PATH += -L$(OPENSOURCE_2ND_LIB_DIR)
+DEPEND_LIBS_PATH += -L$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+DEPEND_LIBS_PATH += -L$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+DEPEND_LIBS_PATH += -Wl,-rpath-link,$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+DEPEND_LIBS_PATH += -Wl,-rpath-link,$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+
+
+ifeq ($(CONFIG_MT_MONTAGE_PLATFORM),y)
+DEPEND_LIBS_PATH += -L$(BUILDROOT_SYSROOT_USR_LIB_DIR) -Wl,-rpath-link,$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+ifeq ($(CONFIG_MT_TEE_SUPPORT),y)
+DEPEND_LIBS_PATH += -L$(TEE_LIB_DIR)
+DEPEND_LIBS += -lteec
+endif
+
+endif
+
+DEPEND_LIBS_PATH += -L$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+DEPEND_LIBS_PATH += -L$(EXTERNAL_BINARY_PREFIX_DIR)/lib
+DEPEND_LIBS_PATH += -L$(SHARED_LIB_DIR_STRIPED)/mt
+DEPEND_LIBS += -lusbcam_route_ts
+
+ifeq ($(CFG_MT_STATIC_LINK),y)
+DEPEND_LIBS_PATH = -L$(STATIC_LIB_DIR)
+else
+DEPEND_LIBS_PATH = -L$(SHARED_LIB_DIR)
+endif
+DEPEND_LIBS_PATH += -L$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+DEPEND_LIBS_PATH += -L$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+DEPEND_LIBS_PATH += -Wl,-rpath-link,$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+DEPEND_LIBS_PATH += -Wl,-rpath-link,$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+
+ifeq ($(CONFIG_MT_ENABLE_MSS_PLAYER),y)
+DEPEND_LIBS_PATH += -L$(EXTERNAL_BINARY_LIB_DIR)/../sspk/lib/Components -L$(EXTERNAL_BINARY_LIB_DIR)/../sspk/lib/Platform -L$(EXTERNAL_BINARY_LIB_DIR)/../sspk/lib/Test -L$(EXTERNAL_BINARY_PREFIX_DIR)/drm
+endif
+
+ifeq ($(CFG_MT_CHIP),$(filter $(CFG_MT_CHIP),symphony1 symphony2 symphony4 symphony6))
+ifeq ($(CONFIG_MT_DRM_SUPPORT),y)
+DEPEND_LIBS_PATH += -L$(EXTERNAL_BINARY_PREFIX_DIR)/drm -L$(BUILDROOT_SYSROOT_USR_LIB_DIR) -Wl,-rpath-link,$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+endif
+endif
+
+DEPEND_LIBS_PATH += -L$(EXTERNAL_BINARY_PREFIX_DIR)/lib
+DEPEND_LIBS += -lusbcam_route_ts
+
+ifeq ($(CFG_MT_CA_IRD_ENABLE),y)
+DEPEND_LIBS += -lciplus
+else
+DEPEND_LIBS += -lciplus_usb
+endif
+
+APP = sample_usbcam
+
+include ${SDK_DIR}/build/script/Makefile-app.rule
+endif

@@ -1,0 +1,420 @@
+ftrace uprobe
+
+$ arm-linux-gnueabihf-gdb pub/bin/uprobe
+
+(gdb) info line start_routine_other
+Line 43 of "uprobe.c" starts at address 0x11120 <start_routine_other> and ends at 0x11168 <start_routine_other+72>.
+(gdb) info line uprobe.c:55
+Line 55 of "uprobe.c" starts at address 0x1118c <start_routine_other+108> and ends at 0x11198 <start_routine_other+120>.
+
+(gdb) info line uprobe.c:59
+Line 59 of "uprobe.c" starts at address 0x111b8 <start_routine_other+152> and ends at 0x111c4 <start_routine_other+164>.
+
+(gdb) disassemble start_routine_other
+......
+   0x0001118c <+108>:   mov     r1, #5
+   0x00011190 <+112>:   mov     r0, #4
+   0x00011194 <+116>:   bl      0x10c78 <bar@plt>
+   0x00011198 <+120>:   mov     r1, #7
+   0x0001119c <+124>:   mov     r0, #6
+   0x000111a0 <+128>:   bl      0x10c78 <bar@plt>
+   0x000111a4 <+132>:   mov     r0, r5
+   0x000111a8 <+136>:   bl      0x10d08 <sem_post@plt>
+   0x000111ac <+140>:   mov     r1, #9
+   0x000111b0 <+144>:   mov     r0, #8
+   0x000111b4 <+148>:   bl      0x10c78 <bar@plt>
+   0x000111b8 <+152>:   mov     r1, #11
+   0x000111bc <+156>:   mov     r0, #10
+   0x000111c0 <+160>:   bl      0x10c78 <bar@plt>
+   0x000111c4 <+164>:   mov     r0, #10
+   0x000111c8 <+168>:   bl      0x10ca8 <putchar@plt>
+......
+
+# cd /sys/kernel/debug/tracing
+
+# perf probe -x /usr/local/bin/uprobe --add 'mt:mt0_mt0_mt0_mt0_mt0_mt0=start_routine_other+116'
+Added new event:
+  mt:mt0_mt0_mt0_mt0_mt0_mt0 (on start_routine_other+116 in /usr/local/bin/uprobe)
+You can now use it in all perf tools, such as:
+        perf record -e mt:mt0_mt0_mt0_mt0_mt0_mt0 -aR sleep 1
+
+# perf probe -x /usr/local/bin/uprobe --add 'mt:mt1_mt1_mt1_mt1_mt1_mt1=start_routine_other+164'
+Added new event:
+  mt:mt1_mt1_mt1_mt1_mt1_mt1 (on start_routine_other+164 in /usr/local/bin/uprobe)
+You can now use it in all perf tools, such as:
+        perf record -e mt:mt1_mt1_mt1_mt1_mt1_mt1 -aR sleep 1
+
+# cat uprobe_events
+p:mt/mt0_mt0_mt0_mt0_mt0_mt0 /usr/local/bin/uprobe:0x00001194
+p:mt/mt1_mt1_mt1_mt1_mt1_mt1 /usr/local/bin/uprobe:0x000011c4
+
+# ls events/mt/
+enable                    mt1_mt1_mt1_mt1_mt1_mt1   mt_ftrace_callback_start  mt_handler_string
+filter                    mt_ftrace_callback        mt_handler_entry          mt_sched_callchain
+mt0_mt0_mt0_mt0_mt0_mt0   mt_ftrace_callback_end    mt_handler_exit
+
+# ftrace_init.sh
+# echo 1 > events/mt/mt0_mt0_mt0_mt0_mt0_mt0/enable
+# echo 1 > events/mt/mt1_mt1_mt1_mt1_mt1_mt1/enable
+# ftrace_start.sh
+# uprobe & sleep 5
+# ftrace_end.sh
+
+
+
+上述用法是对app添加uprobe，对动态库添加uprobe的方法是一样的
+$ arm-linux-gnueabihf-gdb pub/shared_lib/libuprobe.so
+(gdb) disassemble bar
+......
+   0x000005bc <+52>:    ldr     r12, [r4]
+   0x000005c0 <+56>:    str     r12, [r11, #-24]        ; 0xffffffe8
+   0x000005c4 <+60>:    bl      0x458 <__printf_chk@plt>
+   0x000005c8 <+64>:    ldr     r2, [r11, #-24] ; 0xffffffe8
+   0x000005cc <+68>:    ldr     r3, [r4]
+......
+# perf probe -x /usr/local/lib/libuprobe.so --add 'mt:mt3_mt3_mt3_mt3_mt3_mt3=bar+60'
+# perf probe -x /usr/local/lib/libuprobe.so --add 'mt:mt4_mt4_mt4_mt4_mt4_mt4=bar+64'
+# cat uprobe_events
+p:mt/mt0_mt0_mt0_mt0_mt0_mt0 /usr/local/bin/uprobe:0x00000f88
+p:mt/mt1_mt1_mt1_mt1_mt1_mt1 /usr/local/bin/uprobe:0x00000f8c
+p:mt/mt3_mt3_mt3_mt3_mt3_mt3 /usr/local/lib/libuprobe.so:0x000005c4
+p:mt/mt4_mt4_mt4_mt4_mt4_mt4 /usr/local/lib/libuprobe.so:0x000005c8
+
+一次性清除全部uprobe
+echo "" > uprobe_events
+删除具体某一个uprobe
+perf probe --del 'mt:mt0_mt0_mt0_mt0_mt0_mt0'
+perf probe --del 'mt:mt1_mt1_mt1_mt1_mt1_mt1'
+
+
+
+
+
+
+
+
+
+ftrace uretprobe
+用法和uprobe差不多，只是末尾加%return，并且不加偏移量
+uprobe也可以不要偏移量，那么探测点就是在函数的首条指令：perf probe -x /usr/local/lib/libuprobe.so --add 'mt:mty_mty_mty_mty_mty_mty=bar'
+uprobe和uretprobe都不要偏移量，就可以用来测量这个函数每一次执行的耗时
+
+# perf probe -x /usr/local/lib/libuprobe.so --add 'mt:mtx_mtx_mtx_mtx_mtx_mtx=bar%return'
+
+# cat uprobe_events
+p:mt/mt3_mt3_mt3_mt3_mt3_mt3 /usr/local/lib/libuprobe.so:0x000005c4
+p:mt/mt4_mt4_mt4_mt4_mt4_mt4 /usr/local/lib/libuprobe.so:0x000005c8
+r:mt/mtx_mtx_mtx_mtx_mtx_mtx /usr/local/lib/libuprobe.so:0x00000588	注意这里是r开头，探测点地址是函数首条指令的地址
+p:mt/mty_mty_mty_mty_mty_mty /usr/local/lib/libuprobe.so:0x00000588	不要偏移量的，探测点地址是函数首条指令的地址
+
+# ftrace_init.sh
+# echo 1 > events/mt/mtx_mtx_mtx_mtx_mtx_mtx/enable
+# echo 1 > events/mt/mty_mty_mty_mty_mty_mty/enable
+# ftrace_start.sh
+# uprobe & sleep 5
+# ftrace_end.sh
+
+# grep mtx_mtx trace
+    uprobe_other-1214  [000] ....   187.578033: mtx_mtx_mtx_mtx_mtx_mtx: (0x11198 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   187.578686: mtx_mtx_mtx_mtx_mtx_mtx: (0x111a4 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   187.579853: mtx_mtx_mtx_mtx_mtx_mtx: (0x111b8 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   187.582364: mtx_mtx_mtx_mtx_mtx_mtx: (0x111c4 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   188.584081: mtx_mtx_mtx_mtx_mtx_mtx: (0x11198 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   188.584161: mtx_mtx_mtx_mtx_mtx_mtx: (0x111a4 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   188.584717: mtx_mtx_mtx_mtx_mtx_mtx: (0x111b8 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   188.585786: mtx_mtx_mtx_mtx_mtx_mtx: (0x111c4 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   189.586212: mtx_mtx_mtx_mtx_mtx_mtx: (0x11198 <- 0xb6f7d588)
+    uprobe_other-1214  [000] ....   189.586289: mtx_mtx_mtx_mtx_mtx_mtx: (0x111a4 <- 0xb6f7d588)
+0x11198 0x111a4 0x111b8 0x111c4就是函数返回地址
+
+# grep mty_mty trace
+    uprobe_other-1214  [001] ....   187.577386: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   187.578053: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   187.578744: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   187.579867: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   188.583963: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   188.584095: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   188.584497: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   188.584730: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   189.586092: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+    uprobe_other-1214  [000] ....   189.586226: mty_mty_mty_mty_mty_mty: (0xb6f7d588)
+
+
+
+
+
+
+
+
+
+
+什么时候应该用uretprobe？
+例如函数a调用了函数b，反汇编函数a，找到调用b的地方
+调用函数有两种形式：
+1，bl/blx，这种可以在bl/blx指令处加uprobe，在bl/blx后面的指令也加uprobe
+2，b/bx/ldr pc，这种在b/bx/ldr pc指令处加uprobe，然后给函数a设置uretprobe
+必须对汇编很熟悉的才能够判断出是否得用uretprobe
+有个简单的判断方法，从C代码来看，如果函数b是在函数a中间调用的，就用两个uprobe，如果函数b是在函数a最末尾，则用uprobe + uretprobe
+
+
+
+
+
+
+
+ftrace kprobe和kretprobe
+用法与uprobe/uretprobe完全一样，唯一的区别就是添加探测点时，不加-x和elf路径
+perf probe --add 'mt:mta_mta_mta_mta_mta_mta=kernel_function+offset'
+perf probe --add 'mt:mtb_mtb_mtb_mtb_mtb_mtb=kernel_function'
+perf probe --add 'mt:mtc_mtc_mtc_mtc_mtc_mtc=kernel_function%return'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+perf usdt kprobe uprobe kretprobe uretprobe tracepoint
+
+usdt就是perf的mark，详细信息见tools/perf/usdt.txt和sample/usdt
+sdk中已经封装好了usdt，见tools/perf/usdt-pos.sh和common/api/sys/mt_ftrace.c里的mt_usdt_mark0/1/2
+在板子上执行usdt-pos.sh就可以得到函数名和偏移量，不需要使用gdb的info line了，但是要动态添加probe还是得用gdb
+
+lujiang@cn028lnx02:~/work/mt_sdk/symphony/linux $ readelf -n usrfs/bin/usdt
+Displaying notes found at file offset 0x00000170 with length 0x00000024:
+  Owner                 Data size       Description
+  GNU                  0x00000014       NT_GNU_BUILD_ID (unique build ID bitstring)
+    Build ID: a2b555efd0914ba3a5209400f609851ecde430d8
+Displaying notes found at file offset 0x00000194 with length 0x00000020:
+  Owner                 Data size       Description
+  GNU                  0x00000010       NT_GNU_ABI_TAG (ABI version tag)
+    OS: Linux, ABI: 3.2.0
+Displaying notes found at file offset 0x000010c0 with length 0x000000d8:
+  Owner                 Data size       Description
+  stapsdt              0x0000002d       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: mt_usdt
+    Name: mt0_mt0_mt0_mt0_mt0_mt0
+    Location: 0x000107e8, Base: 0x000109b8, Semaphore: 0x00000000
+    Arguments:
+  stapsdt              0x00000032       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: mt_usdt
+    Name: mt1_mt1_mt1_mt1_mt1_mt1
+    Location: 0x000107ec, Base: 0x000109b8, Semaphore: 0x00000000
+    Arguments: -4@r4
+  stapsdt              0x00000038       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: mt_usdt
+    Name: mt2_mt2_mt2_mt2_mt2_mt2
+    Location: 0x00010808, Base: 0x000109b8, Semaphore: 0x00000000
+    Arguments: -4@r4 -4@r5
+
+
+
+
+lujiang@cn028lnx02:~/work/mt_sdk/symphony/linux $ readelf -n usrfs/lib/libusdt.so
+Displaying notes found at file offset 0x00000114 with length 0x00000024:
+  Owner                 Data size       Description
+  GNU                  0x00000014       NT_GNU_BUILD_ID (unique build ID bitstring)
+    Build ID: 779da7b86327382079c558dbfa53de089e02c479
+Displaying notes found at file offset 0x000010b8 with length 0x00000040:
+  Owner                 Data size       Description
+  stapsdt              0x00000029       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: mt_usdt
+    Name: test_lib
+    Location: 0x00000578, Base: 0x000005a8, Semaphore: 0x00000000
+    Arguments: -4@r0 -4@r1
+
+
+
+
+lujiang@cn028lnx02:~/work/mt_sdk/symphony/linux $ arm-linux-gnueabihf-gdb pub/bin/usdt
+Reading symbols from pub/bin/usdt...done.
+(gdb) info line *0x000107e8
+Line 23 of "usdt.c" starts at address 0x107e8 <main+84> and ends at 0x107ec <main+88>.
+(gdb) info line *0x000107ec
+Line 24 of "usdt.c" starts at address 0x107ec <main+88> and ends at 0x107f0 <main+92>.
+(gdb) info line *0x00010808
+Line 26 of "usdt.c" starts at address 0x10808 <main+116> and ends at 0x1080c <main+120>.
+(gdb) file pub/shared_lib/libusdt.so
+Load new symbol table from "pub/shared_lib/libusdt.so"? (y or n) y
+Reading symbols from pub/shared_lib/libusdt.so...done.
+(gdb) info line *0x00000578
+Line 13 of "libusdt.c" starts at address 0x578 <bar+40> and ends at 0x57c <bar+44>.
+(gdb)
+
+
+
+
+# perf probe -x /usr/local/bin/usdt --add 'mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0=main+84'
+Added new event:
+  mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 (on main+84 in /usr/local/bin/usdt)
+You can now use it in all perf tools, such as:
+        perf record -e mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 -aR sleep 1
+
+# perf probe -x /usr/local/bin/usdt --add 'mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1=main+88 a=%r4'
+Added new event:
+  mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 (on main+88 in /usr/local/bin/usdt with a=%r4)
+You can now use it in all perf tools, such as:
+        perf record -e mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 -aR sleep 1
+
+# perf probe -x /usr/local/bin/usdt --add 'mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2=main+116 x=%r4 y=%r5'
+Added new event:
+  mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 (on main+116 in /usr/local/bin/usdt with x=%r4 y=%r5)
+You can now use it in all perf tools, such as:
+        perf record -e mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 -aR sleep 1
+
+# perf probe -x /usr/local/lib/libusdt.so --add 'mt_usdt:test_lib=bar+40 m=%r0 n=%r1'
+Added new event:
+  mt_usdt:test_lib     (on bar+40 in /usr/local/lib/libusdt.so with m=%r0 n=%r1)
+You can now use it in all perf tools, such as:
+        perf record -e mt_usdt:test_lib -aR sleep 1
+
+# perf probe --list
+  mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 (on main+84 in /usr/local/bin/usdt)
+  mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 (on main+88 in /usr/local/bin/usdt with a)
+  mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 (on main+116 in /usr/local/bin/usdt with x y)
+  mt_usdt:test_lib     (on bar+40 in /usr/local/lib/libusdt.so with m n)
+
+# cd /media/sda1/
+
+# perf record -g -e mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 -e mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 -e mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 -e mt_usdt:test_lib -- /usr/local/bin/usdt 6 9
+param: 6 9
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.003 MB perf.data (4 samples) ]
+
+
+
+# perf script
+usdt  1208 [001]    88.396346: mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0: (107e8)
+                     7e8 main (/usr/local/bin/usdt)
+                   17700 __libc_start_main (/lib/libc-2.28.so)
+
+usdt  1208 [001]    88.396386: mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1: (107ec) a=0x6
+                     7ec main (/usr/local/bin/usdt)
+                   17700 __libc_start_main (/lib/libc-2.28.so)
+
+usdt  1208 [001]    88.396866: mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2: (10808) x=0x6 y=0x9
+                     808 main (/usr/local/bin/usdt)
+                   17700 __libc_start_main (/lib/libc-2.28.so)
+
+usdt  1208 [001]    88.396898:                mt_usdt:test_lib: (b6faa578) m=0x9 n=0x6
+                     578 bar (/usr/local/lib/libusdt.so)
+                     818 main (/usr/local/bin/usdt)
+                   17700 __libc_start_main (/lib/libc-2.28.so)
+
+
+# perf script -G
+            usdt  1208 [001]    88.396346: mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0: (107e8)
+            usdt  1208 [001]    88.396386: mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1: (107ec) a=0x6
+            usdt  1208 [001]    88.396866: mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2: (10808) x=0x6 y=0x9
+            usdt  1208 [001]    88.396898:                mt_usdt:test_lib: (b6faa578) m=0x9 n=0x6
+
+
+# perf probe --list
+  mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 (on main+84 in /usr/local/bin/usdt)
+  mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 (on main+88 in /usr/local/bin/usdt with a)
+  mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 (on main+116 in /usr/local/bin/usdt with x y)
+  mt_usdt:test_lib     (on bar+40 in /usr/local/lib/libusdt.so with m n)
+
+# perf probe --del mt_usdt:test_lib
+Removed event: mt_usdt:test_lib
+
+# perf probe --list
+  mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 (on main+84 in /usr/local/bin/usdt)
+  mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 (on main+88 in /usr/local/bin/usdt with a)
+  mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 (on main+116 in /usr/local/bin/usdt with x y)
+# perf probe --del mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0
+Removed event: mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0
+# perf probe --del mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1
+Removed event: mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1
+# perf probe --del mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2
+Removed event: mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2
+# perf probe --list
+
+
+
+
+
+
+
+
+
+
+
+使用perf调试微观性能问题，sdk已经封装好了脚本，见tools/perf/perf-lag.sh
+但是大量的tracepoint会导致perf开销很大，不适合我们的开发环境
+tracepoint目前对perf来说最有用的功能是添加开始和结束mark
+然后删掉开始结束mark前后的log，这样就可以产生出一份干净的没有垃圾log的火焰图
+
+$ arm-linux-gnueabihf-gdb pub/bin/uprobe
+
+(gdb) info line start_routine_rr
+Line 76 of "uprobe.c" starts at address 0x10fd4 <start_routine_rr> and ends at 0x11010 <start_routine_rr+60>.
+
+(gdb) info line uprobe.c:102
+Line 102 of "uprobe.c" starts at address 0x110b4 <start_routine_rr+224> and ends at 0x110c4 <start_routine_rr+240>.
+
+(gdb) disassemble start_routine_rr
+......
+   0x000110b4 <+224>:   ldr     r0, [r4]
+   0x000110b8 <+228>:   mov     r2, #0
+   0x000110bc <+232>:   movw    r1, #19201      ; 0x4b01
+   0x000110c0 <+236>:   bl      0x10c38 <ioctl@plt>
+   0x000110c4 <+240>:   ldr     r0, [pc, #48]   ; 0x110fc <start_routine_rr+296>
+   0x000110c8 <+244>:   add     r0, pc, r0
+......
+
+
+
+telnet 1
+
+# perf probe -x /usr/local/bin/uprobe --add 'mt:mt0_mt0_mt0_mt0_mt0_mt0=start_routine_rr+236'
+Added new event:
+  mt:mt0_mt0_mt0_mt0_mt0_mt0 (on start_routine_rr+236 in /usr/local/bin/uprobe)
+You can now use it in all perf tools, such as:
+        perf record -e mt:mt0_mt0_mt0_mt0_mt0_mt0 -aR sleep 1
+
+# perf probe -x /usr/local/bin/uprobe --add 'mt:mt1_mt1_mt1_mt1_mt1_mt1=start_routine_rr+240'
+Added new event:
+  mt:mt1_mt1_mt1_mt1_mt1_mt1 (on start_routine_rr+240 in /usr/local/bin/uprobe)
+You can now use it in all perf tools, such as:
+        perf record -e mt:mt1_mt1_mt1_mt1_mt1_mt1 -aR sleep 1
+
+# cd /sys/kernel/debug/tracing/
+
+# cat uprobe_events
+p:mt/mt0_mt0_mt0_mt0_mt0_mt0 /usr/local/bin/uprobe:0x000010c0
+p:mt/mt1_mt1_mt1_mt1_mt1_mt1 /usr/local/bin/uprobe:0x000010c4
+
+# cd /media/sda1/
+
+# perf record -g -e cpu-cycles -e mt:mt1_mt1_mt1_mt1_mt1_mt1 -e mt:mt0_mt0_mt0_mt0_mt0_mt0 -a
+
+
+
+telnet 2
+# insmod /usr/local/stb/external-ko/kprobe.ko
+# uprobe
+
+
+ctrl + c停掉perf
+# perf script > out.perf
+将out.perf拷贝到服务器，然后修改out.perf，删除mt0之前的和mt1之后的log，mt0和mt1也要删除
+
+
+
+
+
+perf的tracepoint开销比ftrace的tracepoint大的原因：
+ftrace是将log记录在内核空间里的，在record期间没有拷贝到用户空间
+而perf则是在record期间一边记录在内核buffer里，一边从内核buffer拷贝到用户空间，所以开销就大的多

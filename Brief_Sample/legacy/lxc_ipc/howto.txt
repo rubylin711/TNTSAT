@@ -1,0 +1,126 @@
+source envsetup intek.cfg
+make clean uninstall
+make
+
+then burn nand flash
+
+
+copy a readme.txt and xxoo.txt into your usb storage
+
+
+
+plugin usb storage at your board
+plugin network cable at your board
+power on
+run the following command on your board
+
+
+1,
+ctrl + c to stop sample_wb
+ifconfig eth0 down
+ifconfig eth0 hw ether your_mac_address
+ifcnofig eth0 up
+udhcpc
+telnetd
+then you must use telnet to login in board, user is root, no password
+
+
+2,
+in telnet session 1
+lxc-execute -n mt1 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+listener1
+
+in telnet session 2
+lxc-execute -n mt2 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+listener2
+
+in telnet session 3
+lxc-execute -n mt3 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+listener3
+
+in telnet session 4
+lxc-execute -n mt4 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+caller /media/casetest/readme.txt
+
+you can check how many names in lxc_ipc
+cat /sys/devices/platform/soc@bf000000/soc@bf000000:lxc_ipc/lxc_ipc
+
+
+
+
+
+
+
+
+
+
+multi process sample
+in telnet session 5
+lxc-execute -n mt5 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+listener_mp
+
+in telnet session 6
+lxc-execute -n mt6 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+caller_mp1 /media/casetest/readme.txt
+
+in telnet session 7
+lxc-execute -n mt7 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+caller_mp2 /media/casetest/xxoo.txt
+
+in telnet session 8
+lxc-execute -n mt8 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+caller_mp3 /media/casetest/xxoo.txt /media/casetest/readme.txt
+
+
+
+
+
+
+
+
+usb storage
+in telnet session 9
+lxc-execute -n mt9 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+usb-storage-daemon
+then insert or remove usb disk
+
+
+
+
+
+
+
+
+
+
+
+stress test
+in telnet session 10
+lxc-execute -n mt10 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+stress-server
+
+in telnet session 11
+lxc-execute -n mt11 -f /usr/share/lxc/config/conf.txt -P /var/lib/lxc/ -- /bin/sh
+export PATH=$PATH:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+stress-client

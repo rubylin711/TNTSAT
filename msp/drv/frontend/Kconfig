@@ -1,0 +1,21 @@
+menuconfig MT_FRONTEND
+	bool "Frontend"
+	default y
+	depends on MT_MSP
+	help
+	  Montage Frontend Driver
+
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/cs8000_cab/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/cs8000_sat/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/ct8k/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/dm6000/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/m88dd3k/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/tc6930/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/sony_cxd2856/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/cs8800/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/rs6060/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/tp5001/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/ds6103/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/ds6113/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/hd2502/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/sony_cxd_family/Kconfig"

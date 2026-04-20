@@ -1,0 +1,7 @@
+#!/bin/sh
+
+route del default
+ACCOUNT=4g@zjdl.vpdn.zj   # 用户名
+PASSWORD=zjdl # 口令，注意限制其他人读取本文件！
+export TELEPHONE ACCOUNT PASSWORD
+exit 0

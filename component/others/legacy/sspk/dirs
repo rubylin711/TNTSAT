@@ -1,0 +1,4 @@
+dirs = \
+  Components \
+  Platform \
+  Test \

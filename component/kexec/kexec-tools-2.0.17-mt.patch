@@ -1,0 +1,19 @@
+diff -Naur kexec-tools-2.0.17-orig/kexec/fs2dt.c kexec-tools-2.0.17/kexec/fs2dt.c
+--- kexec-tools-2.0.17-orig/kexec/fs2dt.c	2020-05-13 14:44:53.192902075 +0800
++++ kexec-tools-2.0.17/kexec/fs2dt.c	2020-05-20 10:37:07.928906770 +0800
+@@ -341,13 +341,13 @@
+ 	if (strncmp(bname, "/memory@", 8) && strcmp(bname, "/memory"))
+ 		return;
+ 
+-	if (len < sizeof(buf))
++	if (len > sizeof(buf))
+ 		die("unrecoverable error: not enough data for mem property\n");
+ 
+ 	if (lseek(fd, 0, SEEK_SET) < 0)
+ 		die("unrecoverable error: error seeking in \"%s\": %s\n",
+ 		    pathname, strerror(errno));
+-	if (read(fd, buf, sizeof(buf)) != sizeof(buf))
++	if (read(fd, buf, sizeof(buf)) != len)
+ 		die("unrecoverable error: error reading \"%s\": %s\n",
+ 		    pathname, strerror(errno));
+ 

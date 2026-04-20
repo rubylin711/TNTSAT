@@ -1,0 +1,40 @@
+menuconfig MT_FRONTEND_DMD_SONY_CXD2856
+	bool "SONY_CXD2856"
+	default n
+	depends on MT_FRONTEND
+	help
+	  Sony Frontend CXD2856 Driver
+
+if MT_FRONTEND_DMD_SONY_CXD2856
+
+config MT_FRONTEND_DMD_SONY_CXD2856_TN_MXL608
+	bool "MxL608 Tuner"
+	default y
+	help
+	  MaxLinear MxL603 or 608 Tuner
+
+config MT_FRONTEND_DMD_SONY_CXD2856_TN_R850
+	bool "R850 Tuner"
+	default y
+	help
+	  Rafael R850 Tuner
+
+config MT_FRONTEND_DMD_SONY_CXD2856_TN_R858C
+	bool "R858C dual Tuner"
+	default y
+	help
+	  Rafael R858C dual Tuner
+
+config MT_FRONTEND_DMD_SONY_CXD2856_TN_R836
+	bool "R836 Tuner"
+	default y
+	help
+	  Rafael R836 Tuner
+
+config MT_FRONTEND_DMD_SONY_CXD2856_TN_TC6800
+	bool "TC6800 Tuner"
+	default y
+	help
+	Montage TC6800 Tuner
+
+endif #MT_FRONTEND_DMD_SONY_CXD2856

@@ -1,0 +1,47 @@
+
+menuconfig MT_FRONTEND_DMD_CS8800
+	bool "CS8800"
+	default y
+	depends on MT_FRONTEND && (MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6)
+	help
+	  Montage Frontend CS8800 Driver
+
+if MT_FRONTEND_DMD_CS8800
+
+config MT_FRONTEND_DMD_CS8800_TN_TS6011
+	bool "TS6011 Tuner"
+	default y
+	help
+	  Montage TS6011 Tuner
+
+config MT_FRONTEND_DMD_CS8800_TN_MXL601
+	bool "MXL601 Tuner"
+	default y
+	help
+	  Montage MXL603 Tuner
+
+config MT_FRONTEND_DMD_CS8800_TN_MXL603
+	bool "MXL603 Tuner"
+	default y
+	help
+	  Montage MXL603 Tuner
+
+config MT_FRONTEND_DMD_CS8800_TN_RDA5815S
+	bool "RDA5815S Tuner"
+	default y
+	help
+	  Montage RDA5815S Tuner
+
+config MT_FRONTEND_DMD_CS8800_TN_TC6800
+	bool "TC6800 Tuner"
+	default y
+	help
+	  Montage TC6800 Tuner
+
+config MT_FRONTEND_DMD_CS8800_TN_RT720
+	bool "RT720 Tuner"
+	default y
+	help
+	  Rafael RT720 Tuner
+
+endif #MT_FRONTEND_DMD_CS8800

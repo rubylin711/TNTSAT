@@ -1,0 +1,488 @@
+<?xml version="1.0" ?>
+<release_notes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="release.notes.xsd">
+	<project id="$Id: QalEnvRln.xml,v 1.2 2010/02/11 14:12:07 sbsuser Exp $" name="talts_montage_IV">
+		<contact_person comment="tel +41 21 732 04 45" email="dtesen.support@nagra.com" name="DTESEN support"/>
+	</project>
+	<release version="1_0_5">
+		<components>
+			<component name="nv_tstore.h"/>
+			<component name="nv_types.h"/>
+			<component name="ca_os.h"/>
+			<component name="ca_mpeg.h"/>
+			<component name="ca_types.h"/>
+			<component name="nv_tfl.h"/>
+			<component name="ca_defs.h"/>
+			<component name="nv_tflta.h"/>
+			<component name="nv_defs.h"/>
+			<component name="dalapivr.h"/>
+			<component name="nv_debug.h"/>
+			<component name="ca_cert.h"/>
+			<component name="nv_mem.h"/>
+			<component name="ca_icc.h"/>
+			<component name="nv_tflts.h"/>
+			<component name="ca_defsx.h"/>
+			<component name="nv_time.h"/>
+			<component name="dsetgetchar.h"/>
+			<component name="nv_acd.h"/>
+			<component name="talapivr.h"/>
+			<component name="ca_sec.h"/>
+		</components>
+		<compatibility>
+			<product name="cakapi" version="1.40.0"/>
+			<product name="dalapi" version="7.21.0"/>
+			<product name="makefiles" version="3.4.27"/>
+			<product name="talapi" version="1.4.4"/>
+			<product name="talts" version="1.32.1"/>
+			<toolchain name="aarch64-none-linux-gnu-gcc" version="12.3.rel1">
+				<compiler_flags>
+					<flag>-std=gnu11</flag>
+					<flag>-fdiagnostics-show-option</flag>
+					<flag>-Wall</flag>
+					<flag>-Wcast-align</flag>
+					<flag>-Wextra</flag>
+					<flag>-Wfloat-equal</flag>
+					<flag>-Wformat-nonliteral</flag>
+					<flag>-Wformat-security</flag>
+					<flag>-Wformat=2</flag>
+					<flag>-Winit-self</flag>
+					<flag>-Wmissing-declarations</flag>
+					<flag>-Wmissing-format-attribute</flag>
+					<flag>-Wmissing-include-dirs</flag>
+					<flag>-Wmissing-noreturn</flag>
+					<flag>-Wmissing-prototypes</flag>
+					<flag>-Wnested-externs</flag>
+					<flag>-Wpointer-arith</flag>
+					<flag>-Wshadow</flag>
+					<flag>-Wstrict-prototypes</flag>
+					<flag>-Wswitch-default</flag>
+					<flag>-Wwrite-strings</flag>
+					<flag>-Wno-missing-field-initializers</flag>
+					<flag>-Wno-format-zero-length</flag>
+					<flag>-Wpacked-not-aligned</flag>
+					<flag>-Waddress-of-packed-member</flag>
+					<flag>-Wdeclaration-after-statement</flag>
+					<flag>-Wredundant-decls</flag>
+					<flag>-Wold-style-definition</flag>
+					<flag>-Wstrict-aliasing=2</flag>
+					<flag>-Wundef</flag>
+					<flag>-Os</flag>
+					<flag>-fpic</flag>
+					<flag>-mstrict-align</flag>
+					<flag>-mno-outline-atomics</flag>
+					<flag>-fstack-protector-strong</flag>
+					<flag>-MD</flag>
+					<flag>-MF</flag>
+					<flag>-Wno-error=return-type</flag>
+					<flag>-c</flag>
+				</compiler_flags>
+			</toolchain>
+		</compatibility>
+		<bug_fixes/>
+		<changes/>
+		<new_features/>
+		<comments/>
+		<libraries>
+			<library name="talts.nagrata-mps-ree.release.aarch64-none-linux-gnu-gcc.a" version="">
+				<operators/>
+			</library>
+			<library name="talts.nagrata-mps-reeworker.release.aarch64-none-linux-gnu-gcc.a" version="">
+				<operators/>
+			</library>
+			<library name="talts.nagrata-mps-tee.release.aarch64-none-linux-gnu-gcc.a" version="">
+				<operators/>
+			</library>
+		</libraries>
+	</release>
+	<release version="1_0_4">
+		<components>
+			<component name="nv_tstore.h"/>
+			<component name="nv_types.h"/>
+			<component name="ca_os.h"/>
+			<component name="ca_mpeg.h"/>
+			<component name="ca_types.h"/>
+			<component name="nv_tfl.h"/>
+			<component name="ca_defs.h"/>
+			<component name="nv_tflta.h"/>
+			<component name="nv_defs.h"/>
+			<component name="dalapivr.h"/>
+			<component name="nv_debug.h"/>
+			<component name="ca_cert.h"/>
+			<component name="nv_mem.h"/>
+			<component name="ca_icc.h"/>
+			<component name="nv_tflts.h"/>
+			<component name="ca_defsx.h"/>
+			<component name="nv_time.h"/>
+			<component name="dsetgetchar.h"/>
+			<component name="nv_acd.h"/>
+			<component name="talapivr.h"/>
+			<component name="ca_sec.h"/>
+		</components>
+		<compatibility>
+			<product name="cakapi" version="1.40.0"/>
+			<product name="dalapi" version="7.21.0"/>
+			<product name="makefiles" version="3.4.27"/>
+			<product name="talapi" version="1.4.4"/>
+			<product name="talts" version="1.32.0"/>
+			<toolchain name="aarch64-none-linux-gnu-gcc" version="12.3.rel1">
+				<compiler_flags>
+					<flag>-std=gnu11</flag>
+					<flag>-fdiagnostics-show-option</flag>
+					<flag>-Wall</flag>
+					<flag>-Wcast-align</flag>
+					<flag>-Wextra</flag>
+					<flag>-Wfloat-equal</flag>
+					<flag>-Wformat-nonliteral</flag>
+					<flag>-Wformat-security</flag>
+					<flag>-Wformat=2</flag>
+					<flag>-Winit-self</flag>
+					<flag>-Wmissing-declarations</flag>
+					<flag>-Wmissing-format-attribute</flag>
+					<flag>-Wmissing-include-dirs</flag>
+					<flag>-Wmissing-noreturn</flag>
+					<flag>-Wmissing-prototypes</flag>
+					<flag>-Wnested-externs</flag>
+					<flag>-Wpointer-arith</flag>
+					<flag>-Wshadow</flag>
+					<flag>-Wstrict-prototypes</flag>
+					<flag>-Wswitch-default</flag>
+					<flag>-Wwrite-strings</flag>
+					<flag>-Wno-missing-field-initializers</flag>
+					<flag>-Wno-format-zero-length</flag>
+					<flag>-Wpacked-not-aligned</flag>
+					<flag>-Waddress-of-packed-member</flag>
+					<flag>-Wdeclaration-after-statement</flag>
+					<flag>-Wredundant-decls</flag>
+					<flag>-Wold-style-definition</flag>
+					<flag>-Wstrict-aliasing=2</flag>
+					<flag>-Wundef</flag>
+					<flag>-Os</flag>
+					<flag>-fpic</flag>
+					<flag>-mstrict-align</flag>
+					<flag>-mno-outline-atomics</flag>
+					<flag>-fstack-protector-strong</flag>
+					<flag>-MD</flag>
+					<flag>-MF</flag>
+					<flag>-Wno-error=return-type</flag>
+					<flag>-c</flag>
+				</compiler_flags>
+			</toolchain>
+		</compatibility>
+		<bug_fixes/>
+		<changes/>
+		<new_features/>
+		<comments/>
+	</release>
+	<release version="1_0_3">
+		<components>
+			<component name="nv_tstore.h"/>
+			<component name="nv_types.h"/>
+			<component name="ca_os.h"/>
+			<component name="ca_mpeg.h"/>
+			<component name="ca_types.h"/>
+			<component name="nv_tfl.h"/>
+			<component name="ca_defs.h"/>
+			<component name="nv_tflta.h"/>
+			<component name="nv_defs.h"/>
+			<component name="dalapivr.h"/>
+			<component name="nv_debug.h"/>
+			<component name="ca_cert.h"/>
+			<component name="nv_mem.h"/>
+			<component name="ca_icc.h"/>
+			<component name="nv_tflts.h"/>
+			<component name="ca_defsx.h"/>
+			<component name="nv_time.h"/>
+			<component name="dsetgetchar.h"/>
+			<component name="nv_acd.h"/>
+			<component name="talapivr.h"/>
+			<component name="ca_sec.h"/>
+		</components>
+		<compatibility>
+			<product name="cakapi" version="1.40.0"/>
+			<product name="dalapi" version="7.21.0"/>
+			<product name="makefiles" version="3.4.23"/>
+			<product name="talapi" version="1.4.4"/>
+			<product name="talts" version="1.31.0"/>
+			<toolchain name="arm-none-linux-gnueabihf-gcc" version="12.3.rel1">
+				<compiler_flags>
+					<flag>-std=gnu11</flag>
+					<flag>-fdiagnostics-show-option</flag>
+					<flag>-Wall</flag>
+					<flag>-Wcast-align</flag>
+					<flag>-Wextra</flag>
+					<flag>-Wfloat-equal</flag>
+					<flag>-Wformat-nonliteral</flag>
+					<flag>-Wformat-security</flag>
+					<flag>-Wformat=2</flag>
+					<flag>-Winit-self</flag>
+					<flag>-Wmissing-declarations</flag>
+					<flag>-Wmissing-format-attribute</flag>
+					<flag>-Wmissing-include-dirs</flag>
+					<flag>-Wmissing-noreturn</flag>
+					<flag>-Wmissing-prototypes</flag>
+					<flag>-Wnested-externs</flag>
+					<flag>-Wpointer-arith</flag>
+					<flag>-Wshadow</flag>
+					<flag>-Wstrict-prototypes</flag>
+					<flag>-Wswitch-default</flag>
+					<flag>-Wwrite-strings</flag>
+					<flag>-Wno-missing-field-initializers</flag>
+					<flag>-Wno-format-zero-length</flag>
+					<flag>-Wpacked-not-aligned</flag>
+					<flag>-Waddress-of-packed-member</flag>
+					<flag>-Wdeclaration-after-statement</flag>
+					<flag>-Wredundant-decls</flag>
+					<flag>-Wold-style-definition</flag>
+					<flag>-Wstrict-aliasing=2</flag>
+					<flag>-Wundef</flag>
+					<flag>-Os</flag>
+					<flag>-fpic</flag>
+					<flag>-fstack-protector-strong</flag>
+					<flag>-MD</flag>
+					<flag>-MF</flag>
+					<flag>-Wno-error=return-type</flag>
+					<flag>-c</flag>
+					<flag>-Wcast-qual</flag>
+				</compiler_flags>
+			</toolchain>
+		</compatibility>
+		<bug_fixes/>
+		<changes/>
+		<new_features/>
+		<comments/>
+	</release>
+	<release version="1_0_2">
+		<components>
+			<component name="nv_tstore.h"/>
+			<component name="nv_types.h"/>
+			<component name="ca_os.h"/>
+			<component name="ca_mpeg.h"/>
+			<component name="ca_types.h"/>
+			<component name="nv_tfl.h"/>
+			<component name="ca_defs.h"/>
+			<component name="nv_tflta.h"/>
+			<component name="nv_defs.h"/>
+			<component name="dalapivr.h"/>
+			<component name="nv_debug.h"/>
+			<component name="ca_cert.h"/>
+			<component name="nv_mem.h"/>
+			<component name="ca_icc.h"/>
+			<component name="nv_tflts.h"/>
+			<component name="ca_defsx.h"/>
+			<component name="nv_time.h"/>
+			<component name="dsetgetchar.h"/>
+			<component name="nv_acd.h"/>
+			<component name="talapivr.h"/>
+			<component name="ca_sec.h"/>
+		</components>
+		<compatibility>
+			<product name="cakapi" version="1.40.0"/>
+			<product name="dalapi" version="7.21.0"/>
+			<product name="makefiles" version="3.4.23"/>
+			<product name="talapi" version="1.4.4"/>
+			<product name="talts" version="1.31.0"/>
+			<toolchain name="aarch64-none-linux-gnu-gcc" version="12.3.rel1">
+				<compiler_flags>
+					<flag>-std=gnu11</flag>
+					<flag>-fdiagnostics-show-option</flag>
+					<flag>-Wall</flag>
+					<flag>-Wcast-align</flag>
+					<flag>-Wextra</flag>
+					<flag>-Wfloat-equal</flag>
+					<flag>-Wformat-nonliteral</flag>
+					<flag>-Wformat-security</flag>
+					<flag>-Wformat=2</flag>
+					<flag>-Winit-self</flag>
+					<flag>-Wmissing-declarations</flag>
+					<flag>-Wmissing-format-attribute</flag>
+					<flag>-Wmissing-include-dirs</flag>
+					<flag>-Wmissing-noreturn</flag>
+					<flag>-Wmissing-prototypes</flag>
+					<flag>-Wnested-externs</flag>
+					<flag>-Wpointer-arith</flag>
+					<flag>-Wshadow</flag>
+					<flag>-Wstrict-prototypes</flag>
+					<flag>-Wswitch-default</flag>
+					<flag>-Wwrite-strings</flag>
+					<flag>-Wno-missing-field-initializers</flag>
+					<flag>-Wno-format-zero-length</flag>
+					<flag>-Wpacked-not-aligned</flag>
+					<flag>-Waddress-of-packed-member</flag>
+					<flag>-Wdeclaration-after-statement</flag>
+					<flag>-Wredundant-decls</flag>
+					<flag>-Wold-style-definition</flag>
+					<flag>-Wstrict-aliasing=2</flag>
+					<flag>-Wundef</flag>
+					<flag>-Os</flag>
+					<flag>-fpic</flag>
+					<flag>-mstrict-align</flag>
+					<flag>-mno-outline-atomics</flag>
+					<flag>-fstack-protector-strong</flag>
+					<flag>-MD</flag>
+					<flag>-MF</flag>
+					<flag>-Wno-error=return-type</flag>
+					<flag>-c</flag>
+				</compiler_flags>
+			</toolchain>
+		</compatibility>
+		<bug_fixes/>
+		<changes/>
+		<new_features/>
+		<comments/>
+	</release>
+	<release version="1_0_1">
+		<components>
+			<component name="nv_tstore.h"/>
+			<component name="nv_types.h"/>
+			<component name="ca_os.h"/>
+			<component name="ca_mpeg.h"/>
+			<component name="ca_types.h"/>
+			<component name="nv_tfl.h"/>
+			<component name="ca_defs.h"/>
+			<component name="nv_tflta.h"/>
+			<component name="nv_defs.h"/>
+			<component name="dalapivr.h"/>
+			<component name="nv_debug.h"/>
+			<component name="nv_mem.h"/>
+			<component name="nv_tflts.h"/>
+			<component name="ca_defsx.h"/>
+			<component name="nv_time.h"/>
+			<component name="dsetgetchar.h"/>
+			<component name="nv_acd.h"/>
+			<component name="talapivr.h"/>
+			<component name="ca_sec.h"/>
+		</components>
+		<compatibility>
+			<product name="cakapi" version="1.40.0"/>
+			<product name="dalapi" version="7.21.0"/>
+			<product name="makefiles" version="3.4.23"/>
+			<product name="talapi" version="1.4.4"/>
+			<product name="talts" version="1.31.0"/>
+			<toolchain name="aarch64-none-linux-gnu-gcc" version="11.3.1">
+				<compiler_flags>
+					<flag>-std=gnu11</flag>
+					<flag>-fdiagnostics-show-option</flag>
+					<flag>-Wall</flag>
+					<flag>-Wcast-align</flag>
+					<flag>-Wextra</flag>
+					<flag>-Wfloat-equal</flag>
+					<flag>-Wformat-nonliteral</flag>
+					<flag>-Wformat-security</flag>
+					<flag>-Wformat=2</flag>
+					<flag>-Winit-self</flag>
+					<flag>-Wmissing-declarations</flag>
+					<flag>-Wmissing-format-attribute</flag>
+					<flag>-Wmissing-include-dirs</flag>
+					<flag>-Wmissing-noreturn</flag>
+					<flag>-Wmissing-prototypes</flag>
+					<flag>-Wnested-externs</flag>
+					<flag>-Wpointer-arith</flag>
+					<flag>-Wshadow</flag>
+					<flag>-Wstrict-prototypes</flag>
+					<flag>-Wswitch-default</flag>
+					<flag>-Wwrite-strings</flag>
+					<flag>-Wno-missing-field-initializers</flag>
+					<flag>-Wno-format-zero-length</flag>
+					<flag>-Wpacked-not-aligned</flag>
+					<flag>-Waddress-of-packed-member</flag>
+					<flag>-Wdeclaration-after-statement</flag>
+					<flag>-Wredundant-decls</flag>
+					<flag>-Wold-style-definition</flag>
+					<flag>-Wstrict-aliasing=2</flag>
+					<flag>-Wundef</flag>
+					<flag>-Os</flag>
+					<flag>-fpic</flag>
+					<flag>-mstrict-align</flag>
+					<flag>-mno-outline-atomics</flag>
+					<flag>-fstack-protector-strong</flag>
+					<flag>-MD</flag>
+					<flag>-MF</flag>
+					<flag>-Wno-error=return-type</flag>
+					<flag>-c</flag>
+				</compiler_flags>
+			</toolchain>
+		</compatibility>
+		<bug_fixes/>
+		<changes/>
+		<new_features/>
+		<comments/>
+	</release>
+	<release version="1_0_0">
+		<components>
+			<component name="nv_tstore.h"/>
+			<component name="nv_types.h"/>
+			<component name="ca_os.h"/>
+			<component name="ca_mpeg.h"/>
+			<component name="ca_types.h"/>
+			<component name="nv_tfl.h"/>
+			<component name="ca_defs.h"/>
+			<component name="nv_tflta.h"/>
+			<component name="nv_defs.h"/>
+			<component name="dalapivr.h"/>
+			<component name="nv_debug.h"/>
+			<component name="ca_cert.h"/>
+			<component name="nv_mem.h"/>
+			<component name="ca_icc.h"/>
+			<component name="nv_tflts.h"/>
+			<component name="ca_defsx.h"/>
+			<component name="nv_time.h"/>
+			<component name="dsetgetchar.h"/>
+			<component name="nv_acd.h"/>
+			<component name="talapivr.h"/>
+			<component name="ca_sec.h"/>
+		</components>
+		<compatibility>
+			<product name="cakapi" version="1.40.0"/>
+			<product name="dalapi" version="7.21.0"/>
+			<product name="makefiles" version="3.4.23"/>
+			<product name="talapi" version="1.4.4"/>
+			<product name="talts" version="1.31.0"/>
+			<toolchain name="aarch64-none-linux-gnu-gcc" version="11.3.1">
+				<compiler_flags>
+					<flag>-std=gnu11</flag>
+					<flag>-fdiagnostics-show-option</flag>
+					<flag>-Wall</flag>
+					<flag>-Wcast-align</flag>
+					<flag>-Wextra</flag>
+					<flag>-Wfloat-equal</flag>
+					<flag>-Wformat-nonliteral</flag>
+					<flag>-Wformat-security</flag>
+					<flag>-Wformat=2</flag>
+					<flag>-Winit-self</flag>
+					<flag>-Wmissing-declarations</flag>
+					<flag>-Wmissing-format-attribute</flag>
+					<flag>-Wmissing-include-dirs</flag>
+					<flag>-Wmissing-noreturn</flag>
+					<flag>-Wmissing-prototypes</flag>
+					<flag>-Wnested-externs</flag>
+					<flag>-Wpointer-arith</flag>
+					<flag>-Wshadow</flag>
+					<flag>-Wstrict-prototypes</flag>
+					<flag>-Wswitch-default</flag>
+					<flag>-Wwrite-strings</flag>
+					<flag>-Wno-missing-field-initializers</flag>
+					<flag>-Wno-format-zero-length</flag>
+					<flag>-Wpacked-not-aligned</flag>
+					<flag>-Waddress-of-packed-member</flag>
+					<flag>-Wdeclaration-after-statement</flag>
+					<flag>-Wredundant-decls</flag>
+					<flag>-Wold-style-definition</flag>
+					<flag>-Wstrict-aliasing=2</flag>
+					<flag>-Wundef</flag>
+					<flag>-Os</flag>
+					<flag>-fpic</flag>
+					<flag>-mstrict-align</flag>
+					<flag>-mno-outline-atomics</flag>
+					<flag>-fstack-protector-strong</flag>
+					<flag>-MD</flag>
+					<flag>-MF</flag>
+					<flag>-Wno-error=return-type</flag>
+					<flag>-c</flag>
+				</compiler_flags>
+			</toolchain>
+		</compatibility>
+		<bug_fixes/>
+		<changes/>
+		<new_features/>
+		<comments/>
+	</release>
+</release_notes>

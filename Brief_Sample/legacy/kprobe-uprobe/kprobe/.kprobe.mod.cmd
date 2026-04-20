@@ -1,0 +1,1 @@
+savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/kprobe-uprobe/kprobe/kprobe.mod := printf '%s\n'   kprobe1.o | awk '!x[$$0]++ { print("/home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/kprobe-uprobe/kprobe/"$$0) }' > /home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/kprobe-uprobe/kprobe/kprobe.mod

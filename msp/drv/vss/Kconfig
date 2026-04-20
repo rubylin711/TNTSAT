@@ -1,0 +1,16 @@
+menuconfig MT_VSS
+	bool "VSS"
+	default y
+	depends on MT_SECURITY && (MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6)
+	help
+	Montage Vendor Specific Security Subsystem
+
+if MT_VSS
+
+config MT_VSS_MB
+	bool "VSS Mailbox"
+	default y
+	help
+	Montage VSS Mailbox
+
+endif #MT_VSS

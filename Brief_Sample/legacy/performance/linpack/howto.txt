@@ -1,0 +1,2 @@
+./linpack-orig
+Enter array size (q to quit) [200]: [ENTER]

@@ -1,0 +1,40 @@
+#*****************************************************************
+#
+# Copyright (C) Microsoft Corporation. All rights reserved.
+#
+#*****************************************************************
+
+MSPK_TARGETNAME = PALUnitTests
+MSPK_TARGETPATH = Test/Apps/Unit/$(MSPK_TARGETNAME)
+MSPK_TARGETTYPE = TEST
+
+MSPK_CDEFINES = \
+    -DMSPK_USING_STD_TEMPLATE_LIBS \
+
+MSPK_DBG_CDEFINES = \
+
+MSPK_SOURCES= \
+    main.c \
+    PALUnitTests.cpp \
+    SocketTests.cpp \
+
+MSPK_PALS_NEEDED= \
+    MSPK_PAL_EXECUTIVE \
+
+MSPK_TARGETLIBS = \
+    $(MSPK_PAL_TESTFRAMEWORK_LIBS) \
+    $(MSPK_PAL_LIBS) \
+    $(MSPK_COMPONENT_LIBS) \
+    $(MSPK_TEST_LIBS) \
+
+MSPK_INCLUDES= \
+    $(MSPK_PAL_TESTFRAMEWORK_INCLUDES); \
+    $(MSPK_PAL_INCLUDES); \
+    $(MSPK_TEST_INCLUDES); \
+    $(MSPK_ROOT)/inc; \
+    $(MSPK_ROOT)/Components/inc; \
+    $(MSPK_ROOT)/Components/Utilities; \
+
+DYNAMIC_LIBS= \
+    $(MSPK_PAL_TESTFRAMEWORK_DYNAMIC_LIBS) \
+

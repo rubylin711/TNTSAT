@@ -1,0 +1,32 @@
+
+menuconfig MT_KEYTABLE
+	bool "Keytable"
+	default y
+	depends on MT_SECURITY
+	help
+	  Montage Keytable Driver
+
+if MT_KEYTABLE
+
+config MT_KEYTABLE_SYM2
+	bool "Keytable sym2"
+	default y
+	depends on MT_CHIP_SYMPHONY2
+	help
+	  Montage Keytable sym2 driver
+
+config MT_KEYTABLE_SYM4
+	bool "Keytable sym4"
+	default y
+	depends on MT_CHIP_SYMPHONY4
+	help
+	  Montage Keytable sym4 driver
+
+config MT_KEYTABLE_SYM6
+	bool "Keytable sym6"
+	default y
+	depends on MT_CHIP_SYMPHONY6
+	help
+	  Montage Keytable sym6 driver
+
+endif #MT_KEYTABLE

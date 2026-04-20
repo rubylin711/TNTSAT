@@ -1,0 +1,35 @@
+
+menuconfig MT_FRONTEND_DMD_DD3K
+	bool "DD3000"
+	default y
+	depends on MT_FRONTEND
+	help
+	  Montage Frontend DD330X Driver
+
+if MT_FRONTEND_DMD_DD3K
+
+config MT_FRONTEND_DMD_DD3K_TN_TC6800
+	bool "TC6800 Tuner"
+	default y
+	help
+	  Montage TC6800 Tuner
+
+config MT_FRONTEND_DMD_DD3K_TN_TC3800
+	bool "TC3800 Tuner"
+	default y
+	help
+	  Montage TC3800 Tuner
+
+config MT_FRONTEND_DMD_DD3K_TN_MXL603
+	bool "MXL603 Tuner"
+	default n
+	help
+	  Montage MXL603 Tuner
+
+config MT_FRONTEND_DMD_DD3K_TN_MXL608
+	bool "MXL608 Tuner"
+	default n
+	help
+	  Montage MXL608 Tuner
+	  
+endif #MT_FRONTEND_DMD_DD3K

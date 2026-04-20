@@ -1,0 +1,30 @@
+1. 整体介绍
+该sample包含多个基本文件
+sample_power_timer.c
+该文件是配置获取遥控器键值的主要步骤以及涉及函数。
+Makefile
+该文件为编译所用到的makefile
+
+2. 编译
+执行Makefile进行编译
+make
+
+3. 使用
+拷贝 sample_power_timer 到u盘，u盘接上单板
+执行以下指令：
+mount /dev/sda1 /mnt/
+将linux/pub目录下的lib文件夹拷贝到U盘
+export LD_LIBRARY_PATH=/mnt/lib/:/usr/local/lib
+cd /mnt
+./sample_power_timer
+
+4.流程介绍
+
+1.mt_sys_init()  //系统初始化
+2.MTADP_HDMI_Init()  //HDMI初始化
+3.MTADP_Disp_Init()  //显示初始化
+4.MT_UNF_PMOC_Init()  //PMOC初始化
+5.MT_UNF_PMOC_SetDevType() //设置设备类型
+6.MT_UNF_PMOC_SetWakeUpAttr()  //设置唤醒属性
+7.MT_UNF_PMOC_SwitchSystemMode()  //选择系统模式
+ 

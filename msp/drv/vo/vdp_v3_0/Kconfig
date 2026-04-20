@@ -1,0 +1,6 @@
+
+menuconfig MT_VO
+	bool "VO"
+	default y
+	help
+	  Montage Video Output

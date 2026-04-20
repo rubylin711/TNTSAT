@@ -1,0 +1,39 @@
+#Montage lxc configuration
+lxc.uts.name = montage
+
+#final lxc rootfs
+lxc.rootfs.path = /lxc_rootfs_real/rootfs
+#lxc will mount "/lxc_rootfs_real/rootfs" at "/lxc_rootfs_transfer", then chroot
+lxc.rootfs.mount = /lxc_rootfs_transfer
+
+#follow /etc/fstab
+#lxc.mount.entry = proc proc proc nodev,noexec,nosuid 0 0
+lxc.mount.entry = proc proc proc defaults  0 0
+#lxc.mount.entry = sysfs sys sysfs nodev,noexec,nosuid 0 0
+lxc.mount.entry = sysfs sys sysfs defaults  0 0
+#lxc.mount.entry = cgroup2 sys/fs/cgroup cgroup2 defaults  0 0
+
+#no need, just for lxc-start of lxc-1.0
+#lxc.console.path = /dev/console
+
+#path map
+#host path, guest path (base on guest rootfs, note: can't start with /), device
+lxc.mount.entry = /bin bin none bind,nosuid,nodev,ro 0 0
+lxc.mount.entry = /dev dev none bind,nosuid,nodev,rw 0 0
+lxc.mount.entry = /etc etc none bind,nosuid,nodev,ro 0 0
+lxc.mount.entry = /home home none bind,nosuid,nodev,rw 0 0
+lxc.mount.entry = /lib lib none bind,nosuid,nodev,ro 0 0
+#32 bit platform no need lib64, there is empty folder
+lxc.mount.entry = /lib64 lib64 none bind,nosuid,nodev,ro 0 0
+lxc.mount.entry = /mnt mnt none bind,nosuid,nodev,rw 0 0
+lxc.mount.entry = /opt opt none bind,nosuid,nodev,ro 0 0
+lxc.mount.entry = /root root none bind,nosuid,nodev,ro 0 0
+lxc.mount.entry = /sbin sbin none bind,nosuid,nodev,ro 0 0
+lxc.mount.entry = /stream stream none bind,nosuid,nodev,rw 0 0
+lxc.mount.entry = /tmp tmp none bind,nosuid,nodev,rw 0 0
+lxc.mount.entry = /usr usr none bind,nosuid,nodev,ro 0 0
+lxc.mount.entry = /usr/local usr/local none bind,nosuid,nodev,ro 0 0
+lxc.mount.entry = /var var none bind,nosuid,nodev,rw 0 0
+lxc.mount.entry = /media media none bind,nosuid,nodev,rw 0 0
+#if not have usb storage, lxc startup will fail
+#lxc.mount.entry = /media/sda1 media/sda1 none bind,nosuid,nodev,rw 0 0

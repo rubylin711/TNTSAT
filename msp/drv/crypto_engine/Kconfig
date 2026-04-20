@@ -1,0 +1,38 @@
+menuconfig MT_CRYPTOENGINE
+	bool "CryptoEngine"
+	default y
+	depends on MT_SECURITY
+	help
+	  Montage CryptoEngine
+
+if MT_CRYPTOENGINE
+
+config MT_CRYPTOENGINE_SYM2
+	bool "CryptoEngine sym2"
+	default y
+	depends on MT_CHIP_SYMPHONY2
+	help
+	  Montage CryptoEngine sym2
+
+config MT_CRYPTOENGINE_SYM4
+	bool "CryptoEngine sym4"
+	default y
+	depends on MT_CHIP_SYMPHONY4
+	help
+	  Montage CryptoEngine sym4
+
+config MT_CRYPTOENGINE_SYM6
+	bool "CryptoEngine sym6"
+	default y
+	depends on MT_CHIP_SYMPHONY6
+	help
+	  Montage CryptoEngine sym6
+
+config MT_CRYPTOENGINE_SYM6_HW_IRQ_SUPPORT
+	bool "CryptoEngine sym6 hw irq support"
+	default y
+	depends on MT_CHIP_SYMPHONY6
+	help
+	  Montage CryptoEngine sym6 hw irq support
+
+endif #MT_CRYPTOENGINE

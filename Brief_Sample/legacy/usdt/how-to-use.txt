@@ -1,0 +1,187 @@
+lujiang@cn028lnx02:~/work/mt_sdk/symphony/linux $ readelf -n usrfs/bin/usdt
+
+Displaying notes found at file offset 0x00000170 with length 0x00000024:
+  Owner                 Data size       Description
+  GNU                  0x00000014       NT_GNU_BUILD_ID (unique build ID bitstring)
+    Build ID: a2b555efd0914ba3a5209400f609851ecde430d8
+
+Displaying notes found at file offset 0x00000194 with length 0x00000020:
+  Owner                 Data size       Description
+  GNU                  0x00000010       NT_GNU_ABI_TAG (ABI version tag)
+    OS: Linux, ABI: 3.2.0
+
+Displaying notes found at file offset 0x000010c0 with length 0x000000d8:
+  Owner                 Data size       Description
+  stapsdt              0x0000002d       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: mt_usdt
+    Name: mt0_mt0_mt0_mt0_mt0_mt0
+    Location: 0x000107e8, Base: 0x000109b8, Semaphore: 0x00000000
+    Arguments:
+  stapsdt              0x00000032       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: mt_usdt
+    Name: mt1_mt1_mt1_mt1_mt1_mt1
+    Location: 0x000107ec, Base: 0x000109b8, Semaphore: 0x00000000
+    Arguments: -4@r4
+  stapsdt              0x00000038       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: mt_usdt
+    Name: mt2_mt2_mt2_mt2_mt2_mt2
+    Location: 0x00010808, Base: 0x000109b8, Semaphore: 0x00000000
+    Arguments: -4@r4 -4@r5
+
+
+
+
+
+
+
+
+
+
+lujiang@cn028lnx02:~/work/mt_sdk/symphony/linux $ readelf -n usrfs/lib/libusdt.so
+
+Displaying notes found at file offset 0x00000114 with length 0x00000024:
+  Owner                 Data size       Description
+  GNU                  0x00000014       NT_GNU_BUILD_ID (unique build ID bitstring)
+    Build ID: 779da7b86327382079c558dbfa53de089e02c479
+
+Displaying notes found at file offset 0x000010b8 with length 0x00000040:
+  Owner                 Data size       Description
+  stapsdt              0x00000029       NT_STAPSDT (SystemTap probe descriptors)
+    Provider: mt_usdt
+    Name: test_lib
+    Location: 0x00000578, Base: 0x000005a8, Semaphore: 0x00000000
+    Arguments: -4@r0 -4@r1
+
+
+
+
+
+
+
+
+
+
+lujiang@cn028lnx02:~/work/mt_sdk/symphony/linux $ arm-linux-gnueabihf-gdb pub/bin/usdt
+Reading symbols from pub/bin/usdt...done.
+(gdb) info line *0x000107e8
+Line 23 of "usdt.c" starts at address 0x107e8 <main+84> and ends at 0x107ec <main+88>.
+(gdb) info line *0x000107ec
+Line 24 of "usdt.c" starts at address 0x107ec <main+88> and ends at 0x107f0 <main+92>.
+(gdb) info line *0x00010808
+Line 26 of "usdt.c" starts at address 0x10808 <main+116> and ends at 0x1080c <main+120>.
+(gdb) file pub/shared_lib/libusdt.so
+Load new symbol table from "pub/shared_lib/libusdt.so"? (y or n) y
+Reading symbols from pub/shared_lib/libusdt.so...done.
+(gdb) info line *0x00000578
+Line 13 of "libusdt.c" starts at address 0x578 <bar+40> and ends at 0x57c <bar+44>.
+(gdb)
+
+
+
+
+
+
+
+# perf probe -x /usr/local/bin/usdt --add 'mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0=main+84'
+Added new event:
+  mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 (on main+84 in /usr/local/bin/usdt)
+
+You can now use it in all perf tools, such as:
+
+        perf record -e mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 -aR sleep 1
+
+#
+#
+# perf probe -x /usr/local/bin/usdt --add 'mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1=main+88 a=%r4'
+Added new event:
+  mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 (on main+88 in /usr/local/bin/usdt with a=%r4)
+
+You can now use it in all perf tools, such as:
+
+        perf record -e mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 -aR sleep 1
+
+#
+#
+# perf probe -x /usr/local/bin/usdt --add 'mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2=main+116 x=%r4 y=%r5'
+Added new event:
+  mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 (on main+116 in /usr/local/bin/usdt with x=%r4 y=%r5)
+
+You can now use it in all perf tools, such as:
+
+        perf record -e mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 -aR sleep 1
+
+#
+#
+# perf probe -x /usr/local/lib/libusdt.so --add 'mt_usdt:test_lib=bar+40 m=%r0 n=%r1'
+Added new event:
+  mt_usdt:test_lib     (on bar+40 in /usr/local/lib/libusdt.so with m=%r0 n=%r1)
+
+You can now use it in all perf tools, such as:
+
+        perf record -e mt_usdt:test_lib -aR sleep 1
+
+#
+#
+# perf probe --list
+  mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 (on main+84 in /usr/local/bin/usdt)
+  mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 (on main+88 in /usr/local/bin/usdt with a)
+  mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 (on main+116 in /usr/local/bin/usdt with x y)
+  mt_usdt:test_lib     (on bar+40 in /usr/local/lib/libusdt.so with m n)
+#
+#
+# cd /media/sda1/
+#
+# perf record -g -e mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 -e mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 -e mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 -e mt_usdt:test_lib -- /usr/local/bin/
+usdt 6 9
+param: 6 9
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.003 MB perf.data (4 samples) ]
+#
+#
+# perf script
+usdt  1208 [001]    88.396346: mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0: (107e8)
+                     7e8 main (/usr/local/bin/usdt)
+                   17700 __libc_start_main (/lib/libc-2.28.so)
+
+usdt  1208 [001]    88.396386: mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1: (107ec) a=0x6
+                     7ec main (/usr/local/bin/usdt)
+                   17700 __libc_start_main (/lib/libc-2.28.so)
+
+usdt  1208 [001]    88.396866: mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2: (10808) x=0x6 y=0x9
+                     808 main (/usr/local/bin/usdt)
+                   17700 __libc_start_main (/lib/libc-2.28.so)
+
+usdt  1208 [001]    88.396898:                mt_usdt:test_lib: (b6faa578) m=0x9 n=0x6
+                     578 bar (/usr/local/lib/libusdt.so)
+                     818 main (/usr/local/bin/usdt)
+                   17700 __libc_start_main (/lib/libc-2.28.so)
+
+#
+# perf script -G
+            usdt  1208 [001]    88.396346: mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0: (107e8)
+            usdt  1208 [001]    88.396386: mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1: (107ec) a=0x6
+            usdt  1208 [001]    88.396866: mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2: (10808) x=0x6 y=0x9
+            usdt  1208 [001]    88.396898:                mt_usdt:test_lib: (b6faa578) m=0x9 n=0x6
+#
+#
+# perf probe --list
+  mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 (on main+84 in /usr/local/bin/usdt)
+  mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 (on main+88 in /usr/local/bin/usdt with a)
+  mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 (on main+116 in /usr/local/bin/usdt with x y)
+  mt_usdt:test_lib     (on bar+40 in /usr/local/lib/libusdt.so with m n)
+#
+# perf probe --del mt_usdt:test_lib
+Removed event: mt_usdt:test_lib
+#
+# perf probe --list
+  mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0 (on main+84 in /usr/local/bin/usdt)
+  mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1 (on main+88 in /usr/local/bin/usdt with a)
+  mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2 (on main+116 in /usr/local/bin/usdt with x y)
+# perf probe --del mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0
+Removed event: mt_usdt:mt0_mt0_mt0_mt0_mt0_mt0
+# perf probe --del mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1
+Removed event: mt_usdt:mt1_mt1_mt1_mt1_mt1_mt1
+# perf probe --del mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2
+Removed event: mt_usdt:mt2_mt2_mt2_mt2_mt2_mt2
+# perf probe --list
+#

@@ -1,0 +1,6 @@
+mt_tuner -o .open 0
+mt_tuner -o .setpara 0 2 34 88 288 208 1 0
+mt_tuner -o .dirlock  314 6875 256
+mt_av_dvb -o .init 0 416 36 417 4 6 0 0 0 0 1 0 416
+mt_hdmi -o .hdcp_off
+sh benchmark.sh high one &

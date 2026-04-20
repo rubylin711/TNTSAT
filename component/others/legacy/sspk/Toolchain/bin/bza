@@ -1,0 +1,71 @@
+#!/bin/sh
+##################################################################################
+#
+#  Copyright (c) Microsoft Corporation.  All Rights Reserved.
+#
+##################################################################################
+
+
+if [ "$MSPK_OUTPUT" == "" ]
+then
+	export MSPK_OUTPUT=$HOME/output
+fi
+
+rm -f $MSPK_OUTPUT/results.txt
+
+#
+# Get a list of everything in the platform folder
+#
+for obj in $MSPK_ROOT/Platform/*
+do
+	#
+	# Only process folders
+	#
+	if [ -d $obj ];
+	then
+		#
+		# Get the base name of the folder
+		#
+		PLAT=$(basename $obj)
+
+		#
+		# Skip "common" and Windows-built platforms
+		#
+		if [ $PLAT == "Common" ];
+		then
+			continue;
+		fi
+
+		export MSPK_PLATFORM=$PLAT
+		export OUTPUT_ROOT=$MSPK_OUTPUT/$PLAT
+
+		#echo $MSPK_PLATFORM
+		if [ -f $MSPK_ROOT/Platform/$MSPK_PLATFORM/bin/bz ]
+		then
+			$MSPK_ROOT/Platform/$MSPK_PLATFORM/bin/bz $*
+		else
+			mkdir -p $OUTPUT_ROOT
+
+			buildlog=$OUTPUT_ROOT/build.log
+			builderr=$OUTPUT_ROOT/build.err
+
+			make -f makefile.pk mspk_all 2> $builderr | tee $buildlog
+
+			# if builderr file is nonzero length, display it
+			if [ -s $builderr ]
+			then
+				echo BUILD ERRORS:
+				cat $builderr
+			fi
+		fi
+
+		if [ -s "$OUTPUT_ROOT/build.err" ]
+		then
+			echo $PLAT: failure>>$MSPK_OUTPUT/results.txt
+		else
+			echo $PLAT: success>>$MSPK_OUTPUT/results.txt
+		fi
+	fi
+done
+
+cat $MSPK_OUTPUT/results.txt

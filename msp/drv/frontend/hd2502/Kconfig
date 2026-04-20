@@ -1,0 +1,6 @@
+menuconfig MT_FRONTEND_DMD_HD2502
+	bool "HD2502"
+	default n
+	depends on MT_FRONTEND
+	help
+	  HDIC Frontend HD2502 Driver

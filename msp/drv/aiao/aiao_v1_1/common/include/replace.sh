@@ -1,0 +1,36 @@
+#!/bin/sh
+echo "start"
+sed -i "s/HI/MT/g" *.*
+sed -i "s/MT_U32/mt_u32/g" *.*
+sed -i "s/MT_S32/mt_s32/g" *.*
+sed -i "s/MT_VOID/mt_void/g" *.*
+sed -i "s/MT_CHAR/mt_char/g" *.*
+sed -i "s/MT_U8/mt_u8/g" *.*
+sed -i "s/MT_S8/mt_s8/g" *.*
+sed -i "s/MT_U16/mt_u16/g" *.*
+sed -i "s/MT_S16/mt_s16/g" *.*
+sed -i "s/MT_HANDLE/mt_handle/g" *.*
+sed -i "s/MMZ_BUFFER_S/mmz_buffer_s/g" *.*
+sed -i "s/PM_BASEDEV_S/basedev_s/g" *.*
+sed -i "s/MT_DRV_MODULE_GetFunction/mt_drv_module_getfunction/g" *.*
+sed -i "s/MT_DRV_MMZ_Alloc/mt_drv_mmz_alloc/g" *.*
+sed -i "s/MT_DRV_MMZ_MapCache/mt_drv_mmz_map_cache/g" *.*
+sed -i "s/MT_DRV_MMZ_AllocAndMap/mt_drv_mmz_alloc_and_map/g" *.*
+sed -i "s/MT_DRV_MMZ_Unmap/mt_drv_mmz_unmap/g" *.*
+sed -i "s/MT_DRV_MMZ_Release/mt_drv_mmz_release/g" *.*
+sed -i "s/MT_DRV_MMZ_UnmapAndRelease/mt_drv_mmz_unmap_and_release/g" *.*
+sed -i "s/MT_DRV_FILE_Write/mt_drv_file_write/g" *.*
+sed -i "s/MT_DRV_FILE_Close/mt_drv_file_close/g" *.*
+sed -i "s/MT_DRV_FILE_GetStorePath/mt_drv_file_get_storepath/g" *.*
+sed -i "s/MT_DRV_FILE_Open/mt_drv_file_open/g" *.*
+sed -i "s/MT_DRV_PROC_RemoveModule/mt_drv_proc_rm_module/g" *.*
+sed -i "s/MT_DRV_PROC_EchoHelper/mt_drv_proc_echohelp/g" *.*
+sed -i "s/MT_DRV_PROC_AddModule/mt_drv_proc_add_module/g" *.*
+sed -i "s/MT_DRV_UserCopy/mt_drv_usercopy/g" *.*
+sed -i "s/TMTS_MODULE/THIS_MODULE/g" *.*
+sed -i "s/PM_BASEOPS_S/baseops_s/g" *.*
+sed -i "s/BASEOPS_S/baseops_s/g" *.*
+sed -i "s/MT_DEVICE_S/mt_device_s/g" *.*
+sed -i "s/MT_UNF_SND_SPDIF_SCMSMODE_COPYPROMTBITED/MT_UNF_SND_SPDIF_SCMSMODE_COPYPROHIBITED/g" *.*
+echo "finish"
+

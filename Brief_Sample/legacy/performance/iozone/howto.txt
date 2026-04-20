@@ -1,0 +1,1 @@
+./iozone -Ra -i 0 -i 1 -g 4096K -f /usr/local/star/etc/db/111.txt > test.txt

@@ -1,0 +1,182 @@
+#!/bin/bash
+
+#*****************************************************************
+#
+# Copyright (C) Microsoft Corporation. All rights reserved.
+#
+#*****************************************************************
+
+#
+# Make sure we know where to put the output, and define a default
+# place if noting is already defined
+#
+
+export MSPK_FLAVOR="chk" 
+#export MSPK_FLAVOR="shp" 
+export MSPK_PLATFORM="LinuxSample" 
+export MSPK_ROOT=$SSPK_TOP_DIR
+export MSPK_TOOLCHAIN=$SSPK_TOP_DIR/Toolchain
+#export MSPK_OUTPUT="$SSPK_TOP_DIR/output"
+#export MSPK_OUTPUT_INSTALL="$SSPK_OUTPUT_PATH/sspk"
+export MSPK_OUTPUT=$SSPK_TOP_DIR/output
+export MSPK_OUTPUT_INSTALL=$SSPK_OUTPUT_PATH/sspk
+echo "BUILDROOT_SYSROOT_USR_INC_DIR is $BUILDROOT_SYSROOT_USR_INC_DIR"
+echo "BUILDROOT_SYSROOT_USR_LIB_DIR is $BUILDROOT_SYSROOT_USR_LIB_DIR"
+echo "MSPK_ROOT is $MSPK_ROOT"
+echo "MSPK_TOOLCHAIN is $MSPK_TOOLCHAIN"
+echo "MSPK_OUTPUT is $MSPK_OUTPUT"
+echo "MSPK_OUTPUT_INSTALL is $MSPK_OUTPUT_INSTALL"
+
+if [ "$MSPK_OUTPUT" == "" ]
+then
+	export MSPK_OUTPUT=$HOME/output
+fi
+
+#
+# Set the LS_COLORS variable if not already set in order
+# to accommodate color-coded build output for better viewing
+#
+if [ "$LS_COLORS" == "" ]
+then
+	eval `dircolors`
+fi
+
+#
+# Expand links and folders for each Toolchain subfolder, if necessary
+#
+for MSPK_FOLDER in $MSPK_TOOLCHAIN/Toolchain/$MSPK_PLATFORM/*
+do
+	if [ -f $MSPK_FOLDER/links_and_folders.tgz ]
+	then
+		if [ $MSPK_FOLDER/links_and_folders_unpacked -ot $MSPK_FOLDER/links_and_folders.tgz ]
+		then
+			tar -xpvz -f $MSPK_FOLDER/links_and_folders.tgz -C $MSPK_FOLDER
+			touch -r $MSPK_FOLDER/links_and_folders.tgz $MSPK_FOLDER/links_and_folders_unpacked
+		fi
+	fi
+done
+
+#
+# See if we want to build multiple platforms
+#
+if [ "$MSPK_MULTIFLAVOR" == "" ]
+then
+	if [ "$MSPK_FLAVOR" == "" ]
+	then
+		export MSPK_MULTIFLAVOR="chk"
+	else
+		export MSPK_MULTIFLAVOR="$MSPK_FLAVOR"
+	fi
+fi
+
+#
+# Build each flavor
+#
+for MSPK_FLAVOR in $MSPK_MULTIFLAVOR
+do
+	#
+	# We don't need the MSPK_ prefix on this because it's being set
+	# inside a BASH script, so the variable's life ends when the
+	# script ends
+	#
+	export OUTPUT_ROOT=$MSPK_OUTPUT/$MSPK_PLATFORM/$MSPK_FLAVOR
+
+	mkdir -p $OUTPUT_ROOT
+
+	#
+	# Define the build log file name and build error file name
+	#
+	buildlog=$OUTPUT_ROOT/build.log
+	builderr=$OUTPUT_ROOT/build.err
+
+	#
+	# Delete any existing build log or build error file
+	#
+	rm -f $buildlog
+	rm -f $builderr
+
+	#
+	# Create a couple FIFO's (named pipes) to capture various output.
+	# We're going to use stdout_pipe$$ to capture the standard output
+	# of the make, stderr_pipe$$ to capture the standard error of the
+	# make, and stdxtr_pipe$$ to capture an extra file descriptor that
+	# the make process outputs to show a more sterile output to the
+	# display. The standard output will go to the build log file, the
+	# standard error will go to the build error file, and another copy
+	# of the standard error will go to the screen AND the build log file.
+	#
+	stderr_pipe=$OUTPUT_ROOT/stderr_pipe$$
+	stdout_pipe=$OUTPUT_ROOT/stdout_pipe$$
+	stdxtr_pipe=$OUTPUT_ROOT/stdxtr_pipe$$
+	mkfifo $stderr_pipe
+	mkfifo $stdout_pipe
+	mkfifo $stdxtr_pipe
+
+	#
+	# Start a new process (tee) that will use the current set of file
+	# descriptors (stdin, stdout, stderr) to output what comes from the
+	# stderr_pipe$$ to the error file, the log file, and also output it
+	# to the screen (the CURRENT stdout)
+	#
+	tee -a $builderr $buildlog < $stderr_pipe &
+	tpid1=$!
+
+	#
+	# Start another new process (tee) that will output what comes from
+	# the stdout_pipe$$ to the log file only. We do tee and dispose of
+	# the stdout output because that way tee is outputting to the build
+	# log (which already has another process outputting to it as well)
+	# instead of using pipes/redirectors which wouldn't share file output
+	# as nicely.
+	#
+	tee -a $buildlog < $stdout_pipe > /dev/null &
+	tpid2=$!
+
+	#
+	# Start another new process (cat) that will output what comes from
+	# the extra file descriptor of the build process (stdxtr_pipe$$)
+	# to the screen.
+	#
+	cat < $stdxtr_pipe &
+	tpid3=$!
+
+	#
+	# Build, redirecting output to stdout_pipe$$, error to stderr_pipe$$,
+	# and extra output to stdxtr_pipe$$
+	#
+	make -f makefile.pk VTARGET=mspk_all 1> $stdout_pipe 2> $stderr_pipe 3> $stdxtr_pipe
+
+	#
+	# Wait until the tee processes are done (s.b. less than a split second
+	# if anything)
+	#
+	wait $tpid1
+	wait $tpid2
+	wait $tpid3
+
+	#
+	# Delete the temporary named pipes
+	#
+	rm $stderr_pipe
+	rm $stdout_pipe
+	rm $stdxtr_pipe
+
+	#
+	# Summary
+	#
+	echo -e The output is at: \\0033[`echo "$LS_COLORS" | sed "s/^.*so=\([^:]*\).*$/\1/g"`m$OUTPUT_ROOT\\0033[00m
+	echo -e The build log can be found at: \\0033[`echo "$LS_COLORS" | sed "s/^.*so=\([^:]*\).*$/\1/g"`m$buildlog\\0033[00m
+	if [ -s $builderr ]
+	then
+		echo BUILD ERRORS:
+		cat $builderr
+		echo -e The error log can be found at: \\0033[`echo "$LS_COLORS" | sed "s/^.*so=\([^:]*\).*$/\1/g"`m$builderr\\0033[00m
+	else
+		echo BUILD SUCCEEDED.
+	fi
+	cp $MSPK_ROOT/inc $MSPK_OUTPUT_INSTALL -rf
+	mkdir -p $MSPK_OUTPUT_INSTALL/Platform
+	cp $MSPK_ROOT/Platform/inc  $MSPK_OUTPUT_INSTALL/Platform -rf
+	mkdir -p $MSPK_OUTPUT_INSTALL/Platform/LinuxSample
+	cp $MSPK_ROOT/Platform/LinuxSample/inc  $MSPK_OUTPUT_INSTALL/Platform/LinuxSample -rf
+done

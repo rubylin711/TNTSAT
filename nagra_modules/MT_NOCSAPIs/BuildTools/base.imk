@@ -1,0 +1,5 @@
+MT_IMPL_RELPATH = \
+  MT_NOCSAPIs
+
+MT_ROOT ?= \
+  $(subst /$(MT_IMPL_RELPATH)__,,$(CURDIR)__)

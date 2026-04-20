@@ -1,0 +1,23 @@
+
+menuconfig MT_FRONTEND_DMD_CS8K_SATELLITE
+	bool "CS8000_Satellite"
+	default y
+	depends on MT_FRONTEND && MT_CHIP_SYMPHONY1
+	help
+	  Montage Frontend CS8000 Satellite Driver
+
+if MT_FRONTEND_DMD_CS8K_SATELLITE
+
+config MT_FRONTEND_DMD_CS8K_SATELLITE_TN_TS2022
+	bool "TS2022 Tuner"
+	default y
+	help
+	  Montage TS2022 Tuner
+
+config MT_FRONTEND_DMD_CS8K_SATELLITE_TN_TS6011
+	bool "TS6011 Tuner"
+	default y
+	help
+	  Montage TS6011 Tuner
+
+endif #MT_FRONTEND_DMD_CS8K_SATELLITE

@@ -1,0 +1,43 @@
+Release History:
+	20210819:
+        	1. add the support for RTL8852B
+        	2. update the fw files for RTL8723F
+	20210706:
+        	1. fixed the compiling error of rtk_btusb .
+	20210628:
+		1. update fw files for RTL8822B, RTL8723D, RTL8821C, RTL8822C, RTL8821DS, RTL8761B, RTL8725A, RTL8723F
+		2. rtk_btusb: backport the usb alternate settings from Upstream
+	20210423:
+		1. update the firmware files for rtl8723f, rtl8725a, rtl8761b, rtl8822c, rtl8852a
+		2. misc: add the more support ID for RTL8852AE
+		3. btrtksdio: btrtl: add the support for 32k+ fw patch
+	20210324:
+		1. update firmware files for rtl8822b, rtl8723d, rtl8821c, rtl8822c, rtl8761b, 
+		   rtl8725a, rtl8723f
+		2. update config file to disable 3M packet type for less interference
+		3. misc: add supported USB VID/PID for RTL8723DE, RTL8821CE and RTL8822CE
+		4. misc: fine-tune fw_patch_table to maintain the supported id in only one table
+	20201202:
+		update firmware files for rtl8723d, rtl8821c, rtl8852a
+		update firmware files for rtl8723f, rtl8761b, rtl8725a
+	20201026:
+		update firmware file for rtl8822c
+		coex: Fix incorrect profile judgement issue in acl disc
+	20200812: 
+		update the config file for rtl8821cu to fix the bring-up issue on Linux Kernel 4.19+
+		add the support for RTL8723F
+	20200610:
+		update the FW files for rtl8821c and rtl8761b
+
+Software Package Feature:
+	Bluez
+	Other software based on HCI, L2CAP, RFCOMM, SCO and Management sock 
+
+Hardware Supported:
+	All Realtek Bluetooth Chip.
+
+Platform Supported:
+	Linux kernel V2.6.32-5.8
+
+CPU supported:
+	ARM/MIPS/X86

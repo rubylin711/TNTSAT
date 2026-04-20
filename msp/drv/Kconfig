@@ -1,0 +1,227 @@
+menu "Montage MSP"
+
+menuconfig MT_MSP
+	tristate "MSP Driver"
+	default y
+	depends on MT_CHIP_COMMON
+	help
+	  Montage MSP Driver
+
+if MT_MSP
+
+config MT_AVPLAY
+	bool "AVPlay"
+	default y
+	help
+	  Montage AV Play
+
+config MT_SPDMA
+	bool "SPDma"
+	default n
+	help
+	  Montage SPDma
+
+menuconfig MT_VDEC
+	bool "VDEC"
+	default y
+	help
+	  Montage Video Decoder
+
+if MT_VDEC
+
+config MT_VFMW
+	tristate "VFMW"
+	default n
+	depends on MT_CHIP_SYMPHONY4 || MT_CHIP_ARIA || MT_CHIP_SYMPHONY6
+	help
+	  Montage VFMW
+
+endif #MT_VDEC
+
+config MT_SYNC
+	bool "AVSync"
+	default y
+	help
+	  Montage AV Sync
+
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/aiao/Kconfig"
+
+config MT_ADEC
+	bool "ADEC"
+	default y
+	help
+	  Montage Audio Decoder
+
+config MT_PVR
+	bool "PVR"
+	default y
+	help
+	  Montage PVR
+
+menuconfig MT_VO
+	bool "VO"
+	default y
+	help
+	  Montage Video Output Driver
+
+if MT_VO
+
+config MT_VO_SL_HDR
+	tristate "SL_HDR"
+	default y
+	depends on MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6
+	help
+	  Montage Technicolor HDR Driver
+
+config MT_VO_FW
+	tristate "VO_FW"
+	default y
+	help
+	  Montage Video Output Firmware
+
+endif #MT_VO
+
+config MT_OPTM
+	bool "OPTM"
+	default y
+	help
+	  Montage Physical OPTM
+
+config MT_MTFB
+	bool "MTFB"
+	default y
+	help
+	  Montage Framebuffer
+
+config MT_TDE
+	bool "TDE"
+	default y
+	help
+	  Montage TDE
+
+config MT_OSD
+	bool "OSD"
+	default y
+	help
+	  Montage OSD
+
+config MT_DEMUX
+	bool "Demux"
+	default y
+	help
+	  Montage Demux
+
+menuconfig MT_SECURITY
+	bool "Montage Security"
+	default y
+	help
+	  Montage Security Driver
+
+if MT_SECURITY
+
+config MT_IPCS
+    bool "IPCS"
+    default y
+    help
+      Montage Secure Mailbox
+
+config MT_CIPHER_SCPU
+    bool "CIPHER_SCPU"
+    default y
+    help
+      Montage CIPHER_SCPU
+
+config MT_KEYLADDER
+	bool "KeyLadder"
+	default y
+	help
+	  Montage KeyLadder Driver
+
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/crypto_engine/Kconfig"
+
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/keytable/Kconfig"
+
+config MT_CERT
+	bool "Cert"
+	default y
+	depends on MONTAGE_NAGRA
+	help
+	  Montage Cert
+
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/opc/Kconfig"
+
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/vss/Kconfig"
+
+endif #MT_SECURITY
+
+config MT_PNG
+	bool "PNG"
+	default y
+	depends on MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6
+	help
+	  Montage PNG
+
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/keyled/Kconfig"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/frontend/Kconfig"
+
+config MT_LXC_IPC
+	bool "Linux Container IPC"
+	default n
+	help
+	  Montage Linux Container IPC
+
+menu "CI Plus"
+
+config MT_SMIT_USB_CAM
+	tristate "smit usb cam driver"
+	default y
+	help
+	  SMIT usb cam
+
+config MT_PCMCIA_CI
+	tristate "montage pcmcia ciplus controller"
+	default m
+	depends on (MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6)
+	help
+	  montage pcmcia ciplus controller driver
+
+endmenu
+
+menuconfig MT_HDMI_VER20
+	bool "HDMI Ver(1.4/2.0)"
+	default y
+	depends on MT_CHIP_SYMPHONY6 || MT_CHIP_ETUDE2
+	help
+	  HDMI Ver(1.4/2.0)
+
+if MT_HDMI_VER20
+
+config MT_HDMI_V20_DEBUG_PROC_FS
+	bool "PROC_FS"
+	default y
+	help
+	  HDMI PROC FUNCTION
+	  
+config MT_HDMI_V20_DEBUG_SYSFS
+	bool "SYSFS"
+	default n
+	help
+	  HDMI SYSFS FUNCTION
+	  
+endif #MT_HDMI_VER20  
+
+if MT_CHIP_SYMPHONY4
+menu "Audio DAI"
+source "drivers/$(MT_TOPDIR_REL_PATH)/msp/drv/dai/Kconfig"
+endmenu
+endif
+
+config MT_CHIP_VERIFICATION
+	bool "chip verification"
+	default n
+	help
+	  compile msp/drv/chip_verification
+
+endif #MT_MSP
+
+endmenu

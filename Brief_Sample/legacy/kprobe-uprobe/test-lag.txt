@@ -1,0 +1,18 @@
+cp -af pub/bin/uprobe usrfs/bin/; cp -af pub/shared_lib/libuprobe.so usrfs/lib/; cp -af pub/ko/kprobe.ko usrfs/stb/external-ko/; arm-linux-gnueabihf-strip --strip-debug usrfs/bin/uprobe usrfs/lib/libuprobe.so usrfs/stb/external-ko/kprobe.ko; sync
+
+insmod /usr/local/stb/external-ko/kprobe.ko
+
+cpu1 off
+echo 0 > /sys/devices/system/cpu/cpu1/online
+
+100% cpu time can be used by rt thread
+echo 1000000 > /proc/sys/kernel/sched_rt_runtime_us
+
+95% cpu time can be used by rt thread
+echo 950000 > /proc/sys/kernel/sched_rt_runtime_us
+
+ftrace_init.sh; ftrace_start.sh; uprobe
+
+ftrace_end.sh; cp -af /sys/kernel/debug/tracing/trace /usr/local/trace.log; sync
+
+

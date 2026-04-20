@@ -1,0 +1,1 @@
+savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/kprobe-uprobe/kprobe/Module.symvers :=  scripts/mod/modpost -M        -o /home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/kprobe-uprobe/kprobe/Module.symvers -T /home/ruby_lin/TNTSAT/Sym6/ddk/Brief_Sample/legacy/kprobe-uprobe/kprobe/modules.order -i Module.symvers -e 
