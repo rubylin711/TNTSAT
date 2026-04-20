@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<Partition_Info>
+<FlashBinLen len="80.0M"/>
+<FlashBin outputname="./flash_ddr3_spinand.bin"/>
+<Part Sel="1" PartitionName="bootinit" FlashType="spinand" FileSystem="none" Start="0.0" Length="0.5M" SelectFile="./btinit_ddr3_666m.img"/>
+<Part Sel="1" PartitionName="uboot" FlashType="spinand" FileSystem="none" Start="0.5M" Length="1.0M" SelectFile="./uboot_linux.img"/>
+<Part Sel="1" PartitionName="bootenv" FlashType="spinand" FileSystem="none" Start="1.5M" Length="0.25M" SelectFile="./bootargs/uboot_symphony_demo_nand.scr"/>
+<Part Sel="0" PartitionName="logo" FlashType="spinand" FileSystem="none" Start="1.75M" Length="0.25M" SelectFile="./logo.jpg"/>
+<Part Sel="1" PartitionName="av_cpu" FlashType="spinand" FileSystem="none" Start="2.0M" Length="1.0M" SelectFile="./av_cpu256m_sym4.bin"/>
+<Part Sel="0" PartitionName="kernel" FlashType="spinand" FileSystem="none" Start="3.0M" Length="5.0M" SelectFile="./uImage"/>
+<Part Sel="1" PartitionName="rootfs" FlashType="spinand" FileSystem="none" Start="8.0M" Length="12.0M" SelectFile="./rootfs.img"/>
+<Part Sel="1" PartitionName="usrfs" FlashType="spinand" FileSystem="none" Start="20.0M" Length="20.0M" SelectFile="./usrfs.img"/>
+<Part Sel="0" PartitionName="datafs" FlashType="spinand" FileSystem="none" Start="40.0M" Length="20.0M" SelectFile="./nandubi.img"/>
+<Part Sel="1" PartitionName="other" FlashType="spinand" FileSystem="none" Start="60.0M" Length="-" SelectFile=""/>
+</Partition_Info>

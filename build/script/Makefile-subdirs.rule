@@ -1,0 +1,22 @@
+.PHONY: all clean install uninstall distclean prepare all_objs_phony $(SUBDIRS)
+
+all: prepare $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@ all
+
+all_objs_phony:
+	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i all_objs_phony; done
+
+clean:
+	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
+
+install:
+	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+
+uninstall:
+	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i uninstall; done
+
+distclean:
+	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i distclean; done
+

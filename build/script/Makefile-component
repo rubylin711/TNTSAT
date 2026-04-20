@@ -1,0 +1,27 @@
+include ${SDK_DIR}/build/script/base.mk
+
+SUBDIRS = network
+ifeq ($(CONFIG_MT_WIFI_SUPPORT),y)
+SUBDIRS += wifi
+endif
+
+ifeq ($(CFG_MT_CHIP),$(filter $(CFG_MT_CHIP),etude2 symphony6))
+SUBDIRS += hdmi20
+endif
+
+ifeq ($(CONFIG_MT_LXC_SUPPORT),y)
+SUBDIRS += shadow
+endif
+
+ifeq ($(CONFIG_MT_BLUETOOTH),y)
+SUBDIRS += bluetooth
+endif
+
+include ${SDK_DIR}/build/script/Makefile-subdirs.rule
+
+ifeq ($(CONFIG_MT_BLUETOOTH),y)
+ifeq ($(CONFIG_MT_WIFI_SUPPORT),y)
+bluetooth: wifi
+endif
+endif
+

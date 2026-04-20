@@ -1,0 +1,9 @@
+#!/bin/bash
+
+MT_SDK_EXTERNAL_VERSION=$1
+
+echo MT_SDK_EXTERNAL_VERSION=${MT_SDK_EXTERNAL_VERSION}
+
+sed -i "s|BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION=\"master\"|BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION=\"${MT_SDK_EXTERNAL_VERSION}\"|g" buildroot/configs/symphony*_defconfig
+sed -i "s|BR2_LINUX_KERNEL_VERSION=\"master\"|BR2_LINUX_KERNEL_VERSION=\"${MT_SDK_EXTERNAL_VERSION}\"|g" buildroot/configs/symphony*_defconfig
+

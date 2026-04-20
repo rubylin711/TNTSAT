@@ -1,0 +1,28 @@
+include ${SDK_DIR}/build/script/base.mk                                                                                                                                                                                              
+obj-m := mt_slhdr.o
+mt_slhdr-objs := SL_api.o SL_compute.o sl_hdr.o SL_LUT_fill.o SL_math.o SL_OEOTF_convert.o SL_static_LUT_fill.o
+
+obj-m += mt_vfmw.o
+mt_vfmw-objs := avs2_dec.o DPB_AVS_MPEG.o fw_dpb_output.o fw_middle.o fw_utility.o h264_header.o h264_output.o hevc_comrom.o \
+				 hevc_decsei.o mpeg.o vc1_dpb.o vp8.o vp9_entropy.o vp9_quant_common.o avs.o fw_api.o fw_es_descriptor.o \
+				 fw_scheduler.o h264_dec.o h264_image.o hevc_comdpb.o hevc_comslice.o hevc_dectop.o rv.o vdec_common.o \
+				 vp9_entropymode.o  vp9.o vp9_seg_common.o bitstream.o fw_clock.o fw_hw_reset.o fw_timeout.o h264_dpb.o\
+				 h264_mbuffer.o hevc_compic.o hevc_deccavlc.o mpeg4.o vc1_dec.o vfmw_intf.o vp9_entropymv.o vp9_prob.o
+
+obj-m += mt_vofw.o
+mt_vofw-objs := MT_DF_4K_Disp_Set.o MT_DF_DCE.o MT_DF_FRC.o MT_DF_hdr10p_ootf.o MT_DF_Osd_Gra_Scaler_4K.o MT_DF_PreScale.o MT_DF_ScalarPara.o \
+				 MT_DF_4k_reg.o MT_DF_disp.o MT_DF_Freeze.o MT_DF_HdrVivid_ootf.o MT_DF_Osd_Gra_Scaler.o MT_DF_PullDown.o vo_fw.o
+
+KERNELDIR ?= $(MT_KERNEL_DIR)
+PWD := $(shell pwd)
+
+all: prepare_lib
+	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
+
+prepare_lib:
+	ar x libsl_hdr.a
+	ar x libvf_mw.a
+	ar x libvo_fw.a
+clean:
+	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
+	rm -f ./*.o

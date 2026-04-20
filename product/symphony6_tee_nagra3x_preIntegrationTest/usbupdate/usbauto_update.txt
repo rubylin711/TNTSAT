@@ -1,0 +1,34 @@
+# -- start
+
+#bootinit
+usbup 0 usbupdate/script/bootinit.cfg
+
+#uboot
+usbup 0 usbupdate/script/uboot.cfg
+
+#bootenv
+usbup 0 usbupdate/script/bootenv.cfg
+
+#logo
+usbup 0 usbupdate/script/logo.cfg
+
+#av_cpu
+usbup 0 usbupdate/script/av_cpu.cfg
+
+#kernel
+usbup 0 usbupdate/script/kernel.cfg
+
+#roots
+usbup 0 usbupdate/script/rootfs.cfg
+
+#datafs
+usbup 0 usbupdate/script/datafs.cfg
+
+#jffs2
+#usbup 0 usbupdate/script/jffs2.cfg
+
+#ubifs
+usbup 0 usbupdate/script/ubifs.cfg
+
+% -- end
+

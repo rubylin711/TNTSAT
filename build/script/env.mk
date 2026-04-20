@@ -1,0 +1,617 @@
+CFG_MT_SDK_RELEASE=y
+
+FIXED_SYSROOT_USR_LIB_PATH_USE_L=n
+
+LOADER_OUTPUT=out/loader
+GENERAL_OUTPUT=out/general
+ifeq ($(CFG_MT_BUILD_LOADER),y)
+  MT_OUTPUT=$(LOADER_OUTPUT)
+  MSP_API_OBJECTS=${SDK_DIR}/loader/msp/api/objects.mk
+else
+  MT_OUTPUT=$(GENERAL_OUTPUT)
+  MSP_API_OBJECTS=$(MSP_DIR)/api/objects.mk
+endif
+MFRS_CFG_MENUCONFIG_PATH=${SDK_DIR}/$(GENERAL_OUTPUT)/menuconfig
+
+ifeq ($(CONFIG_MT_CHIP_SYMPHONY1),y)
+CFG_MT_CHIP=symphony1
+else ifeq ($(CONFIG_MT_CHIP_SYMPHONY2),y)
+CFG_MT_CHIP=symphony2
+else ifeq ($(CONFIG_MT_CHIP_SYMPHONY4),y)
+CFG_MT_CHIP=symphony4
+else ifeq ($(CONFIG_MT_CHIP_SYMPHONY6),y)
+CFG_MT_CHIP=symphony6
+else ifeq ($(CONFIG_MT_CHIP_ARIA),y)
+CFG_MT_CHIP=aria
+endif
+
+# CONFIG_MT_ARCH_MIPS and CONFIG_MT_ARCH_ARM and CONFIG_MT_ARCH_AARCH64 meaning user space mode
+# CONFIG_MT_KERNEL_ARCH_MIPS and CONFIG_MT_KERNEL_ARCH_ARM and CONFIG_MT_KERNEL_ARCH_AARCH64 meaning kernel space mode
+ifeq ($(CONFIG_MT_ARCH_MIPS),y)
+CFG_MT_ARCH=mips
+else ifeq ($(CONFIG_MT_ARCH_ARM),y)
+CFG_MT_ARCH=arm
+else ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+CFG_MT_ARCH=aarch64
+endif
+
+ifneq (${BR2_VERSION},)
+  MT_KERNEL_DIR=$(LINUX_DIR)
+else
+  LINUX_PATH=kernel/linux-x.y.z
+  MT_KERNEL_DIR=${SDK_DIR}/$(LINUX_PATH)
+endif
+
+ifeq ($(CONFIG_MT_STATIC_LINK),y)
+  CFG_MT_STATIC_LINK ?= y
+endif
+
+AT := @
+COMMON_DIR=${SDK_DIR}/common
+MSP_DIR=${SDK_DIR}/msp
+
+#TARGET_VENDOR of external toolchain is buildroot, see buildroot/package/Makefile.in
+TARGET_VENDOR = buildroot
+ifeq ($(CONFIG_MT_ARCH_ARM),y)
+  BUILDROOT_HOST_DIR = arm-$(TARGET_VENDOR)-linux-gnueabihf
+else ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+  BUILDROOT_HOST_DIR = aarch64-$(TARGET_VENDOR)-linux-gnu
+else ifeq ($(CONFIG_MT_ARCH_MIPS),y)
+  BUILDROOT_HOST_DIR = mipsel-$(TARGET_VENDOR)-linux-gnu
+endif
+ifneq (${BR2_VERSION},)
+  #TARGET_DIR and STAGING_DIR be exported in buildroot top Makefile
+  BUILDROOT_DIR=${MT_BUILDROOT_TOPDIR}
+  BUILDROOT_SYSROOT_DIR=${STAGING_DIR}
+  BUILDROOT_TARGET_DIR=${TARGET_DIR}
+else
+  #buildroot relative path, we can move buildroot dir to other place
+  CFG_MT_BUILDROOT_REL_PATH=./buildroot
+  BUILDROOT_DIR=${SDK_DIR}/$(CFG_MT_BUILDROOT_REL_PATH)
+  BUILDROOT_SYSROOT_DIR=$(BUILDROOT_DIR)/output/host/$(BUILDROOT_HOST_DIR)/sysroot
+  BUILDROOT_TARGET_DIR=$(BUILDROOT_DIR)/output/target
+endif
+BUILDROOT_SYSROOT_USR_DIR=$(BUILDROOT_SYSROOT_DIR)/usr
+BUILDROOT_TARGET_USR_DIR=$(BUILDROOT_TARGET_DIR)/usr
+KWARE_DIR=${SDK_DIR}/kware
+COMPONENT_NAME=component
+COMPONENT_DIR=${SDK_DIR}/$(COMPONENT_NAME)
+AV_BIN_DIR_NAME = av-bin
+AV_RTOS_DIR=${SDK_DIR}/av_rtos/platform
+WB_DIR=${SDK_DIR}/wb
+SAMPLE_DIR=${SDK_DIR}/Brief_Sample
+MBOOT_DIR=${SDK_DIR}/mboot
+VERIFICATION_DIR=${SDK_DIR}/chip-verification
+VERIFICATION_DISP_DIR=${VERIFICATION_DIR}/disp
+
+COMMON_UNF_INCLUDE = ${COMMON_DIR}/inc
+COMMON_API_INCLUDE = ${COMMON_DIR}/api/inc
+COMMON_DRV_INCLUDE = ${COMMON_DIR}/drv/inc
+MSP_UNF_INCLUDE = ${MSP_DIR}/inc
+MSP_API_INCLUDE = ${MSP_DIR}/api/inc
+MSP_DRV_INCLUDE = ${MSP_DIR}/drv/inc
+
+MFRS=$(CONFIG_MT_MFRS:"%"=%)
+
+ifeq ($(CONFIG_MT_DDR_SIZE_4096),y)
+CFG_MT_DDR_SIZE=4096
+else ifeq ($(CONFIG_MT_DDR_SIZE_2048),y)
+CFG_MT_DDR_SIZE=2048
+else ifeq ($(CONFIG_MT_DDR_SIZE_1024),y)
+CFG_MT_DDR_SIZE=1024
+else ifeq ($(CONFIG_MT_DDR_SIZE_512),y)
+CFG_MT_DDR_SIZE=512
+else ifeq ($(CONFIG_MT_DDR_SIZE_256),y)
+CFG_MT_DDR_SIZE=256
+else ifeq ($(CONFIG_MT_DDR_SIZE_128),y)
+CFG_MT_DDR_SIZE=128
+endif
+
+ifeq ($(CONFIG_MT_FFMPEG_VER_422),y)
+CFG_FFMPEG_VER_NUM=422
+endif
+
+
+ifeq ($(KERNELRELEASE),)
+
+
+
+THREAD_NUM ?= 4
+j ?= ${THREAD_NUM}
+
+
+
+out_objs=$(addprefix ${SDK_DIR}/$(MT_OUTPUT)/$(subst ${SDK_DIR}/,,$(CURDIR))/,$(subst $(CURDIR)/,,$(1)))
+out_lib=$(addprefix ${SDK_DIR}/$(MT_OUTPUT)/$(subst ${SDK_DIR}/,,$(CURDIR))/,$(subst $(CURDIR)/,,$(1)))
+out_app=$(addprefix ${SDK_DIR}/$(MT_OUTPUT)/$(subst ${SDK_DIR}/,,$(CURDIR))/,$(subst $(CURDIR)/,,$(1)))
+
+STATIC_OBJ_DIR=static_objs
+SHARED_OBJ_DIR=shared_objs
+
+DIR_REAL=${SDK_DIR}/$(MT_OUTPUT)/$(subst ${SDK_DIR}/,,$(CURDIR))
+ifneq (${BR2_VERSION},)
+  KERNEL_OUTPUT=$(LINUX_DIR)
+  MT_KERNEL_OUTPUT_OPT :=
+else
+  KERNEL_OUTPUT=$(subst ${SDK_DIR},${SDK_DIR}/$(MT_OUTPUT),${MT_KERNEL_DIR})
+  MT_KERNEL_OUTPUT_OPT := O=$(KERNEL_OUTPUT)
+endif
+-include $(KERNEL_OUTPUT)/mt_kernel_version.mk
+#$(info MT_KERNEL_VERSION=$(MT_KERNEL_VERSION))
+CFG_MT_KERNEL_VERSION=${MT_KERNEL_VERSION}
+
+
+
+CURRENT_MAKEFILES=$(word 1,$(MAKEFILE_LIST))
+
+USR_FS_DIR=${SDK_DIR}/image/$(MFRS)/usrfs
+DATA_DIR=${SDK_DIR}/image/$(MFRS)/datafs
+TEEFS_DIR=${SDK_DIR}/image/$(MFRS)/teefs
+MONTAGE_TOOLS_DIR=${SDK_DIR}/tools/linux
+MKSQUASHFS=$(MONTAGE_TOOLS_DIR)/mksquashfs
+MKUBIFS=$(MONTAGE_TOOLS_DIR)/mkfs.ubifs
+MKUBIIMG=$(MONTAGE_TOOLS_DIR)/ubinize
+
+ifeq ($(CONFIG_MT_BACKTRACE),y)
+CFG_MT_BACKTRACE_ENABLE ?= y
+endif
+
+ifeq ($(CFG_MT_BACKTRACE_ENABLE),y)
+  CFG_MT_BACKTRACE = -rdynamic -funwind-tables -fno-omit-frame-pointer -fno-optimize-sibling-calls
+  ifeq ($(CONFIG_MT_ARCH_ARM),y)
+    ifeq ($(CONFIG_MT_ARM_MODE),y)
+      CFG_MT_BACKTRACE += -mapcs-frame
+    else
+      CFG_MT_BACKTRACE += -mtpcs-frame -mtpcs-leaf-frame
+    endif
+  else ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+    CFG_MT_BACKTRACE += -mno-omit-leaf-frame-pointer
+  endif
+else
+  CFG_MT_BACKTRACE = -fomit-frame-pointer
+  ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+    CFG_MT_BACKTRACE += -momit-leaf-frame-pointer
+  endif
+endif
+
+ifeq ($(CONFIG_MT_SSP_ALL),y)
+CFG_MT_SSP_ALL_ENABLE ?= y
+else ifeq ($(CONFIG_MT_SSP_STRONG),y)
+CFG_MT_SSP_STRONG_ENABLE ?= y
+else
+CFG_MT_SSP_NONE_ENABLE ?= y
+endif
+
+ifeq ($(CFG_MT_SSP_ALL_ENABLE),y)
+CFG_MT_SSP = -fstack-protector-all
+else ifeq ($(CFG_MT_SSP_STRONG_ENABLE),y)
+CFG_MT_SSP = -fstack-protector-strong
+else
+CFG_MT_SSP =
+endif
+
+ifeq ($(CONFIG_MT_SANITIZE),y)
+  CFG_MT_SANITIZE = -fsanitize=address -fsanitize-address-use-after-scope -fsanitize=undefined -fno-sanitize=alignment
+  CFG_MT_SANITIZE_LD_LIB = -lasan -lubsan
+  CFG_MT_SANITIZE_DIR = sanitize/generic/asan
+else ifeq ($(CONFIG_MT_SANITIZE_TAG),y)
+  CFG_MT_SANITIZE = -fsanitize=hwaddress -fsanitize-address-use-after-scope -fno-sanitize=alignment --param hwasan-instrument-allocas=0
+  CFG_MT_SANITIZE_LD_LIB = -lhwasan
+  CFG_MT_SANITIZE_DIR = sanitize/tagged/asan
+else ifeq ($(CONFIG_MT_SANITIZE_THREAD_RACE),y)
+  CFG_MT_SANITIZE = -fsanitize=thread
+  CFG_MT_SANITIZE_LD_LIB = -ltsan
+  CFG_MT_SANITIZE_DIR = sanitize/generic/tsan
+else
+  CFG_MT_SANITIZE =
+  CFG_MT_SANITIZE_LD_LIB =
+  CFG_MT_SANITIZE_DIR =
+endif
+
+CFG_MT_BASE_CFLAGS = -fno-common
+ifeq ($(CONFIG_MT_LONG_32),y)
+CFG_MT_BASE_CFLAGS += -D_FILE_OFFSET_BITS=64
+# -D_GNU_SOURCE will enable __USE_LARGEFILE64 __USE_LARGEFILE _LARGEFILE64_SOURCE _LARGEFILE_SOURCE _XOPEN_SOURCE=700
+endif
+CFG_MT_BASE_CFLAGS += -D_GNU_SOURCE -Wl,--build-id -Wl,-z,now -Wl,-z,relro
+
+ifeq ($(CONFIG_MT_SANITIZE_NONE),y)
+  ifeq ($(CONFIG_MT_OPTIMIZE_OS),y)
+    CFG_MT_BASE_CFLAGS += -ftree-vectorize -D_FORTIFY_SOURCE=2
+  else ifeq ($(CONFIG_MT_OPTIMIZE_O2),y)
+    CFG_MT_BASE_CFLAGS += -ftree-vectorize -D_FORTIFY_SOURCE=2
+  else
+    CFG_MT_BASE_CFLAGS += -fno-tree-vectorize -D_FORTIFY_SOURCE=0
+  endif
+else
+  CFG_MT_BASE_CFLAGS += -fno-tree-vectorize -D_FORTIFY_SOURCE=0
+endif
+CFG_MT_BASE_LDFLAGS = --build-id -z,relro -z,now
+
+ifeq ($(CONFIG_MT_ARCH_ARM),y)
+  CFG_MT_ARM_LDFLAGS =
+else ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+  CFG_MT_AARCH64_LDFLAGS = -Ttext-segment=0x100400000
+else ifeq ($(CONFIG_MT_ARCH_MIPS),y)
+  CFG_MT_MIPS_LDFLAGS =
+endif
+
+ifeq ($(CONFIG_MT_ARCH_MIPS),y)
+  UCLIBC =
+  ifeq ($(UCLIBC),uclibc)
+    MUCLIBC = -muclibc
+  endif
+  FLOAT = soft-float
+  ifeq ($(FLOAT),soft-float)
+    MFLOAT = -msoft-float
+  endif
+  ENDIAN = el
+  ifeq ($(ENDIAN),el)
+    EL = -EL
+  endif
+  LIBC_FLOAT_ENDIAN = $(UCLIBC)/$(FLOAT)/$(ENDIAN)
+else ifeq ($(CONFIG_MT_ARCH_ARM),y)
+  ARM_COMPILE_OPTION = -march=armv7ve -mtune=cortex-a7 -mabi=aapcs-linux -mfloat-abi=hard -mfpu=neon-vfpv4 -mthumb-interwork
+  ifeq ($(CONFIG_MT_ARM_MODE),y)
+    ARM_COMPILE_OPTION += -marm
+  else
+    ARM_COMPILE_OPTION += -mthumb
+  endif
+else ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+  AARCH64_COMPILE_OPTION = -march=armv8-a -mtune=cortex-a53 -mabi=lp64
+  AARCH64_COMPILE_OPTION += -mfix-cortex-a53-835769 -mfix-cortex-a53-843419
+#see ld --verbose, first line of SECTIONS is:
+#PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x400000)); . = SEGMENT_START("text-segment", 0x400000) + SIZEOF_HEADERS;
+#set the text-segment address can replace 0x400000, see SEGMENT_START in ld.pdf
+  AARCH64_COMPILE_OPTION += -Wl,-Ttext-segment=0x100400000
+endif
+
+# Note, Very Important:
+# -I use BUILDROOT_SYSROOT_USR_INC_DIR and BUILDROOT_SYSROOT_USR_INC_MT_DIR
+# -L use BUILDROOT_SYSROOT_USR_LIB_DIR and BUILDROOT_SYSROOT_USR_LIB_MT_DIR and BUILDROOT_SYSROOT_USR_STATIC_LIB_DIR and BUILDROOT_SYSROOT_USR_STATIC_LIB_MT_DIR
+# first -L must be -L$(TOOLCHAIN_SYSROOT)/usr/lib64 or set --sysroot=$(BUILDROOT_SYSROOT_DIR)
+# BUILDROOT_SYSROOT_XXX just for compile, not for run
+BUILDROOT_SYSROOT_USR_INC_DIR=$(BUILDROOT_SYSROOT_USR_DIR)/include
+BUILDROOT_SYSROOT_USR_LIB_DIR=$(BUILDROOT_SYSROOT_USR_DIR)/lib
+BUILDROOT_SYSROOT_USR_LIB_PKGCONFIG_DIR=$(BUILDROOT_SYSROOT_USR_DIR)/lib/pkgconfig
+BUILDROOT_SYSROOT_USR_INC_MT_DIR=$(BUILDROOT_SYSROOT_USR_DIR)/include/mt
+BUILDROOT_SYSROOT_USR_LIB_MT_DIR=$(BUILDROOT_SYSROOT_USR_DIR)/lib/mt
+BUILDROOT_SYSROOT_USR_STATIC_LIB_DIR=$(BUILDROOT_SYSROOT_USR_DIR)/static_lib
+BUILDROOT_SYSROOT_USR_STATIC_LIB_MT_DIR=$(BUILDROOT_SYSROOT_USR_DIR)/static_lib/mt
+BUILDROOT_SYSROOT_USR_BIN_MT_DIR=$(BUILDROOT_SYSROOT_USR_DIR)/bin/mt
+# BUILDROOT_TARGET_XXX just for run, not for compile
+BUILDROOT_TARGET_USR_INC_DIR=$(BUILDROOT_TARGET_USR_DIR)/include
+BUILDROOT_TARGET_USR_LIB_DIR=$(BUILDROOT_TARGET_USR_DIR)/lib
+BUILDROOT_TARGET_USR_INC_MT_DIR=$(BUILDROOT_TARGET_USR_DIR)/include/mt
+BUILDROOT_TARGET_USR_LIB_MT_DIR=$(BUILDROOT_TARGET_USR_DIR)/lib/mt
+BUILDROOT_TARGET_USR_BIN_MT_DIR=$(BUILDROOT_TARGET_USR_DIR)/bin/mt
+
+ifeq ($(CONFIG_MT_TEE_SUPPORT),y)
+  MT_RELEASE_TEE_DIR = _tee
+endif
+ifeq ($(CONFIG_MT_NOR_ENABLE),y)
+  MT_RELEASE_NOR_DIR = _nor
+endif
+ifeq ($(CONFIG_MT_GSTPLAYER_ENABLE),y)
+  MT_RELEASE_GST_DIR = _gst
+endif
+ifeq ($(CFG_MT_CHIP),$(filter $(CFG_MT_CHIP),symphony5 symphony6))
+  ifeq ($(CONFIG_MT_64BIT_MODE),y)
+    USER_MODE=64u
+  else
+    USER_MODE=32u
+  endif
+  ifeq ($(CONFIG_MT_64BIT_KMODE),y)
+    KERNEL_MODE=64k
+  else
+    KERNEL_MODE=32k
+  endif
+  MT_RELEASE_DIR = 512$(MT_RELEASE_TEE_DIR)$(MT_RELEASE_NOR_DIR)$(MT_RELEASE_GST_DIR)_$(USER_MODE)$(KERNEL_MODE)
+else
+  MT_RELEASE_DIR = $(CFG_MT_DDR_SIZE)$(MT_RELEASE_TEE_DIR)$(MT_RELEASE_NOR_DIR)$(MT_RELEASE_GST_DIR)
+endif
+
+ifeq ($(CFG_MT_BUILD_LOADER),y)
+  STATIC_LIB_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/loader/static_lib
+  SHARED_LIB_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/loader/shared_lib
+  INCLUDE_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/loader/inc
+  MODULE_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/loader/ko
+  BIN_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/loader/bin
+else
+  STATIC_LIB_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/general/static_lib
+  SHARED_LIB_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/general/shared_lib
+  INCLUDE_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/general/inc
+  MODULE_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/general/ko
+  BIN_RELEASE_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/general/bin
+endif
+FW_RELEASE_DIR = $(MODULE_RELEASE_DIR)/lib/firmware
+AV_RELEASE_BIN_DIR = ${SDK_DIR}/tools/prebuilts/$(CFG_MT_CHIP)/release/$(MT_RELEASE_DIR)/general/$(AV_BIN_DIR_NAME)
+
+ifeq (${DOING_MT_SDK_RELEASE},1)
+  STATIC_LIB_DIR = $(STATIC_LIB_RELEASE_DIR)
+  SHARED_LIB_DIR = $(SHARED_LIB_RELEASE_DIR)
+  INCLUDE_DIR = $(INCLUDE_RELEASE_DIR)
+  MODULE_DIR = $(MODULE_RELEASE_DIR)
+  BIN_DIR = $(BIN_RELEASE_DIR)
+  FW_DIR = $(FW_RELEASE_DIR)
+  AV_BIN_DIR = $(AV_RELEASE_BIN_DIR)
+else
+  ifeq ($(CFG_MT_BUILD_LOADER),y)
+    STATIC_LIB_DIR = ${SDK_DIR}/loader/pub/static_lib
+    SHARED_LIB_DIR = ${SDK_DIR}/loader/pub/shared_lib
+    INCLUDE_DIR = ${SDK_DIR}/loader/pub/inc
+    MODULE_DIR = ${SDK_DIR}/loader/pub/ko
+    BIN_DIR = ${SDK_DIR}/loader/pub/bin
+  else
+    STATIC_LIB_DIR = $(BUILDROOT_SYSROOT_USR_STATIC_LIB_MT_DIR)
+    SHARED_LIB_DIR = $(BUILDROOT_SYSROOT_USR_LIB_MT_DIR)
+    INCLUDE_DIR = $(BUILDROOT_SYSROOT_USR_INC_MT_DIR)
+    MODULE_DIR = $(BUILDROOT_TARGET_DIR)
+    BIN_DIR = $(BUILDROOT_SYSROOT_USR_BIN_MT_DIR)
+  endif
+  FW_DIR = $(MODULE_DIR)/lib/firmware
+  AV_BIN_DIR = $(BUILDROOT_SYSROOT_USR_BIN_MT_DIR)/$(AV_BIN_DIR_NAME)
+endif
+
+ifeq ($(CFG_MT_BUILD_LOADER),y)
+  SHARED_LIB_DIR_STRIPED = ${SDK_DIR}/loader/pub/shared_lib_striped
+  MODULE_DIR_STRIPED = ${SDK_DIR}/loader/pub/ko_striped
+  BIN_DIR_STRIPED = ${SDK_DIR}/loader/pub/bin_striped
+  MONTAGE_ROOTFS_STRIPED = ${SDK_DIR}/loader/pub/rootfs_striped
+  RESOURCE_DIR = ${SDK_DIR}/loader/pub/resource
+  DEBUG_INFO_DIR = ${SDK_DIR}/loader/pub/debuginfo
+else
+  SHARED_LIB_DIR_STRIPED = ${SDK_DIR}/pub/shared_lib_striped
+  MODULE_DIR_STRIPED = ${SDK_DIR}/pub/ko_striped
+  BIN_DIR_STRIPED = ${SDK_DIR}/pub/bin_striped
+  MONTAGE_ROOTFS_STRIPED = ${SDK_DIR}/pub/rootfs_striped
+  RESOURCE_DIR = ${SDK_DIR}/pub/resource
+  DEBUG_INFO_DIR = ${SDK_DIR}/pub/debuginfo
+endif
+
+ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+  TEE_COMPONENT_DIR ?= ${SDK_DIR}/tee/arm64
+  TEE_AUDIO_TA_DIR ?= ${SDK_DIR}/tee/arm64/audio_ta
+else
+  TEE_COMPONENT_DIR ?= ${SDK_DIR}/tee/arm32
+  TEE_AUDIO_TA_DIR ?= ${SDK_DIR}/tee/arm32/audio_ta
+endif
+TEE_ROOTFS_DIR ?= $(TEE_COMPONENT_DIR)/rootfs
+TEE_OPTEE_ARMTZ ?= $(TEE_COMPONENT_DIR)/usrfs/lib/optee_armtz
+TEE_USRFS_DIR ?= $(TEE_COMPONENT_DIR)/$(CFG_MT_SANITIZE_DIR)/usrfs
+TEE_LIB_DIR ?= $(TEE_USRFS_DIR)/lib
+
+#teeos bin always 64bit
+TEE_BIN_DIR ?= ${SDK_DIR}/tee/arm64/bin
+
+COMPONENT_BUILD_DIR = ${SDK_DIR}/$(MT_OUTPUT)/$(COMPONENT_NAME)
+EXTERNAL_BINARY_PREFIX_DIR = ${SDK_DIR}/external-binary/output/$(CFG_MT_SANITIZE_DIR)/$(CFG_MT_ARCH)_output
+EXTERNAL_BINARY_INC_DIR = $(EXTERNAL_BINARY_PREFIX_DIR)/include
+ifeq ($(CFG_MT_STATIC_LINK),y)
+  EXTERNAL_BINARY_LIB_DIR = $(EXTERNAL_BINARY_PREFIX_DIR)/../$(CFG_MT_ARCH)_output_static/lib
+else
+  EXTERNAL_BINARY_LIB_DIR = $(EXTERNAL_BINARY_PREFIX_DIR)/lib
+endif
+
+ifeq ($(CONFIG_MT_ARCH_ARM),y)
+  MONTAGE_ROOTFS_PATH=rootfs_arm
+else ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+  MONTAGE_ROOTFS_PATH=rootfs_aarch64
+else ifeq ($(CONFIG_MT_ARCH_MIPS),y)
+  ifneq ($(CFG_MT_DDR_SIZE),128)
+    MONTAGE_ROOTFS_PATH=rootfs_mips
+  else
+    MONTAGE_ROOTFS_PATH=rootfs_mips_128
+  endif
+endif
+
+ifneq ($(FIXED_SYSROOT_USR_LIB_PATH_USE_L),y)
+  FIXED_SYSROOT_USR_LIB_PATH = --sysroot=$(BUILDROOT_SYSROOT_DIR)
+endif
+
+ARCH=$(CFG_MT_ARCH)
+ifeq ($(CONFIG_MT_KERNEL_ARCH_ARM),y)
+  KERNEL_ARCH=$(ARCH)
+  HOST=arm-linux-gnueabihf
+  ifeq ($(CFG_MT_CHIP),aria)
+    TOOLCHAIN_PATH=/opt/gcc-linaro-arm-linux-gnueabihf/bin
+    TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/4.7.3
+  else ifeq ($(CFG_MT_CHIP),$(filter $(CFG_MT_CHIP),symphony4 symphony6))
+    TOOLCHAIN_PATH=/usr/local/linaro/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin
+    TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/8.3.0
+  endif
+  TOOLCHAIN_SYSROOT=$(TOOLCHAIN_PATH)/../$(HOST)/libc
+  ifeq ($(FIXED_SYSROOT_USR_LIB_PATH_USE_L),y)
+    ifeq ($(CFG_MT_CHIP),aria)
+      FIXED_SYSROOT_USR_LIB_PATH=-L$(TOOLCHAIN_SYSROOT)/usr/lib/$(HOST)
+    else
+      FIXED_SYSROOT_USR_LIB_PATH=-L$(TOOLCHAIN_SYSROOT)/usr/lib
+    endif
+  endif
+  TOOLCHAIN_SUPCXX=$(TOOLCHAIN_PATH)/../$(HOST)/lib
+  TOOLCHAIN_STDCXX=$(TOOLCHAIN_SUPCXX)
+  TOOLCHAIN_PATH_KERNEL=$(TOOLCHAIN_PATH)
+else ifeq ($(CONFIG_MT_KERNEL_ARCH_AARCH64),y)
+  KERNEL_ARCH=arm64
+  ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+    HOST=aarch64-none-linux-gnu
+    TOOLCHAIN_PATH=/usr/local/linaro/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/bin
+    TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/12.3.1
+    TOOLCHAIN_SYSROOT=$(TOOLCHAIN_PATH)/../$(HOST)/libc
+    ifeq ($(FIXED_SYSROOT_USR_LIB_PATH_USE_L),y)
+      FIXED_SYSROOT_USR_LIB_PATH=-L$(TOOLCHAIN_SYSROOT)/usr/lib64
+    endif
+    TOOLCHAIN_SUPCXX=$(TOOLCHAIN_PATH)/../$(HOST)/lib64
+    TOOLCHAIN_STDCXX=$(TOOLCHAIN_SUPCXX)
+  else
+    HOST=arm-linux-gnueabihf
+    TOOLCHAIN_PATH=/usr/local/linaro/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin
+    TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/8.3.0
+    TOOLCHAIN_SYSROOT=$(TOOLCHAIN_PATH)/../$(HOST)/libc
+    ifeq ($(FIXED_SYSROOT_USR_LIB_PATH_USE_L),y)
+      FIXED_SYSROOT_USR_LIB_PATH=-L$(TOOLCHAIN_SYSROOT)/usr/lib
+    endif
+    TOOLCHAIN_SUPCXX=$(TOOLCHAIN_PATH)/../$(HOST)/lib
+    TOOLCHAIN_STDCXX=$(TOOLCHAIN_SUPCXX)
+  endif
+  TOOLCHAIN_PATH_KERNEL=/usr/local/linaro/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/bin
+else ifeq ($(CONFIG_MT_KERNEL_ARCH_MIPS),y)
+  #MIPS_GCC_VERSION=4.3
+  #MIPS_GCC_VERSION=5.3
+  #MIPS_GCC_VERSION=6.3
+  #MIPS_GCC_VERSION=8.3
+  MIPS_GCC_VERSION=9.3
+  KERNEL_ARCH=$(ARCH)
+  ifeq ($(MIPS_GCC_VERSION),6.3)
+    HOST=mipsel-mt-linux-gnu
+    TOOLCHAIN_PATH=/usr/local/crosstool-ng/mipsel-mt-linux-gnu/bin
+    TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/6.3.0
+    TOOLCHAIN_SYSROOT=$(TOOLCHAIN_PATH)/../$(HOST)/libc
+    ifeq ($(FIXED_SYSROOT_USR_LIB_PATH_USE_L),y)
+      FIXED_SYSROOT_USR_LIB_PATH=-L$(TOOLCHAIN_SYSROOT)/usr/lib
+    endif
+    TOOLCHAIN_SUPCXX=$(TOOLCHAIN_SYSROOT)/lib
+    TOOLCHAIN_STDCXX=$(TOOLCHAIN_SYSROOT)/lib
+  else ifeq ($(MIPS_GCC_VERSION),8.3)
+    HOST=mipsel-linux-gnu
+    TOOLCHAIN_PATH=/usr/local/crosstool-ng/mipsel-linux-gnu/bin
+    TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/8.3.0
+    TOOLCHAIN_SYSROOT=$(TOOLCHAIN_PATH)/../$(HOST)/libc
+    ifeq ($(FIXED_SYSROOT_USR_LIB_PATH_USE_L),y)
+      FIXED_SYSROOT_USR_LIB_PATH=-L$(TOOLCHAIN_SYSROOT)/usr/lib
+    endif
+    TOOLCHAIN_SUPCXX=$(TOOLCHAIN_SYSROOT)/lib
+    TOOLCHAIN_STDCXX=$(TOOLCHAIN_SYSROOT)/lib
+  else ifeq ($(MIPS_GCC_VERSION),9.3)
+    HOST=mipsel-linux-gnu
+    TOOLCHAIN_PATH=/usr/local/crosstool-ng/gcc-9.3-glibc-2.28-mipsel-linux-gnu-rm2.0/bin
+    TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/9.3.0
+    TOOLCHAIN_SYSROOT=$(TOOLCHAIN_PATH)/../$(HOST)/libc
+    ifeq ($(FIXED_SYSROOT_USR_LIB_PATH_USE_L),y)
+      FIXED_SYSROOT_USR_LIB_PATH=-L$(TOOLCHAIN_SYSROOT)/usr/lib
+    endif
+    TOOLCHAIN_SUPCXX=$(TOOLCHAIN_SYSROOT)/lib
+    TOOLCHAIN_STDCXX=$(TOOLCHAIN_SYSROOT)/lib
+  else
+    HOST=mips-linux-gnu
+    ifeq ($(MIPS_GCC_VERSION),5.3)
+      TOOLCHAIN_PATH=/usr/local/codesourcery/mips-2016.05/bin
+      TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/5.3.0/$(LIBC_FLOAT_ENDIAN)
+    else
+      TOOLCHAIN_PATH=/usr/local/codesourcery/mips-4.3/bin
+      TOOLCHAIN_LIBGCC=$(TOOLCHAIN_PATH)/../lib/gcc/$(HOST)/4.3.3/$(LIBC_FLOAT_ENDIAN)
+    endif
+    TOOLCHAIN_SYSROOT=$(TOOLCHAIN_PATH)/../$(HOST)/libc/$(LIBC_FLOAT_ENDIAN)
+    ifeq ($(FIXED_SYSROOT_USR_LIB_PATH_USE_L),y)
+      FIXED_SYSROOT_USR_LIB_PATH=-L$(TOOLCHAIN_SYSROOT)/usr/lib
+    endif
+    TOOLCHAIN_SUPCXX=$(TOOLCHAIN_PATH)/../$(HOST)/lib/$(LIBC_FLOAT_ENDIAN)
+    TOOLCHAIN_STDCXX=$(TOOLCHAIN_SYSROOT)/usr/lib
+  endif
+  TOOLCHAIN_PATH_KERNEL=$(TOOLCHAIN_PATH)
+endif
+
+TOOLCHAIN_SANITIZE_PREINIT_O_PATH=$(TOOLCHAIN_SUPCXX)
+ifeq ($(CONFIG_MT_SANITIZE),y)
+  CFG_MT_SANITIZE_LD = $(CFG_MT_SANITIZE_LD_LIB) $(TOOLCHAIN_SANITIZE_PREINIT_O_PATH)/libasan_preinit.o
+else ifeq ($(CONFIG_MT_SANITIZE_TAG),y)
+  CFG_MT_SANITIZE_LD = $(CFG_MT_SANITIZE_LD_LIB)
+else ifeq ($(CONFIG_MT_SANITIZE_THREAD_RACE),y)
+  CFG_MT_SANITIZE_LD = $(CFG_MT_SANITIZE_LD_LIB) $(TOOLCHAIN_SANITIZE_PREINIT_O_PATH)/libtsan_preinit.o
+else
+  CFG_MT_SANITIZE_LD = $(CFG_MT_SANITIZE_LD_LIB)
+endif
+
+ifeq ($(CONFIG_MT_KERNEL_ARCH_ARM),y)
+  MT_CROSS_COMPILE = arm-linux-gnueabihf-
+  MT_CROSS_COMPILE_KERNEL = $(MT_CROSS_COMPILE)
+else ifeq ($(CONFIG_MT_KERNEL_ARCH_AARCH64),y)
+  ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+    MT_CROSS_COMPILE = aarch64-none-linux-gnu-
+  else
+    MT_CROSS_COMPILE = arm-linux-gnueabihf-
+  endif
+  MT_CROSS_COMPILE_KERNEL = aarch64-none-linux-gnu-
+else ifeq ($(CONFIG_MT_KERNEL_ARCH_MIPS),y)
+  ifeq ($(MIPS_GCC_VERSION),8.3)
+    MT_CROSS_COMPILE = mipsel-linux-gnu-
+  else ifeq ($(MIPS_GCC_VERSION),9.3)
+    MT_CROSS_COMPILE = mipsel-linux-gnu-
+  else
+    #4.3  5.3  6.3
+    MT_CROSS_COMPILE = mips-linux-gnu-
+  endif
+  MT_CROSS_COMPILE_KERNEL = $(MT_CROSS_COMPILE)
+endif
+
+CCACHE_CROSS_COMPILE=ccache $(TOOLCHAIN_PATH)/$(MT_CROSS_COMPILE)
+NONE_CCACHE_CROSS_COMPILE=$(TOOLCHAIN_PATH)/$(MT_CROSS_COMPILE)
+CCACHE_CROSS_COMPILE_KERNEL=ccache $(TOOLCHAIN_PATH_KERNEL)/$(MT_CROSS_COMPILE_KERNEL)
+NONE_CCACHE_CROSS_COMPILE_KERNEL=$(TOOLCHAIN_PATH_KERNEL)/$(MT_CROSS_COMPILE_KERNEL)
+ifeq ($(MT_USE_CCACHE),y)
+CONFIG_CROSS_COMPILE=$(CCACHE_CROSS_COMPILE)
+CONFIG_CROSS_COMPILE_KERNEL=$(CCACHE_CROSS_COMPILE_KERNEL)
+else
+CONFIG_CROSS_COMPILE=$(NONE_CCACHE_CROSS_COMPILE)
+CONFIG_CROSS_COMPILE_KERNEL=$(NONE_CCACHE_CROSS_COMPILE_KERNEL)
+endif
+
+AR := $(NONE_CCACHE_CROSS_COMPILE)ar
+AS := $(NONE_CCACHE_CROSS_COMPILE)as
+CPP := $(CONFIG_CROSS_COMPILE)cpp
+ifeq ($(CONFIG_MT_ARCH_ARM),y)
+  LD := $(NONE_CCACHE_CROSS_COMPILE)ld $(CFG_MT_SANITIZE_LD) $(CFG_MT_BASE_LDFLAGS) $(CFG_MT_ARM_LDFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CXX := $(CONFIG_CROSS_COMPILE)g++ $(ARM_COMPILE_OPTION) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_SANITIZE) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CC := $(CONFIG_CROSS_COMPILE)gcc $(ARM_COMPILE_OPTION) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_SANITIZE) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  LD_NOSAN := $(NONE_CCACHE_CROSS_COMPILE)ld $(CFG_MT_BASE_LDFLAGS) $(CFG_MT_ARM_LDFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CXX_NOSAN := $(CONFIG_CROSS_COMPILE)g++ $(ARM_COMPILE_OPTION) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CC_NOSAN := $(CONFIG_CROSS_COMPILE)gcc $(ARM_COMPILE_OPTION) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+else ifeq ($(CONFIG_MT_ARCH_AARCH64),y)
+  LD := $(NONE_CCACHE_CROSS_COMPILE)ld $(CFG_MT_SANITIZE_LD) $(CFG_MT_BASE_LDFLAGS) $(CFG_MT_AARCH64_LDFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CXX := $(CONFIG_CROSS_COMPILE)g++ $(AARCH64_COMPILE_OPTION) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_SANITIZE) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CC := $(CONFIG_CROSS_COMPILE)gcc $(AARCH64_COMPILE_OPTION) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_SANITIZE) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  LD_NOSAN := $(NONE_CCACHE_CROSS_COMPILE)ld $(CFG_MT_BASE_LDFLAGS) $(CFG_MT_AARCH64_LDFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CXX_NOSAN := $(CONFIG_CROSS_COMPILE)g++ $(AARCH64_COMPILE_OPTION) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CC_NOSAN := $(CONFIG_CROSS_COMPILE)gcc $(AARCH64_COMPILE_OPTION) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+else ifeq ($(CONFIG_MT_ARCH_MIPS),y)
+  #don't set the -msoft-float and -muclibc for ld
+  LD := $(NONE_CCACHE_CROSS_COMPILE)ld $(EL) $(CFG_MT_SANITIZE_LD) $(CFG_MT_BASE_LDFLAGS) $(CFG_MT_MIPS_LDFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CXX := $(CONFIG_CROSS_COMPILE)g++ $(EL) $(MUCLIBC) $(MFLOAT) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_SANITIZE) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CC := $(CONFIG_CROSS_COMPILE)gcc $(EL) $(MUCLIBC) $(MFLOAT) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_SANITIZE) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  LD_NOSAN := $(NONE_CCACHE_CROSS_COMPILE)ld $(EL) $(CFG_MT_BASE_LDFLAGS) $(CFG_MT_MIPS_LDFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CXX_NOSAN := $(CONFIG_CROSS_COMPILE)g++ $(EL) $(MUCLIBC) $(MFLOAT) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+  CC_NOSAN := $(CONFIG_CROSS_COMPILE)gcc $(EL) $(MUCLIBC) $(MFLOAT) $(CFG_MT_BACKTRACE) $(CFG_MT_SSP) $(CFG_MT_BASE_CFLAGS) $(FIXED_SYSROOT_USR_LIB_PATH)
+endif
+RANLIB := $(NONE_CCACHE_CROSS_COMPILE)ranlib
+NM := $(NONE_CCACHE_CROSS_COMPILE)nm
+STRIP := $(NONE_CCACHE_CROSS_COMPILE)strip
+STRIP_KERNEL := $(NONE_CCACHE_CROSS_COMPILE_KERNEL)strip
+OBJCOPY := $(NONE_CCACHE_CROSS_COMPILE)objcopy
+READELF := $(NONE_CCACHE_CROSS_COMPILE)readelf
+OBJDUMP := $(NONE_CCACHE_CROSS_COMPILE)objdump
+CFG_MT_BASE_ENV = "AR AS LD CPP CC RANLIB NM STRIP OBJCOPY OBJDUMP"
+
+CFG_MT_LINK_BY_GXX ?= y
+ifeq ($(CFG_MT_LINK_BY_GXX),y)
+  LINKER := $(CXX)
+else
+  LINKER := $(CC)
+endif
+
+
+
+endif #KERNELRELEASE
+
+
+
+ifeq ($(CFG_MT_BUILD_LOADER),y)
+override KERNEL_DEFCONFIG=$(CONFIG_MT_KERNEL_LOADER_DEFCONFIG:"%"=%)
+else
+override KERNEL_DEFCONFIG=$(CONFIG_MT_KERNEL_DEFCONFIG:"%"=%)
+endif
+
+ifeq (${SDK_DIR}/product/configs/kernel_configs/$(KERNEL_DEFCONFIG),$(wildcard ${SDK_DIR}/product/configs/kernel_configs/$(KERNEL_DEFCONFIG)))
+  KERNEL_DEFCONFIG_PATH = ${SDK_DIR}/product/configs/kernel_configs
+else ifeq ($(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG),$(wildcard $(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG)))
+  KERNEL_DEFCONFIG_PATH = $(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/configs
+endif

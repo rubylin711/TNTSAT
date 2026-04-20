@@ -1,0 +1,17 @@
+how to modify architecture compile option for individual makefile or script
+
+note: -mthumb must be followed a space to distinguish with -mthumb-interwork
+
+modify CC in Makefile
+env.mk
+CC := arm-linux-gnueabihf-gcc -march=armv7-a -mtune=cortex-a7 -mabi=aapcs-linux -mfloat-abi=hard -mfpu=neon-vfpv4 -mthumb -mthumb-interwork
+some specific Makefile
+CC := $(subst -mthumb ,,$(CC))
+
+modify CC in shell script
+export CC="arm-linux-gnueabihf-gcc -march=armv7-a -mtune=cortex-a7 -mabi=aapcs-linux -mfloat-abi=hard -mfpu=neon-vfpv4 -mthumb -mthumb-interwork"
+CC_BAK=${CC}
+CCC="`echo ${CC/-mthumb /}`"
+CC=${CCC}
+........
+CC=${CC_BAK}

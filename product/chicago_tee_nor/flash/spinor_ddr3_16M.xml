@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<Partition_Info>
+<FlashBinLen len="16.0M"/>
+<FlashBin outputname="./flash_ddr3_16M_spinor.bin"/>
+<Part Sel="1" PartitionName="boot" FlashType="spinor" FileSystem="none" Start="0.0" Length="1.5M" SelectFile="./CHIP_OF/OTP_FTA_TEE/symphony6_pkg_ddr3_1866_2DCDCxHz_spi_nor_tee_all.img"/>
+<Part Sel="1" PartitionName="bootenv" FlashType="spinor" FileSystem="none" Start="1.5M" Length="64.0K" SelectFile="./bootargs/uboot_symphony_demo_16.scr"/>
+<Part Sel="0" PartitionName="teeos" FlashType="spinor" FileSystem="none" Start="1600.0K" Length="640.0K" SelectFile="./teeos.bin"/>
+<Part Sel="0" PartitionName="teedtb" FlashType="spinor" FileSystem="none" Start="2240.0K" Length="64.0K" SelectFile="./tee.dtb.bin"/>
+<Part Sel="0" PartitionName="dtb" FlashType="spinor" FileSystem="none" Start="2304.0K" Length="64.0K" SelectFile="./symphony6-rawnand-gmac.dtb"/>
+<Part Sel="1" PartitionName="kernel" FlashType="spinor" FileSystem="none" Start="2368.0K" Length="4608.0K" SelectFile="./uImage"/>
+<Part Sel="0" PartitionName="rootfs" FlashType="spinor" FileSystem="squashfs" Start="6976.0K" Length="4352.0K" SelectFile="./rootfs.squashfs"/>
+<Part Sel="0" PartitionName="usrfs" FlashType="spinor" FileSystem="squashfs" Start="11328.0K" Length="4672.0K" SelectFile="./usrfs.bin"/>
+<Part Sel="0" PartitionName="datafs" FlashType="spinor" FileSystem="jffs2" Start="16000.0K" Length="384.0K" SelectFile="./datafs.jffs2"/>
+<!--- <Part Sel="1" PartitionName="logo" FlashType="spinor" FileSystem="none" Start="16256.0K" Length="128.0K" SelectFile="./logo.jpg"/> -->
+</Partition_Info>

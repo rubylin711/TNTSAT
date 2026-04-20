@@ -1,0 +1,159 @@
+ifneq ($(HEADER_FILES),)
+ifeq ($(INCLUDE_PARENT_DIR),y)
+HEADER_FILES:=$(subst $(CURDIR)/,,$(HEADER_FILES))
+endif
+endif
+
+OBJS_REAL = $(call out_objs,$(OBJS))
+OBJS_REAL_STATIC = $(foreach x,$(OBJS_REAL),$(subst $(DIR_REAL),$(DIR_REAL)/$(STATIC_OBJ_DIR),$(x)))
+APP_REAL = $(call out_app,$(APP))
+DEPENDS_STATIC = $(OBJS_REAL_STATIC:.o=.d)
+
+ifeq ($(FORCE_CFLAGS),)
+CFLAGS = $(CFG_MT_CFLAGS) $(EXTRA_CFLAGS) $(INCLUDE_PATH)
+else
+CFLAGS = $(FORCE_CFLAGS) $(EXTRA_CFLAGS) $(INCLUDE_PATH)
+endif
+CXXFLAGS += $(CFLAGS)
+
+DEPEND_LIBS_PATH_ALL = $(DEPEND_LIBS_PATH)
+
+ifeq ($(CONFIG_MT_INSTRUMENT_FUNCTIONS),y)
+DEPEND_LIBS += -linstrument_function-mt
+endif
+
+ifeq ($(CONFIG_MT_INSTALL_GPERFTOOLS),y)
+ifneq ($(CONFIG_MT_GPERFTOOLS_HEAP_PROF),y)
+DEPEND_LIBS += -lprofiler -lunwind
+endif
+DEPEND_LIBS_PATH_ALL += -L$(BUILDROOT_SYSROOT_USR_LIB_DIR)
+endif
+
+DEPEND_LIBS += -lc-mt -lpthread
+
+#not allow use -static in EXTRA_LDFLAGS DEPEND_LIBS_PATH_ALL DEPEND_LIBS
+LDFLAGS = $(subst -static,,$(EXTRA_LDFLAGS))
+LDFLAGS += $(subst -static,,$(MT_APP_LDFLAGS))
+LDFLAGS += $(subst -static,,$(DEPEND_LIBS_PATH_ALL))
+
+ifneq ($(DEPEND_LIBS),)
+LDFLAGS += -Wl,--start-group $(subst -static,,$(DEPEND_LIBS)) -Wl,--end-group
+endif
+
+ifeq ($(CFG_LIBC_STATIC_LINK),y)
+LDFLAGS += -static
+endif
+
+DEPEND_LIBS_FULL_PATH := $(foreach x,$(DEPEND_LIBS_PATH_ALL),$(foreach y,$(DEPEND_LIBS),$(wildcard $(patsubst -L%,%,$(x))/$(patsubst -l%,lib%,$(y)).a)))
+
+.PHONY: all clean install uninstall distclean prepare all_objs_phony build_app
+
+all: prepare
+	$(AT)$(MAKE) -f $(CURRENT_MAKEFILES) -r build_app
+	$(AT)$(MAKE) -f $(CURRENT_MAKEFILES) -r install
+
+build_app: $(APP_REAL)
+
+$(APP_REAL): $(OBJS_REAL_STATIC) $(DEPEND_LIBS_FULL_PATH)
+	$(LINKER) -o $@ $(OBJS_REAL_STATIC) $(LDFLAGS)
+#$(AT)echo ""
+#$(AT)echo "	DEPEND_LIBS_FULL_PATH = $(DEPEND_LIBS_FULL_PATH)"
+#$(AT)echo ""
+
+clean:
+	$(AT)rm -rf $(DIR_REAL)
+ifneq ($(CLEAN_EXTRA),)
+	$(AT)rm -f $(CLEAN_EXTRA)
+endif
+
+distclean:
+
+install:
+ifneq ($(HEADER_FILES),)
+	$(AT)mkdir -p ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR)
+  ifeq ($(INCLUDE_PARENT_DIR),y)
+	cp -arf --parents $(HEADER_FILES) ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR)
+  else
+	cp -arf $(HEADER_FILES) ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR)
+  endif
+endif
+	$(AT)mkdir -p $(BIN_DIR)
+	cp -af $(APP_REAL) $(BIN_DIR)
+ifneq ($(INSTALL_EXTRA_SCRIPT),)
+	cp -af $(INSTALL_EXTRA_SCRIPT) $(BIN_DIR)
+endif
+ifneq ($(INSTALL_EXTRA_RESOURCE),)
+	mkdir -p ${RESOURCE_DIR}
+	cp -af $(INSTALL_EXTRA_RESOURCE) $(RESOURCE_DIR)
+endif
+
+uninstall:
+	$(AT)rm -f $(BIN_DIR)/$(APP)
+ifneq ($(HEADER_FILES),)
+  ifeq ($(INCLUDE_PARENT_DIR),y)
+	$(foreach file, $(HEADER_FILES), $(AT)rm -rf $(INCLUDE_DIR)/$(HEADER_FILES_INSTALL_SUBDIR)/$(file))
+  else
+	$(foreach file, $(HEADER_FILES), $(AT)rm -rf $(INCLUDE_DIR)/$(HEADER_FILES_INSTALL_SUBDIR)/$(notdir $(file)))
+  endif
+  ifneq ($(HEADER_FILES_INSTALL_SUBDIR),)
+	$(AT)if [ "`find ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR) -type f`" = "" -a "`find ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR) -type l`" = "" ]; then \
+		rm -rf ${INCLUDE_DIR}/$(HEADER_FILES_INSTALL_SUBDIR); \
+	fi
+  endif
+endif
+ifneq ($(INSTALL_EXTRA_SCRIPT),)
+	$(AT)$(foreach install_extra, $(notdir $(INSTALL_EXTRA_SCRIPT)), rm -f $(BIN_DIR)/$(install_extra))
+endif
+ifneq ($(INSTALL_EXTRA_RESOURCE),)
+	$(AT)$(foreach install_extra, $(notdir $(INSTALL_EXTRA_RESOURCE)), rm -f $(RESOURCE_DIR)/$(install_extra))
+endif
+
+all_objs_phony:
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.c
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CC) $(CFLAGS) $(MT_APP_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.cpp
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_APP_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.cxx
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_APP_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.cc
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CXX) $(CXXFLAGS) $(MT_APP_CFLAGS) -c -o $@ $<
+
+$(DIR_REAL)/$(STATIC_OBJ_DIR)/%.o: %.S
+	$(AT)rm -f $@
+	$(AT)mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -M $< > $(@:.o=.tmp)
+	$(AT)sed 's|.*\.o\:|$@\:|g' < $(@:.o=.tmp) > $(@:.o=.d)
+	$(AT)rm -f $(@:.o=.tmp)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),uninstall)
+ifneq ($(MAKECMDGOALS),distclean)
+sinclude $(DEPENDS_STATIC)
+endif
+endif
+endif

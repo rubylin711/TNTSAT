@@ -1,0 +1,1039 @@
+mainmenu "montage product configuration: $(MFRS_CFG)"
+
+
+
+config MT_MONTAGE_PLATFORM
+	bool
+	default y
+	help
+	  new repository --- Lznux, not sdk_release/sdk2.0_release
+
+choice
+	prompt "chip"
+	default MT_CHIP_SYMPHONY1
+
+config MT_CHIP_SYMPHONY1
+	bool "symphony1"
+	select MT_KERNEL_ARCH_MIPS
+
+config MT_CHIP_SYMPHONY2
+	bool "symphony2"
+	select MT_KERNEL_ARCH_MIPS
+
+config MT_CHIP_SYMPHONY4
+	bool "symphony4"
+	select MT_KERNEL_ARCH_ARM
+
+config MT_CHIP_SYMPHONY6
+	bool "symphony6"
+	select MT_KERNEL_ARCH_AARCH64 if MT_64BIT_KMODE
+	select MT_KERNEL_ARCH_ARM if MT_32BIT_KMODE
+	select MT_PHYS_RANGE_BEYOND_4G
+
+config MT_CHIP_ARIA
+	bool "aria"
+	select MT_KERNEL_ARCH_ARM
+
+endchoice
+
+
+config MT_FPGA
+	bool "fpga"
+	default n
+	help
+	  fpga platform
+	  kernel/user space all have this option, you must keep it with the same
+
+config MT_FPGA_GPE
+	bool "fpga gpe test case env"
+	default n
+	help
+	  fpga /chip platform
+	  kernel/user space all have this option, you must keep it with the same	  
+
+config MT_EMU_FPGA
+	bool "emulater fpga"
+	default n
+	help
+	  fpga platform
+	  kernel/user space all have this option, you must keep it with the same
+
+config MT_ARCH_MIPS
+	bool
+	select MT_LONG_32
+
+config MT_ARCH_ARM
+	bool
+	select MT_LONG_32
+
+choice
+	prompt "arm/thumb mode userspace"
+	depends on MT_ARCH_ARM
+	default MT_ARM_MODE
+
+config MT_ARM_MODE
+	bool "arm"
+
+config MT_THUMB_MODE
+	bool "thumb"
+
+endchoice
+
+config MT_ARCH_AARCH64
+	bool
+	select MT_LONG_64
+
+choice
+	prompt "32/64 bit user space"
+	depends on MT_CHIP_SYMPHONY6
+
+config MT_32BIT_MODE
+	bool "32 bit user space"
+	select MT_ARCH_ARM if MT_CHIP_SYMPHONY6
+
+config MT_64BIT_MODE
+	bool "64 bit user space"
+	depends on MT_64BIT_KMODE
+	select MT_ARCH_AARCH64 if MT_CHIP_SYMPHONY6
+
+endchoice
+
+choice
+	prompt "32/64 bit kernel space"
+	depends on MT_CHIP_SYMPHONY6
+
+config MT_32BIT_KMODE
+	bool "32 bit kernel space"
+
+config MT_64BIT_KMODE
+	bool "64 bit kernel space"
+
+endchoice
+
+config MT_LONG_32
+	bool
+
+config MT_LONG_64
+	bool
+
+config MT_PHYS_RANGE_BEYOND_4G
+	bool
+
+config MT_KERNEL_ARCH_MIPS
+	bool
+	select MT_ARCH_MIPS
+
+config MT_KERNEL_ARCH_ARM
+	bool
+	select MT_ARCH_ARM
+
+config MT_KERNEL_ARCH_AARCH64
+	bool
+
+
+config MT_MFRS
+	string "product"
+	default "boston"
+	help
+	  chose product
+
+config MT_PRODUCT_LOADER
+	bool "product loader"
+	default n
+	depends on MT_CHIP_SYMPHONY6
+	help
+	  build loader product
+
+config MT_KERNEL_DEFCONFIG
+	string "kernel defconfig"
+	default "symphony1_dbg_defconfig"
+	help
+	  chose kernel defconfig
+
+
+config MT_KERNEL_LOADER_DEFCONFIG
+	string "loader kernel defconfig"
+	default "symphony1_loader_defconfig"
+	help
+	  chose loader kernel defconfig
+
+
+choice
+	prompt "buildroot or yocto"
+	default MT_BUILDROOT
+	help
+	  compile 3rd lib with which build system
+
+config MT_BUILDROOT
+	bool "buildroot"
+
+config MT_YOCTO
+	bool "yocto"
+
+endchoice
+
+config MT_BUILDROOT_DEFCONFIG
+	string "buildroot defconfig"
+	default "symphony6_defconfig"
+	depends on MT_BUILDROOT
+	help
+	  chose buildroot defconfig
+
+config MT_YOCTO_DEFCONFIG
+	string "yocto defconfig"
+	default "symphony6_defconfig"
+	depends on MT_YOCTO
+	help
+	  chose yocto defconfig
+
+
+choice
+	prompt "ddr size"
+	default MT_DDR_SIZE_256
+
+config MT_DDR_SIZE_4096
+	bool "4096"
+	depends on MT_CHIP_SYMPHONY6
+
+config MT_DDR_SIZE_2048
+	bool "2048"
+	depends on MT_CHIP_SYMPHONY6
+
+config MT_DDR_SIZE_1024
+	bool "1024"
+	depends on (MT_CHIP_ARIA || MT_CHIP_SYMPHONY6)
+
+config MT_DDR_SIZE_512
+	bool "512"
+
+config MT_DDR_SIZE_256
+	bool "256"
+
+config MT_DDR_SIZE_128
+	bool "128"
+
+endchoice
+
+
+choice
+	prompt "optimze gcc option"
+	default MT_OPTIMIZE_O2
+
+config MT_OPTIMIZE_OS
+	bool "-Os"
+
+config MT_OPTIMIZE_O2
+	bool "-O2"
+
+config MT_OPTIMIZE_O0
+	bool "-O0"
+
+endchoice
+
+
+choice
+	prompt "stack protector mode"
+	default MT_SSP_STRONG
+
+config MT_SSP_ALL
+	bool "-fstack-protector-all"
+
+config MT_SSP_STRONG
+	bool "-fstack-protector-strong"
+
+config MT_SSP_NONE
+	bool "none"
+
+endchoice
+
+
+config MT_STATIC_LINK
+	bool "link static lib"
+	default n
+	help
+	  all montage lib and 3rd lib link with static, not include c lib
+	  c lib always use dynamic
+
+
+config MT_WDG_SUPPORT
+	bool "watchdog"
+	default n
+	help
+	  support watchdog
+
+
+config MT_MTEST
+	bool "memory test"
+	default n
+	help
+	  memory test
+
+
+config MT_PROC_SUPPORT
+	bool "proc for msp drvier"
+	default y
+	help
+	  support proc for msp drvier
+
+
+menuconfig MT_WIFI_SUPPORT
+	bool "wifi"
+	default y
+	help
+	  support montage wifi
+
+if MT_WIFI_SUPPORT
+
+config MT_WIFI_DEVICE_MT7601U
+	bool "wifi mt76001u"
+	default y
+	help
+	  wifi mt7601u
+
+config MT_WIFI_DEVICE_RTL8188EUS
+	bool "wifi rtl8188eus"
+	default y
+	help
+	  wifi rtl8188eus
+
+config MT_WIFI_DEVICE_RTL8188FTV
+	bool "wifi rtl8188ftv"
+	default y
+	help
+	  wifi rtl8188ftv
+
+config MT_WIFI_DEVICE_RTL8192FU
+	bool "wifi rtl8192fu"
+	default y
+	help
+	  wifi rtl8192fu
+
+config MT_WIFI_DEVICE_RTL8723BU
+	bool "wifi rtl8723bu"
+	default n
+	help
+	  wifi rtl8723bu
+
+config MT_WIFI_DEVICE_RTL88X2CS
+	bool "sdio wifi rtl88x2cs"
+	default n
+	help
+	  wifi rtl88x2cs
+
+config MT_WIFI_DEVICE_ATBM6032
+	bool "wifi atbm6032/6032x/6132"
+	default n
+	help
+	  wifi atbm wifis
+
+config MT_WIFI_DEVICE_RTL8723DS
+	bool "sdio wifi rtl8723ds"
+	default n
+	help
+	  wifi rtl8723ds
+
+config MT_WIFI_DEVICE_RTL8821CU
+	bool "wifi rtl8821cu"
+	default n
+	help
+	  wifi rtl8821cu
+
+config MT_WIFI_DEVICE_RTL88X2CU
+	bool "wifi rtl88x2cu"
+	default n
+	help
+	  wifi rtl88x2cu
+
+config MT_WIFI_DEVICE_AIC8800
+	bool "wifi aic8800 serial"
+	default n
+	help
+	  wifi aic8800
+
+config MT_WIFI_MODE_STA
+	bool "wifi mode sta"
+	default y
+	help
+	  wifi mode sta
+
+config MT_WIFI_MODE_AP
+	bool "wifi mode ap"
+	default y
+	help
+	  wifi mode ap
+
+endif #MT_WIFI_SUPPORT
+
+config MT_VLAN_SUPPORT
+	bool "vlan"
+	default n
+	help
+	  vlan support
+
+config MT_EXT_VVID_SUPPORT
+	bool "audio vvid"
+	default n
+	help
+	  support ext audio vvid
+
+config MT_MIRACAST_SUPPORT
+	bool "miracast"
+	depends on MT_WIFI_SUPPORT
+	default n
+	help
+	  support montage miracast
+
+config MT_USB3G_SUPPORT
+	bool "usb 3g"
+	default n
+	help
+	  support usb 3g
+
+config MT_VPN_SUPPORT
+	bool "VPN Support"
+	default n
+	help
+	  Enable Montage VPN suite
+
+if MT_VPN_SUPPORT
+
+menu "VPN Configuration"
+
+choice
+	prompt "Select VPN Type"
+	help
+	  Choose which VPN protocol to use
+
+config MT_VPN_SUPPORT_L2TP
+	bool "L2TP VPN"
+	help
+	  Support L2TP VPN protocol
+
+config MT_VPN_SUPPORT_OPENVPN
+	bool "OpenVPN"
+	help
+	  Support OpenVPN protocol
+
+config MT_VPN_SUPPORT_IKEV2
+	bool "IKEv2/IPsec VPN"
+	help
+	  Support IKEv2/IPsec VPN protocol (not supported yet)
+
+endchoice
+
+config MT_VPN_IPSEC_ENABLE
+	bool "Enable IPsec encryption (for L2TP only)"
+	depends on MT_VPN_SUPPORT_L2TP || MT_VPN_SUPPORT_IKEV2
+	default y if MT_VPN_SUPPORT_IKEV2
+	default n
+	help
+	  Enable IPsec encryption for L2TP VPN.
+	  Automatically enabled for IKEv2 VPN.
+
+config MT_VPN_SUPPORT_IPV6
+	bool "Enable IPv6 VPN support"
+	depends on MT_VPN_SUPPORT_L2TP || MT_VPN_SUPPORT_IKEV2
+	default n
+	help
+	  Add IPv6 support for VPN connections.
+
+endmenu
+
+endif # MT_VPN_SUPPORT
+
+config MT_SUPLAYER_SUPPORT
+	bool "old file player"
+	default y
+	help
+	  support old file player
+
+
+config MT_GSTPLAYER_ENABLE
+	bool "new gstreamer player"
+	default n
+	help
+	  support new gstreamer player
+
+
+config MT_GST_SUPLAYER_SUPPORT
+	bool "legcy gstreamer player"
+	default y
+	help
+	  support legcy gstreamer player
+
+
+config MT_ENABLE_GST_DASH_DEMUX
+	bool "legcy gstreamer dash demux"
+	default y
+	help
+	  enable legcy gstreamer dash demux
+
+
+config MT_ENABLE_MSS_PLAYER
+	bool "mss player"
+	default n
+	help
+	  enable mss player
+
+
+config MT_PVR_SUPPORT
+	bool "pvr"
+	default y
+	help
+	  support montage pvr
+
+config MT_PVR_DIO_SUPPORT
+	bool "pvr dio mode"
+	depends on MT_PVR_SUPPORT
+	default y
+	help
+	  pvr write file with dio mode
+
+
+config MT_SAMEPIDMULTICHANNEL
+	bool "same pid multi channel"
+	default n
+	help
+	  more than one channel be set the same pid
+
+
+config MT_AUDIO_AD
+	bool "AD"
+	default y
+	help
+	  audio descrip
+
+
+config MT_CIPHER_SUPPORT
+	bool "cipher"
+	default n
+	help
+	  support montage cipher
+
+config MT_PVR_CIPHER_SUPPORT
+	bool "pvr cipher"
+	depends on (MT_CIPHER_SUPPORT && MT_PVR_SUPPORT)
+	default y
+	help
+	  pvr cipher
+
+config MT_HDCPKEY_ENC_SUPPORT
+	bool "hdcp key enc"
+	depends on MT_CIPHER_SUPPORT
+	default y
+	help
+	  support hdcp key enc
+
+
+config MT_FRONTEND_SUPPORT
+	bool "frontend"
+	default y
+	help
+	  support montage frontend
+
+
+config MT_DISEQC_SUPPORT
+	bool "diseqc"
+	default y
+	help
+	  support montage diseqc
+
+
+config MT_HIGH_PERF_AVPLAY
+	bool "high performance avplay (60 fps)"
+	default n
+	help
+	  high performance avplay for 60 fps
+
+config MT_HIGH_PERF_AVPLAY_PRIORITYSET_PAYLOAD
+	int "high performance avplay thread prio"
+	default 4
+	depends on (!MT_DONT_ALLOW_RT && MT_HIGH_PERF_AVPLAY)
+	help
+	  high performance avplay thread prio
+
+
+config MT_VDEC_HEVC
+	bool "support HEVC"
+	default y
+	help
+	  VDEC support HEVC
+
+config MT_VDEC_HEVC_10BIT
+	bool "support 10bit HEVC"
+	default y
+	depends on MT_VDEC_HEVC && (MT_CHIP_SYMPHONY2 || MT_CHIP_SYMPHONY4|| MT_CHIP_SYMPHONY6)
+	help
+	  VDEC support 10bit HEVC
+
+config MT_VDEC_VP9
+	bool "support VP9"
+	default y
+	depends on (MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6)
+	help
+	  VDEC support VP9
+
+config MT_VDEC_DVIEW
+	bool "support down scaler"
+	default n
+	depends on (MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6)
+	help
+	  VDEC support down scaler 
+
+config MT_VDEC_4K
+	bool "support 4k video"
+	default n
+	depends on (MT_CHIP_SYMPHONY6)
+	help
+	  VDEC support 4k video 
+
+config MT_VDEC_PIP_SUPPORT
+	bool "support video PiP"
+	default n
+	depends on (MT_CHIP_SYMPHONY6)
+	help
+	  VDEC support video PIP
+
+config MT_VDEC_4KPIP_SUPPORT
+	bool "support video 4KPiP "
+	default n
+	depends on (MT_VDEC_PIP_SUPPORT)
+	help
+	  VDEC support video 4KPIP
+
+config MT_VIDEO_LOSSY_COMPRESS
+	bool "support video lossy compress"
+	default n
+	depends on MT_CHIP_SYMPHONY2 || MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6
+	help
+	  Video support lossy compress
+
+config MT_VIDEO_LOSSY_QUALITY
+	int "video lossy compress quality level(0-2)"
+	default 0
+	depends on MT_VIDEO_LOSSY_COMPRESS
+	help
+	  Video lossy compress quality level, 0: best quality, 2: worst quality
+
+config MT_VIDEO_FLUENCY
+	int "video presentation fluency(0-3)"
+	default 1
+	help
+	  Video presentation fluency, 0: less fluently, 3: most fluently
+
+config MT_VIDEO_DYNAMIC_RESOLUTION
+	bool "support seamless DASH dynamic resolution change"
+	default n
+	help
+	  VDEC support seamless DASH dynamic resolution source change
+
+config MT_DISP_HD_DI
+	bool "support display HD DI"
+	default y
+	help
+	  Display support HD deinterleave
+
+
+config MT_FP_VMX_DECRYPTION
+	bool "support fileplay VMX decryption"
+	default n
+	help
+	  Fileplay support VMX decryption
+
+
+config MT_MTGO_JPEG_SUPPORT
+	bool "msp/jpeg for mtgo"
+	default y
+	help
+	  use msp/jpeg for mtgo use
+
+
+config MT_ZLIB_SUPPORT
+	bool "zlib"
+	default y
+	help
+	  support montage zlib
+
+
+config MT_CAPTION_CC_SUPPORT
+	bool "caption cc"
+	default y
+	help
+	  support montage caption cc
+
+
+config MT_FILEPLAY_NONETWORK
+	bool "fileplay without network"
+	default n
+	help
+	  fileplay without network
+
+
+config MT_LIBDOWNLOAD
+	bool "libdownload"
+	default n
+	depends on !MT_FILEPLAY_NONETWORK
+	help
+	  enable libdownload
+
+
+config MT_SMART_HTTP_PTOTOCOL
+	bool "smart http"
+	default y
+	depends on !MT_FILEPLAY_NONETWORK
+	help
+	  smart http
+
+
+config MT_DRM_SUPPORT
+	bool "drm playready - widevine - or others"
+	default y
+	depends on (!MT_STATIC_LINK && !MT_FILEPLAY_NONETWORK)
+	help
+	  drm support
+
+config MT_DRM_TEE_SUPPORT
+	bool "High-level DRM support"
+	default n
+	depends on MT_DRM_SUPPORT
+	help
+	  Highlevel DRM support
+
+
+config MT_ENABLE_OPEN_SSL
+	bool "open ssl"
+	default y
+	depends on !MT_FILEPLAY_NONETWORK
+	help
+	  enable open ssl for fileplay none network
+
+
+config MT_LXC_SUPPORT
+	bool "lxc"
+	default n
+	help
+	  support linux container
+
+config MT_TEE_SUPPORT
+	bool "tee"
+	default n
+	depends on (MT_CHIP_SYMPHONY4 || MT_CHIP_SYMPHONY6)
+	help
+	  support Montage-LZ TEE
+
+config TEE_XTEST
+	bool "optee xtest"
+	default n
+	depends on MT_TEE_SUPPORT
+	help
+	  optee xtest
+
+config MT_SECURE_MEDIA_PATH
+	bool "SMP"
+	default n
+	depends on MT_TEE_SUPPORT
+	help
+	  support secure media path
+
+config MT_FFMPEG_VER_422
+	bool "montage ffmpeg-4.2.2"
+	help
+	  montage ffmpeg-4.2.2
+
+config MT_OMX_IL
+	bool "openmax"
+	default n
+	help
+	  MT OpenMAX Integration Layer (IL) API version 1.2.0
+	  defines a standardized media component interface
+	  that enables developers to integrate and
+	  communicate with multimedia decoders implemented in hardware.
+	  It provides abstraction from the underlying hardware
+	  while offering efficient access to media processing capabilities.
+
+choice
+	prompt "strip"
+	default MT_STRIP_DEBUGINFO
+
+config MT_STRIP_DEBUGINFO
+	bool "strip debug info, keep symbol table"
+
+config MT_STRIP_ALL
+	bool "strip debug info and symbol talbe"
+
+config MT_STRIP_NONE
+	bool "keep debug info and symbol table"
+	help
+	  Say n.
+
+endchoice
+
+
+config MT_INSTALL_JEMALLOC
+	bool "jemalloc"
+	default y
+	depends on MT_SANITIZE_NONE
+	help
+	  jemalloc replace ptmalloc
+
+
+choice
+	prompt "sleep"
+	default MT_USE_MSLEEP
+
+config MT_USE_CLOCK_NANOSLEEP
+	bool "use clock_nanosleep(hrtimer, higher cpu utilization)"
+	help
+	  use clock_nanosleep
+
+config MT_USE_NANOSLEEP
+	bool "use nanosleep(hrtimer, high cpu utilization)"
+	help
+	  use nanosleep
+
+config MT_USE_MSLEEP
+	bool "use msleep(legacy_timer, recommend)"
+	help
+	  use msleep
+
+config MT_USE_USLEEP
+	bool "use usleep(obsolete)"
+	help
+	  use usleep
+
+endchoice
+
+
+choice
+	prompt "mtos task sched policy"
+	default MTOS_TASK_SCHED_RR
+
+config MTOS_TASK_SCHED_FIFO
+	bool "SCHED_FIFO"
+	help
+	  mtos task sched policy SCHED_FIFO
+
+config MTOS_TASK_SCHED_RR
+	bool "SCHED_RR"
+	help
+	  mtos task sched policy SCHED_RR
+
+config MTOS_TASK_SCHED_OTHER
+	bool "SCHED_OTHER"
+	help
+	  mtos task sched policy SCHED_OTHER
+
+endchoice
+
+
+choice
+	prompt "udev or mdev"
+	default MT_UDEV
+	help
+	  select udev or mdev
+
+config MT_UDEV
+	bool "udev"
+
+config MT_MDEV
+	bool "mdev"
+
+endchoice
+
+config MT_RAMDISK
+	bool "ramdisk"
+	default n
+	help
+	  use ramdisk mode,bootargs cfg ramdisk
+
+config MT_DIRECTFB
+	bool "directfb"
+	default n
+	help
+	  install directfb into flash bin
+
+config MT_LINUX_FUSION
+	bool "linux-fusion"
+	default n
+	help
+	  support linux-fusion
+
+config MT_MTD_UTILS
+	bool "mtd-utils"
+	default n
+	help
+	  replace the same commands of busybox with mtd-utils
+
+config MT_PYTHON
+	bool "python3"
+	default n
+	help
+	  install python3 into flash bin
+config MT_MALI_SUPPORT
+	bool "mali ddk support"
+	default n
+	help
+	  mali env support
+	  
+config MT_VDEC_LCEVC_SUPPORT
+	bool "vdec lecvc support"
+	default n
+	help
+	  vdec v-nova lecvc support
+
+menuconfig bluetooth
+	config MT_BLUETOOTH
+	bool "bluetooth support"
+	default n
+	help
+	  enable bluetooth support
+
+if MT_BLUETOOTH
+
+config MT_BLUEZ_SUPPORT
+	bool "enable bluez stack"
+	default n
+	help
+	  enable bluez stack
+
+config MT_BT_DEVICE_REALTEK
+	bool "enable realtek bt driver"
+	default y
+	help
+	  realtek bt chip driver,support rtl8761,rtl8723ds etc
+
+config MT_BT_DEVICE_AIC8800_USB
+	bool "aic8800 usb driver"
+	default y
+	help
+	  aic8800 usb dongle driver
+endif #MT_BLUETOOTH
+
+menu "debug support"
+
+choice
+	bool "sanitize"
+	default MT_SANITIZE_NONE
+
+config MT_SANITIZE
+	bool "generic mode asan"
+	select MT_BACKTRACE
+	select MT_INSTALL_GDBSERVER
+	help
+	  generic mode address sanitizer
+	  restrict
+	  1, sanitizer can't detect first global variable of evary c file for underflow
+	  https://github.com/google/sanitizers/issues/869
+	  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82501
+	  hope gcc 10.3 fix this bug
+	  2, sanitizer can't detect use after free while malloc again and
+	  the new area cover the the old, because gcc not use lift period for malloc
+
+config MT_SANITIZE_TAG
+	bool "tagged mode asan"
+	depends on MT_ARCH_AARCH64
+	select MT_BACKTRACE
+	select MT_INSTALL_GDBSERVER
+	help
+	  aarch64 software tagged mode address sanitizer
+
+config MT_SANITIZE_THREAD_RACE
+	bool "generic mode tsan"
+	depends on MT_ARCH_AARCH64
+	select MT_BACKTRACE
+	select MT_INSTALL_GDBSERVER
+	help
+	  generic mode thread race sanitizer
+
+config MT_SANITIZE_NONE
+	bool "disable sanitizer"
+
+endchoice
+
+comment "please make buildroot_menuconfig to set sanitize option, see tools/sanitizer/readme.txt"
+	depends on (MT_SANITIZE || MT_SANITIZE_TAG || MT_SANITIZE_THREAD_RACE)
+
+config MT_LOG
+	bool "save log into usb storage"
+	default y
+	help
+	  save log into usb storage
+
+config MT_DEBUG
+	bool "debug info"
+	default y
+	help
+	  debug info, -g for gcc
+
+config MT_INSTRUMENT_FUNCTIONS
+	bool "instrument functions"
+	default n
+	help
+	  use gcc option -finstrument-functions
+	  void __cyg_profile_func_enter(void *this_fn, void *call_site)
+	  and
+	  void __cyg_profile_func_exit(void *this_fn, void *call_site)
+	  will be called at function entry and return
+	  this_fn is callee, call_site is caller
+	  if you don't want to some functions be traced, you should use no_instrument_function while declare it
+
+config MT_BACKTRACE
+	bool "backtrace"
+	default y
+	help
+	  support backtrace api and related gcc option
+
+config MT_INSTALL_GDBSERVER
+	bool "install gdbserver into rootfs"
+	default n
+	help
+	  copy gdbserver into rootfs
+
+config MT_INSTALL_PERF
+	bool "install perf binary and library into rootfs"
+	default n
+	select MT_BACKTRACE
+	help
+	  performance analyze for kernel on mips or kernel+userspace on arm
+	  note you must re-compile all libs and apps
+
+config MT_INSTALL_GPERFTOOLS
+	bool "install gperftools binary and library into rootfs"
+	default n
+	depends on (!MT_INSTALL_JEMALLOC && MT_SANITIZE_NONE)
+	select MT_BACKTRACE
+	help
+	  performance analyze for userspace
+
+config MT_GPERFTOOLS_HEAP_PROF
+	bool "enable gperftools heap profile"
+	default n
+	depends on MT_INSTALL_GPERFTOOLS
+	help
+	  heap profile for userspace
+
+config MT_INSTALL_DEBUG_TOOLS_INTO_USB_STORAGE
+	bool "install gdbserver and perf and ftrace into usb storage"
+	default n
+	help
+	  install gdbserver and perf and ftrace into usb storage,
+	  but gperftools must be in rootfs
+	  copy the directory debug_tools_install_path into your usb disk
+
+config MT_FTRACE
+	bool "install ftrace tools into rootfs"
+	default n
+	select MT_INSTALL_PERF
+	help
+	  install ftrace script into rootfs,
+	  you should make kernel_menuconfig to enable ftrace,
+	  see tools/ftrace/readme.txt
+
+config MT_DEBUG_SLEEP
+	bool "debug sleep"
+	default n
+	help
+	  debug sleep
+
+endmenu
+

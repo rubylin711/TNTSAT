@@ -1,0 +1,109 @@
+#!/bin/bash
+
+unset SDK_DIR
+unset MFRS_CFG
+unset MT_USE_CCACHE
+unset THREAD_NUM
+unset FROM_MT_SDK
+unset MT_IP_ADDR
+unset JENKINS_COMPILE_CHECK
+
+SDK_DIR=`pwd`
+
+MT_CCACHE_ALL="ccache"
+MFRS_CFG_ALL=`ls ${SDK_DIR}/product/configs | grep ".*\.cfg"`
+
+MT_USE_CCACHE=n
+MFRS_CFG="symphony6.cfg"
+
+MT_IP_ADDR="`ifconfig | sed -n '2p' | sed -n 's#^.*dr:##gp' | awk '{print $1}'`"
+if [ "${MT_IP_ADDR}" = "" ]; then
+        MT_IP_ADDR="`ifconfig | sed -n '2p' | awk '{print $2}'`"
+fi
+
+JENKINS_COMPILE_CHECK_ALL="jenkins"
+
+MATCH=1
+while [ $# -ge 1 -a "${MATCH}" != 0 ]; do
+	MATCH=0
+	for x in ${MT_CCACHE_ALL}; do
+		if [ "$1" = "${x}" ]; then
+			MT_USE_CCACHE=y
+			MATCH=1
+		fi
+	done
+	for x in ${MFRS_CFG_ALL}; do
+		if [ "$1" = "${x}" ]; then
+			MFRS_CFG=$1
+			MATCH=2
+		fi
+	done
+	for x in ${JENKINS_COMPILE_CHECK_ALL}; do
+		if [ "$1" = "${x}" ]; then
+			JENKINS_COMPILE_CHECK=$1
+			MATCH=3
+		fi
+	done
+	if [ -n "`echo $1 | grep '^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$'`" ]; then
+		MT_IP_ADDR=$1
+		MATCH=4
+	fi
+
+	if [ "${MATCH}" != 0 ]; then
+		shift
+	else
+		echo -e "\033[31m parameter error! only support these: \033[0m"
+		echo -e "\033[32m ${MFRS_CFG_ALL} \033[0m"
+		echo -e "\033[32m ${MT_CCACHE_ALL} \033[0m"
+		echo -e "\033[32m ${MT_IP_ADDR} \033[0m, this is ip addr"
+	fi
+done
+
+if [ "${MATCH}" != "0" ]; then
+	export MFRS_CFG
+	export SDK_DIR
+
+	if [ "${MT_USE_CCACHE}" = "y" ]; then
+		ccache --version > /dev/null 2>&1
+		RESULT=$?
+		if [ "${RESULT}" = "0" ]; then
+			MT_USE_CCACHE=y
+		else
+			MT_USE_CCACHE=n
+		fi
+	fi
+	export MT_USE_CCACHE
+
+	export MT_IP_ADDR
+
+	export THREAD_NUM=`cat /proc/cpuinfo| grep processor | wc -l`
+	if [ "${THREAD_NUM}" -gt "32" ]; then
+		THREAD_NUM="32"
+	fi
+
+	if [ -z "${BR2_VERSION}" ]; then
+		export FROM_MT_SDK=1
+	fi
+
+	export JENKINS_COMPILE_CHECK
+
+	echo MFRS_CFG=${MFRS_CFG};
+	echo MT_USE_CCACHE=${MT_USE_CCACHE}
+	echo THREAD_NUM=${THREAD_NUM}
+	echo SDK_DIR=${SDK_DIR}
+	echo MT_IP_ADDR=${MT_IP_ADDR}
+	echo FROM_MT_SDK=${FROM_MT_SDK}
+	echo JENKINS_COMPILE_CHECK=${JENKINS_COMPILE_CHECK}
+else
+	unset SDK_DIR
+	unset MFRS_CFG
+	unset MT_USE_CCACHE
+	unset THREAD_NUM
+	unset FROM_MT_SDK
+	unset MT_IP_ADDR
+	unset JENKINS_COMPILE_CHECK
+fi
+
+
+
+alias mtenv='echo MFRS_CFG=${MFRS_CFG}; echo MT_USE_CCACHE=${MT_USE_CCACHE}; echo THREAD_NUM=${THREAD_NUM}; echo SDK_DIR=${SDK_DIR}; echo MT_IP_ADDR=${MT_IP_ADDR}; echo FROM_MT_SDK=${FROM_MT_SDK}; echo JENKINS_COMPILE_CHECK=${JENKINS_COMPILE_CHECK}'

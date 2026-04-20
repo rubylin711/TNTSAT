@@ -1,0 +1,848 @@
+include ${SDK_DIR}/build/script/base.mk
+
+
+
+.PHONY: all clean uninstall install  nagra_modules nagra_modules_install nagra_modules_uninstall nagra_modules_clean  \
+	wash \
+	initramfs \
+	kernel kernel_clean kernel_install kernel_uninstall \
+	uImage uImage_install uImage_uninstall \
+	buildroot_step0 buildroot_step1 buildroot_step2 buildroot_step999 buildroot_clean buildroot_install buildroot_uninstall buildroot_mclean buildroot_minstall buildroot_muninstall \
+	check_copy_buildroot_step0 check_copy_buildroot_step1 \
+	copy_lib_to_static rm_lib_from_static \
+	kware kware_clean kware_install kware_uninstall \
+	libc_mt libc_mt_clean libc_mt_install libc_mt_uninstall \
+	common common_clean common_install common_uninstall \
+	msp msp_clean msp_install msp_uninstall \
+	comp comp_clean comp_install comp_uninstall \
+	sample sample_clean sample_install sample_uninstall \
+	chip-verification chip-verification_clean chip-verification_install chip-verification_uninstall \
+	wb wb_clean wb_install wb_uninstall \
+	debug_tools debug_tools_clean debug_tools_install debug_tools_uninstall \
+	strip strip_uninstall \
+	flash flash_uninstall \
+	firmware firmware_encrypt firmware_clean firmware_install firmware_uninstall \
+	mboot mboot_clean mboot_install mboot_uninstall \
+	mall mclean muninstall minstall \
+	mverification \
+	pub_uninstall \
+	copy_released_files remove_released_files \
+	help \
+	menuconfig syncconfig menuconfig_clean kernel_menuconfig kernel_syncconfig kernel_tinyconfig buildroot_menuconfig \
+	menuconfig_all kernel_menuconfig_all \
+	create_config_header destroy_config_header \
+	pkg_la_path_release pkg_la_path_build
+
+all:
+	$(MAKE) -f $(CURRENT_MAKEFILES) mall
+ifneq ($(CONFIG_MT_PRODUCT_LOADER),y)
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r firmware
+endif
+endif
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r flash
+
+install:
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r minstall buildroot_install
+ifneq ($(CONFIG_MT_PRODUCT_LOADER),y)
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r firmware_install
+endif
+endif
+
+clean:
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r mclean buildroot_clean -j$(j)
+	$(AT)if [ -d ${SDK_DIR}/$(MT_OUTPUT) ]; then \
+		if [ "`find ${SDK_DIR}/$(MT_OUTPUT) -type f`" = "" -a "`find ${SDK_DIR}/$(MT_OUTPUT) -type l`" = "" ]; then \
+			rm -rf ${SDK_DIR}/$(MT_OUTPUT); \
+		fi; \
+	fi
+	$(AT)if [ -d ${SDK_DIR}/out ]; then \
+		if [ "`find ${SDK_DIR}/out -type f`" = "" -a "`find ${SDK_DIR}/out -type l`" = "" ]; then \
+			rm -rf ${SDK_DIR}/out; \
+		fi; \
+	fi
+ifneq ($(CONFIG_MT_PRODUCT_LOADER),y)
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r firmware_clean
+endif
+endif
+
+uninstall:
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r muninstall buildroot_uninstall flash_uninstall -j$(j)
+	$(AT)if [ "`find ${MODULE_DIR} -type f`" = "" -a "`find ${MODULE_DIR} -type l`" = "" ]; then \
+		rm -rf ${MODULE_DIR}; \
+	fi
+	$(AT)if [ "`find ${BIN_DIR} -type f`" = "" -a "`find ${BIN_DIR} -type l`" = "" ]; then \
+		rm -rf ${BIN_DIR}; \
+	fi
+	$(AT)if [ "`find ${RESOURCE_DIR} -type f`" = "" -a "`find ${RESOURCE_DIR} -type l`" = "" ]; then \
+		rm -rf ${RESOURCE_DIR}; \
+	fi
+	$(AT)if [ "`find ${INCLUDE_DIR} -type f`" = "" -a "`find ${INCLUDE_DIR} -type l`" = "" ]; then \
+		rm -rf ${INCLUDE_DIR}; \
+	fi
+	$(AT)if [ "`find ${STATIC_LIB_DIR} -type f`" = "" -a "`find ${STATIC_LIB_DIR} -type l`" = "" ]; then \
+		rm -rf ${STATIC_LIB_DIR}; \
+	fi
+	$(AT)if [ "`find ${SHARED_LIB_DIR} -type f`" = "" -a "`find ${SHARED_LIB_DIR} -type l`" = "" ]; then \
+		rm -rf ${SHARED_LIB_DIR}; \
+	fi
+	$(AT)if [ -d ${SDK_DIR}/pub ]; then \
+		if [ "`find ${SDK_DIR}/pub -type f`" = "" -a "`find ${SDK_DIR}/pub -type l`" = "" ]; then \
+			rm -rf ${SDK_DIR}/pub; \
+		fi; \
+	fi
+	$(AT)$(MAKE) -f $(CURRENT_MAKEFILES) -r pub_uninstall
+ifneq ($(CONFIG_MT_PRODUCT_LOADER),y)
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r firmware_uninstall
+endif
+endif
+
+pub_uninstall:
+
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+wash: mclean firmware_clean muninstall firmware_uninstall flash_uninstall
+else
+wash: mclean muninstall flash_uninstall
+endif
+
+copy_released_files:
+ifeq ($(CFG_MT_SDK_RELEASE),y)
+	mkdir -p $(STATIC_LIB_DIR)
+  ifeq ($(wildcard $(STATIC_LIB_RELEASE_DIR)),$(STATIC_LIB_RELEASE_DIR))
+	-cd $(STATIC_LIB_RELEASE_DIR); cp -arf --parents * $(STATIC_LIB_DIR)
+  endif
+	mkdir -p $(SHARED_LIB_DIR)
+  ifeq ($(wildcard $(SHARED_LIB_RELEASE_DIR)),$(SHARED_LIB_RELEASE_DIR))
+	-cd $(SHARED_LIB_RELEASE_DIR); cp -arf --parents * $(SHARED_LIB_DIR)
+  endif
+	mkdir -p $(INCLUDE_DIR)
+  ifeq ($(wildcard $(INCLUDE_RELEASE_DIR)),$(INCLUDE_RELEASE_DIR))
+	-cd $(INCLUDE_RELEASE_DIR); cp -arf --parents * $(INCLUDE_DIR)
+  endif
+	mkdir -p $(MODULE_DIR)
+  ifeq ($(wildcard $(MODULE_RELEASE_DIR)),$(MODULE_RELEASE_DIR))
+	-cd $(MODULE_RELEASE_DIR); cp -arf --parents * $(MODULE_DIR)
+  endif
+	mkdir -p $(BIN_DIR)
+  ifeq ($(wildcard $(BIN_RELEASE_DIR)),$(BIN_RELEASE_DIR))
+	-cd $(BIN_RELEASE_DIR); cp -arf --parents * $(BIN_DIR)
+  endif
+	mkdir -p $(FW_DIR)
+  ifeq ($(wildcard $(FW_RELEASE_DIR)),$(FW_RELEASE_DIR))
+	-cd $(FW_RELEASE_DIR); cp -arf --parents * $(FW_DIR)
+  endif
+	mkdir -p $(AV_BIN_DIR)
+  ifeq ($(wildcard $(AV_RELEASE_BIN_DIR)),$(AV_RELEASE_BIN_DIR))
+	-cd $(AV_RELEASE_BIN_DIR); cp -arf --parents * $(AV_BIN_DIR)
+  endif
+endif
+
+remove_released_files:
+#all the copyed by copy_released_files will be delete by buildroot_clean
+
+initramfs: libc_mt
+	@make -C ${SDK_DIR}/build/script -f strip.mk initramfs
+
+kernel:
+	@echo $(MT_KERNEL_DIR)
+	@echo $(CFG_MT_CHIP)
+	mkdir -p $(KERNEL_OUTPUT)
+ifeq ($(CFG_MT_SDK_RELEASE),y)
+	mkdir -p $(MT_OUTPUT)/msp/drv 
+	cp  -arf  $(SDK_DIR)/tools/prebuilts/symphony6/release/64/* $(MT_OUTPUT)/msp/drv/
+endif
+ifneq ($(KERNEL_DEFCONFIG_PATH),)
+	@echo -e "use \033[32m $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG) \033[0m"
+	@cp -af $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG) $(KERNEL_OUTPUT)/.config
+else
+	@echo -e "\033[31m ${SDK_DIR}/product/configs/kernel_configs/$(KERNEL_DEFCONFIG) not exist \033[0m"
+	@echo -e "\033[31m $(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG) not exist \033[0m"
+	@exit -1
+endif
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" -j$(j)
+
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+#	$(AR) rcs $(SL_HDR_DIR)libsl_hdr.a $(obj_sl_hdr)
+#	$(AR) rcs $(VO_FW_DIR)libvo_fw.a $(obj_vo_fw)
+#	$(AR) rcs $(VF_MW_DIR)libvf_mw.a $(obj_vf_mw)
+else
+#	make -C $(GENERAL_OUTPUT)/msp/ko/ $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" -j$(j) 
+endif	
+	$(AT)$(MAKE) -f $(CURRENT_MAKEFILES) -r kernel_version
+	$(AT)$(MAKE) -f $(CURRENT_MAKEFILES) -r kernel_install
+	$(AT)$(MAKE) -f $(CURRENT_MAKEFILES) -r uImage
+	$(AT)$(MAKE) -f $(CURRENT_MAKEFILES) -r uImage_install
+
+kernel_version:
+	 make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" mt_kernel_version
+
+uImage:
+ifeq ($(CONFIG_MT_KERNEL_ARCH_MIPS),y)
+	make -C $(MT_KERNEL_DIR) -f arch/$(KERNEL_ARCH)/montage/build_symphony_image.mk
+else ifeq ($(CONFIG_MT_KERNEL_ARCH_ARM),y)
+	make -C $(MT_KERNEL_DIR) -f arch/$(KERNEL_ARCH)/boot/build_mt_image.mk
+else ifeq ($(CONFIG_MT_KERNEL_ARCH_AARCH64),y)
+	#make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" Image.lzma
+	make -C $(MT_KERNEL_DIR) -f arch/$(KERNEL_ARCH)/boot/build_mt_image.mk
+endif
+
+kernel_menuconfig:
+	@echo $(MT_KERNEL_DIR)
+	@echo $(CFG_MT_CHIP)
+	mkdir -p $(KERNEL_OUTPUT)
+ifneq ($(KERNEL_DEFCONFIG_PATH),)
+	@echo -e "use \033[32m $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG) \033[0m"
+	cp -af $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG) $(KERNEL_OUTPUT)/.config
+else
+	@echo -e "\033[31m ${SDK_DIR}/product/$(MFRS)/configs/$(KERNEL_DEFCONFIG) not exist \033[0m"
+	@echo -e "\033[31m $(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG) not exist \033[0m"
+	@exit -1
+
+endif
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" menuconfig
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" syncconfig
+	cp -af $(KERNEL_OUTPUT)/.config $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG)
+
+kernel_syncconfig:
+	@echo $(MT_KERNEL_DIR)
+	@echo $(CFG_MT_CHIP)
+	mkdir -p $(KERNEL_OUTPUT)
+ifneq ($(KERNEL_DEFCONFIG_PATH),)
+	@echo -e "use \033[32m $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG) \033[0m"
+	cp -af $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG) $(KERNEL_OUTPUT)/.config
+else
+	@echo -e "\033[31m ${SDK_DIR}/product/$(MFRS)/configs/$(KERNEL_DEFCONFIG) not exist \033[0m"
+	@echo -e "\033[31m $(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG) not exist \033[0m"
+	@exit -1
+
+endif
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" syncconfig
+	cp -af $(KERNEL_OUTPUT)/.config $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG)
+
+kernel_tinyconfig:
+	@echo $(MT_KERNEL_DIR)
+	@echo $(CFG_MT_CHIP)
+	mkdir -p $(KERNEL_OUTPUT)
+ifneq ($(KERNEL_DEFCONFIG_PATH),)
+	@echo -e "use \033[32m $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG) \033[0m"
+	cp -af $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG) $(KERNEL_OUTPUT)/.config
+else
+	@echo -e "\033[31m ${SDK_DIR}/product/$(MFRS)/configs/$(KERNEL_DEFCONFIG) not exist \033[0m"
+	@echo -e "\033[31m $(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG) not exist \033[0m"
+	@exit -1
+
+endif
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" tinyconfig
+	cp -af $(KERNEL_OUTPUT)/.config $(KERNEL_DEFCONFIG_PATH)/$(KERNEL_DEFCONFIG)
+
+kernel_android:
+	@echo $(MT_KERNEL_DIR)
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" $(KERNEL_DEFCONFIG)
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CFG_ANDROID_PRODUCT=y  ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" dtbs
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CFG_ANDROID_PRODUCT=y  ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" uImage -j$(j)
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CFG_ANDROID_PRODUCT=y  ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" uImage-dtb -j$(j)
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CFG_ANDROID_PRODUCT=y  ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" modules
+
+kernel_emu:
+	@echo $(MT_KERNEL_DIR)
+	make  -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) distclean
+	cp -rf $(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/boot/dts/aria_emu.dtsi $(MT_KERNEL_DIR)/arch/$(KERNEL_ARCH)/boot/dts/aria.dtsi
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" aria_emu_defconfig
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CONFIG_EMU=y  ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" dtbs
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CONFIG_EMU=y  ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" uImage -j$(j)
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CONFIG_EMU=y  ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" uImage-dtb -j$(j)
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CONFIG_EMU=y  ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" modules
+
+kernel_clean:
+	@echo $(MT_KERNEL_DIR)
+ifneq (${BR2_VERSION},)
+	$(MAKE) -C $(MT_KERNEL_DIR) M=$(COMMON_DIR)/drv ARCH=$(KERNEL_ARCH) $(MT_KERNEL_OUTPUT_OPT) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" clean
+	$(MAKE) -C $(MT_KERNEL_DIR) M=$(MSP_DIR)/drv ARCH=$(KERNEL_ARCH) $(MT_KERNEL_OUTPUT_OPT) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" clean
+	make  -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" clean
+	make  -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" distclean
+else
+	rm -rf $(MT_OUTPUT)/common/drv $(MT_OUTPUT)/msp/drv
+	rm -rf $(KERNEL_OUTPUT)
+endif
+
+kernel_install:
+	make -C ${SDK_DIR}/build/script -f kernel-install.mk kernel_install
+	make -C ${SDK_DIR} copy_released_files
+
+kernel_uninstall:
+	make -C ${SDK_DIR}/build/script -f kernel-install.mk kernel_uninstall
+
+uImage_install:
+	make -C ${SDK_DIR}/build/script -f kernel-install.mk uImage_install
+
+uImage_uninstall:
+	make -C ${SDK_DIR}/build/script -f kernel-install.mk uImage_uninstall
+
+kware:
+	@echo KWARE $(KWARE_DIR)
+	make  -C $(KWARE_DIR) -j$(j)
+
+kware_install:
+	@echo KWARE $(KWARE_DIR)
+	make  -C $(KWARE_DIR) install
+
+kware_uninstall:
+	@echo KWARE $(KWARE_DIR)
+	make  -C $(KWARE_DIR) uninstall
+
+kware_clean:
+	@echo KWARE $(KWARE_DIR)
+	make  -C $(KWARE_DIR) clean
+	make  -C $(KWARE_DIR) distclean
+
+libc_mt:
+	make  -C $(COMMON_DIR)/api/libc-mt -j$(j)
+
+libc_mt_install:
+	make  -C $(COMMON_DIR)/api/libc-mt install
+
+libc_mt_uninstall:
+	make  -C $(COMMON_DIR)/api/libc-mt uninstall
+
+libc_mt_clean:
+	make  -C $(COMMON_DIR)/api/libc-mt clean
+	make  -C $(COMMON_DIR)/api/libc-mt distclean
+
+
+ifneq (${BR2_VERSION},)
+
+buildroot_step0:
+	make -C ${SDK_DIR} copy_released_files
+buildroot_step1:
+buildroot_step2:
+buildroot_step999:
+	make -C ${SDK_DIR} copy_released_files
+buildroot_clean: buildroot_mclean
+buildroot_install: buildroot_minstall
+buildroot_uninstall: buildroot_muninstall
+buildroot_menuconfig:
+check_copy_buildroot_step0:
+check_copy_buildroot_step1:
+
+else
+
+buildroot_step0:
+ifeq ($(BUILDROOT_DIR)/.config,$(wildcard $(BUILDROOT_DIR)/.config))
+	@if [ -n "`diff $(BUILDROOT_DIR)/configs/$(CONFIG_MT_BUILDROOT_DEFCONFIG) $(BUILDROOT_DIR)/.config`" ]; then \
+		echo -e "\033[32m update $(BUILDROOT_DIR)/.config, use $(BUILDROOT_DIR)/configs/$(CONFIG_MT_BUILDROOT_DEFCONFIG) \033[0m"; \
+		cp -af $(BUILDROOT_DIR)/configs/$(CONFIG_MT_BUILDROOT_DEFCONFIG) $(BUILDROOT_DIR)/.config; \
+	fi
+else
+	@echo -e "\033[32m create $(BUILDROOT_DIR)/.config, use $(BUILDROOT_DIR)/configs/$(CONFIG_MT_BUILDROOT_DEFCONFIG) \033[0m"
+	cp -af $(BUILDROOT_DIR)/configs/$(CONFIG_MT_BUILDROOT_DEFCONFIG) $(BUILDROOT_DIR)/.config
+endif
+	make -C $(BUILDROOT_DIR) toolchain
+	make -C ${SDK_DIR} copy_released_files
+
+buildroot_step1:
+	make -C $(BUILDROOT_DIR) mt-3rd-lib
+	make -C $(COMPONENT_DIR)/media
+ifeq ($(CONFIG_MT_INSTALL_JEMALLOC),y)
+	if [ -n "`grep "BR2_PACKAGE_MT_JEMALLOC=y" $(BUILDROOT_DIR)/.config`" ]; then \
+		make -C $(COMPONENT_DIR)/jemalloc; \
+	fi
+endif
+	if [ -n "`grep "BR2_PACKAGE_MT_BENTO4=y" $(BUILDROOT_DIR)/.config`" ]; then \
+		make -C $(COMPONENT_DIR)/bento4; \
+	fi
+
+buildroot_step2:
+ifeq ($(CONFIG_MT_LINUX_FUSION),y)
+	make -C $(COMPONENT_DIR)/linux-fusion
+endif
+	if [ -n "`grep "BR2_PACKAGE_MT_DIRECTFB=y" $(BUILDROOT_DIR)/.config`" ]; then \
+		make -C $(COMPONENT_DIR)/directfb -f build_dfb.mk; \
+		make -C $(COMPONENT_DIR)/directfb -f build_dfb_example.mk; \
+	fi
+
+buildroot_step999:
+	make -C $(BUILDROOT_DIR)
+	make -C ${SDK_DIR} copy_lib_to_static
+	make -C ${SDK_DIR} copy_released_files
+
+buildroot_clean: buildroot_mclean
+	make -C $(BUILDROOT_DIR) clean
+	make -C $(BUILDROOT_DIR) distclean
+
+buildroot_install: buildroot_minstall
+
+buildroot_uninstall: buildroot_muninstall
+
+buildroot_menuconfig:
+	@echo -e "use \033[32m  $(BUILDROOT_DIR)/configs/$(CONFIG_MT_BUILDROOT_DEFCONFIG:"%"=%) \033[0m"
+	cp -af $(BUILDROOT_DIR)/configs/$(CONFIG_MT_BUILDROOT_DEFCONFIG:"%"=%) $(BUILDROOT_DIR)/.config
+	make -C $(BUILDROOT_DIR) menuconfig
+	cp -af $(BUILDROOT_DIR)/.config $(BUILDROOT_DIR)/configs/$(CONFIG_MT_BUILDROOT_DEFCONFIG:"%"=%)
+
+check_copy_buildroot_step0:
+	${SDK_DIR}/build/script/release/check_copy_buildroot.sh step0
+
+check_copy_buildroot_step1:
+	${SDK_DIR}/build/script/release/check_copy_buildroot.sh step1
+
+endif
+
+buildroot_mclean:
+ifeq ($(CONFIG_MT_INSTALL_JEMALLOC),y)
+	make -C $(COMPONENT_DIR)/jemalloc clean
+	make -C $(COMPONENT_DIR)/jemalloc distclean
+endif
+	make -C $(COMPONENT_DIR)/bento4 clean
+	make -C $(COMPONENT_DIR)/bento4 distclean
+	make -C $(COMPONENT_DIR)/media clean
+	make -C $(COMPONENT_DIR)/media distclean
+ifeq ($(CONFIG_MT_LINUX_FUSION),y)
+	make -C $(COMPONENT_DIR)/linux-fusion clean
+	make -C $(COMPONENT_DIR)/linux-fusion distclean
+endif
+	make -C $(COMPONENT_DIR)/directfb -f build_dfb.mk clean
+	make -C $(COMPONENT_DIR)/directfb -f build_dfb.mk distclean
+	make -C $(COMPONENT_DIR)/directfb -f build_dfb_example.mk clean
+	make -C $(COMPONENT_DIR)/directfb -f build_dfb_example.mk distclean
+
+buildroot_minstall:
+	make -C $(COMPONENT_DIR)/media install
+ifeq ($(CONFIG_MT_INSTALL_JEMALLOC),y)
+	if [ -n "`grep "BR2_PACKAGE_MT_JEMALLOC=y" $(BUILDROOT_DIR)/.config`" ]; then \
+		make -C $(COMPONENT_DIR)/jemalloc install; \
+	fi
+endif
+	if [ -n "`grep "BR2_PACKAGE_MT_BENTO4=y" $(BUILDROOT_DIR)/.config`" ]; then \
+		make -C $(COMPONENT_DIR)/bento4 install; \
+	fi
+ifeq ($(CONFIG_MT_LINUX_FUSION),y)
+	make -C $(COMPONENT_DIR)/linux-fusion install
+endif
+	if [ -n "`grep "BR2_PACKAGE_MT_DIRECTFB=y" $(BUILDROOT_DIR)/.config`" ]; then \
+		make -C $(COMPONENT_DIR)/directfb -f build_dfb.mk install; \
+		make -C $(COMPONENT_DIR)/directfb -f build_dfb_example.mk install; \
+	fi
+
+buildroot_muninstall:
+ifeq ($(CONFIG_MT_INSTALL_JEMALLOC),y)
+	make -C $(COMPONENT_DIR)/jemalloc uninstall
+endif
+	make -C $(COMPONENT_DIR)/bento4 uninstall
+	make -C $(COMPONENT_DIR)/media uninstall
+ifeq ($(CONFIG_MT_LINUX_FUSION),y)
+	make -C $(COMPONENT_DIR)/linux-fusion uninstall
+endif
+	make -C $(COMPONENT_DIR)/directfb -f build_dfb.mk uninstall
+	make -C $(COMPONENT_DIR)/directfb -f build_dfb_example.mk uninstall
+
+
+
+copy_lib_to_static:
+	-cd $(BUILDROOT_SYSROOT_USR_LIB_DIR); cp -af --parents `find -name "*.a"` $(BUILDROOT_SYSROOT_USR_STATIC_LIB_DIR)
+
+rm_lib_from_static:
+	rm -rf $(BUILDROOT_SYSROOT_USR_STATIC_LIB_MT_DIR)
+	rm -rf $(BUILDROOT_SYSROOT_USR_STATIC_LIB_DIR)
+	rm -rf $(BUILDROOT_SYSROOT_USR_LIB_MT_DIR)
+	rm -rf $(BUILDROOT_SYSROOT_USR_INC_MT_DIR)
+	rm -rf $(BUILDROOT_SYSROOT_USR_BIN_MT_DIR)
+
+comp:
+	@echo comp $(COMPONENT_DIR)
+	make  -C $(COMPONENT_DIR) -j$(j)
+
+comp_install:
+	@echo comp $(COMPONENT_DIR)
+	make  -C $(COMPONENT_DIR) install
+
+comp_uninstall:
+	@echo comp $(COMPONENT_DIR)
+	make  -C $(COMPONENT_DIR) uninstall
+
+comp_clean:
+	@echo comp $(COMPONENT_DIR)
+	make  -C $(COMPONENT_DIR) clean
+	make  -C $(COMPONENT_DIR) distclean
+
+chip-verification:
+	make  -C $(VERIFICATION_DIR) -j$(j)
+
+chip-verification_install:
+	make  -C $(VERIFICATION_DIR) install
+
+chip-verification_uninstall:
+	make  -C $(VERIFICATION_DIR) uninstall
+
+chip-verification_clean:
+	make  -C $(VERIFICATION_DIR) clean
+
+sample:
+	make  -C $(SAMPLE_DIR) -j$(j)
+
+sample_install:
+	make  -C $(SAMPLE_DIR) install
+
+sample_uninstall:
+	make  -C $(SAMPLE_DIR) uninstall
+
+sample_clean:
+	make  -C $(SAMPLE_DIR) clean
+
+wb:
+	make  -C $(WB_DIR) -j$(j)
+
+wb_install:
+	make  -C $(WB_DIR) install
+
+wb_uninstall:
+	make  -C $(WB_DIR) uninstall
+
+wb_clean:
+	make  -C $(WB_DIR) clean
+
+debug_tools:
+ifeq ($(CONFIG_MT_INSTALL_PERF),y)
+	make  -C $(COMPONENT_DIR)/others/build_scripts -f 5.set_env_perf.mk
+	make  -C $(COMPONENT_DIR)/others/build_scripts -f 5.set_env_perf.mk install
+endif
+ifeq ($(CONFIG_MT_INSTALL_GPERFTOOLS),y)
+	make  -C $(COMPONENT_DIR)/gperftools
+endif
+
+debug_tools_install:
+ifeq ($(CONFIG_MT_INSTALL_PERF),y)
+	make  -C $(COMPONENT_DIR)/others/build_scripts -f 5.set_env_perf.mk install
+endif
+ifeq ($(CONFIG_MT_INSTALL_GPERFTOOLS),y)
+	make  -C $(COMPONENT_DIR)/gperftools install
+endif
+
+debug_tools_uninstall:
+ifeq ($(CONFIG_MT_INSTALL_PERF),y)
+	make  -C $(COMPONENT_DIR)/others/build_scripts -f 5.set_env_perf.mk uninstall
+endif
+ifeq ($(CONFIG_MT_INSTALL_GPERFTOOLS),y)
+	make  -C $(COMPONENT_DIR)/gperftools uninstall
+endif
+
+debug_tools_clean:
+ifeq ($(CONFIG_MT_INSTALL_PERF),y)
+	make  -C $(COMPONENT_DIR)/others/build_scripts -f 5.set_env_perf.mk clean
+endif
+ifeq ($(CONFIG_MT_INSTALL_GPERFTOOLS),y)
+	make  -C $(COMPONENT_DIR)/gperftools clean
+endif
+
+common:
+	make  -C $(COMMON_DIR) -j$(j)
+
+common_install:
+	make  -C $(COMMON_DIR) install
+
+common_uninstall:
+	make  -C $(COMMON_DIR) uninstall
+
+common_clean:
+	make  -C $(COMMON_DIR) clean
+
+msp:
+	make  -C $(MSP_DIR) -j$(j)
+
+msp_install:
+	make  -C $(MSP_DIR) install
+
+msp_uninstall:
+	make  -C $(MSP_DIR) uninstall
+
+msp_clean:
+	make  -C $(MSP_DIR) clean
+
+firmware:
+ifeq ($(CFG_MT_CHIP),symphony1)
+	cd $(AV_RTOS_DIR); . ./setenv; make firmware_sym1
+else ifeq ($(CFG_MT_CHIP),symphony2)
+	cd $(AV_RTOS_DIR); . ./setenv; make firmware_sym2
+else ifeq ($(CFG_MT_CHIP),symphony4)
+	cd $(AV_RTOS_DIR); . ./setenv; make firmware_encrypt
+else ifeq ($(CFG_MT_CHIP),symphony6)
+	cd $(AV_RTOS_DIR); . ./setenv; make firmware_sym6_encrypt
+endif
+
+firmware_encrypt:
+	cd $(AV_RTOS_DIR); . ./setenv; make firmware_encrypt
+
+firmware_clean:
+	cd $(AV_RTOS_DIR); . ./setenv; make firmware_clean
+
+firmware_install:
+	cd $(AV_RTOS_DIR); . ./setenv; make firmware_install
+
+firmware_uninstall:
+	cd $(AV_RTOS_DIR); . ./setenv; make firmware_uninstall
+
+mboot:
+	make  -C $(MBOOT_DIR) -j1
+	make  -f $(CURRENT_MAKEFILES) mboot_install
+
+mboot_install:
+	make -C ${SDK_DIR}/build/script -f mboot-install.mk mboot_install
+
+mboot_uninstall:
+	make -C ${SDK_DIR}/build/script -f mboot-install.mk mboot_uninstall
+
+mboot_clean:
+	make  -C $(MBOOT_DIR) clean
+	make  -C $(MBOOT_DIR) uninstall
+
+flash: strip
+	@mkdir -p ${SDK_DIR}/image
+ifneq ($(CFG_MT_CHIP),aria)
+	@rsync -ahL ${SDK_DIR}/product/$(MFRS) ${SDK_DIR}/image
+endif
+	@make -C ${SDK_DIR}/image/$(MFRS) install
+	@make -C ${SDK_DIR}/image/$(MFRS) bin
+	@make -C ${SDK_DIR}/image/$(MFRS) update
+	@sync
+
+flash_uninstall: strip_uninstall remove_released_files
+	@rm -rf ${SDK_DIR}/image/$(MFRS)
+	$(AT)if [ "`find ${SDK_DIR}/image -type f`" = "" -a "`find ${SDK_DIR}/image -type l`" = "" ]; then \
+		rm -rf ${SDK_DIR}/image; \
+	fi
+
+strip: copy_released_files
+	@make -C ${SDK_DIR}/build/script -f strip.mk install
+	@make -C ${SDK_DIR}/build/script -f strip.mk rootfs
+	@make -C ${SDK_DIR}/build/script -f depmod.mk
+	@make -C ${SDK_DIR}/build/script -f firmware.mk
+
+strip_uninstall:
+	@make -C ${SDK_DIR}/build/script -f strip.mk uninstall
+
+mclean: libc_mt_clean msp_clean common_clean sample_clean nagra_modules_clean  buildroot_mclean debug_tools_clean kware_clean comp_clean mboot_clean menuconfig_clean destroy_config_header
+	$(MAKE) -f $(CURRENT_MAKEFILES) kernel_clean
+
+muninstall: libc_mt_uninstall kernel_uninstall uImage_uninstall common_uninstall buildroot_muninstall debug_tools_uninstall msp_uninstall kware_uninstall comp_uninstall sample_uninstall nagra_modules_uninstall  mboot_uninstall
+
+minstall: libc_mt_install kernel_install uImage_install common_install buildroot_minstall debug_tools_install msp_install kware_install comp_install sample_install nagra_modules_install  mboot_install
+
+mall:
+	$(MAKE) -f $(CURRENT_MAKEFILES) syncconfig
+	$(MAKE) -f $(CURRENT_MAKEFILES) check_copy_buildroot_step0
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step0
+	$(MAKE) -f $(CURRENT_MAKEFILES) create_config_header
+	$(MAKE) -f $(CURRENT_MAKEFILES) initramfs
+	$(MAKE) -f $(CURRENT_MAKEFILES) kernel
+	$(MAKE) -f $(CURRENT_MAKEFILES) common
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step1
+ifneq ($(CONFIG_MT_PRODUCT_LOADER),y)
+	$(MAKE) -f $(CURRENT_MAKEFILES) debug_tools
+endif
+	$(MAKE) -f $(CURRENT_MAKEFILES) msp
+ifneq ($(CONFIG_MT_PRODUCT_LOADER),y)
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step2
+endif
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step999
+ifneq ($(CONFIG_MT_PRODUCT_LOADER),y)
+	$(MAKE) -f $(CURRENT_MAKEFILES) kware
+	$(MAKE) -f $(CURRENT_MAKEFILES) comp
+endif
+	$(MAKE) -f $(CURRENT_MAKEFILES) sample
+	$(MAKE) -f $(CURRENT_MAKEFILES) nagra_modules
+ifneq ($(CONFIG_MT_PRODUCT_LOADER),y)
+	$(MAKE) -f $(CURRENT_MAKEFILES) mboot
+endif
+	$(MAKE) -f $(CURRENT_MAKEFILES) check_copy_buildroot_step1
+
+mverification:
+	$(MAKE) -f $(CURRENT_MAKEFILES) syncconfig
+	$(MAKE) -f $(CURRENT_MAKEFILES) check_copy_buildroot_step0
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step0
+	$(MAKE) -f $(CURRENT_MAKEFILES) create_config_header
+	$(MAKE) -f $(CURRENT_MAKEFILES) firmware
+	$(MAKE) -f $(CURRENT_MAKEFILES) initramfs
+	$(MAKE) -f $(CURRENT_MAKEFILES) kernel
+	$(MAKE) -f $(CURRENT_MAKEFILES) common
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step1
+	$(MAKE) -f $(CURRENT_MAKEFILES) msp
+	$(MAKE) -f $(CURRENT_MAKEFILES) chip-verification
+	$(MAKE) -f $(CURRENT_MAKEFILES) check_copy_buildroot_step1
+
+mloader:
+	$(MAKE) -f $(CURRENT_MAKEFILES) syncconfig
+	$(MAKE) -f $(CURRENT_MAKEFILES) check_copy_buildroot_step0
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step0
+	$(MAKE) -f $(CURRENT_MAKEFILES) create_config_header
+	$(MAKE) -f $(CURRENT_MAKEFILES) initramfs
+	$(MAKE) -f $(CURRENT_MAKEFILES) kernel
+	$(MAKE) -f $(CURRENT_MAKEFILES) common
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step1
+	$(MAKE) -f $(CURRENT_MAKEFILES) msp
+	$(MAKE) -f $(CURRENT_MAKEFILES) buildroot_step999
+	$(MAKE) -f $(CURRENT_MAKEFILES) sample
+	$(MAKE) -f $(CURRENT_MAKEFILES) nagra_modules
+	$(MAKE) -f $(CURRENT_MAKEFILES) check_copy_buildroot_step1
+
+menuconfig:
+	@mkdir -p $(MFRS_CFG_MENUCONFIG_PATH)
+	@cp -af ${SDK_DIR}/product/configs/$(MFRS_CFG) $(MFRS_CFG_MENUCONFIG_PATH)/.config
+	@make menuconfig -C ${SDK_DIR}/build/script/menuconfig ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" O=$(MFRS_CFG_MENUCONFIG_PATH) KBUILD_KCONFIG=${SDK_DIR}/Kconfig
+	@cp -af $(MFRS_CFG_MENUCONFIG_PATH)/.config ${SDK_DIR}/product/configs/$(MFRS_CFG)
+	@make syncconfig
+
+menuconfig_clean:
+	@rm -rf $(MFRS_CFG_MENUCONFIG_PATH)
+	@rm -f $(INCLUDE_DIR)/autoconf-old.h
+
+syncconfig:
+	mkdir -p $(MFRS_CFG_MENUCONFIG_PATH)
+	cp -af ${SDK_DIR}/product/configs/$(MFRS_CFG) $(MFRS_CFG_MENUCONFIG_PATH)/.config
+	make syncconfig -C ${SDK_DIR}/build/script/menuconfig ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" O=$(MFRS_CFG_MENUCONFIG_PATH) KBUILD_KCONFIG=${SDK_DIR}/Kconfig
+ifeq ($(MFRS_CFG_MENUCONFIG_PATH)/autoconf-old.h,$(wildcard $(MFRS_CFG_MENUCONFIG_PATH)/autoconf-old.h))
+	@if [ -n "`diff $(MFRS_CFG_MENUCONFIG_PATH)/autoconf-old.h $(MFRS_CFG_MENUCONFIG_PATH)/include/generated/autoconf.h`" ]; then \
+		echo -e "\033[32m update $(MFRS_CFG_MENUCONFIG_PATH)/include/generated/autoconf.h, use $(MFRS_CFG) \033[0m"; \
+		cp -af $(MFRS_CFG_MENUCONFIG_PATH)/include/generated/autoconf.h $(MFRS_CFG_MENUCONFIG_PATH)/autoconf-old.h; \
+	fi
+else
+	@echo -e "\033[32m create $(MFRS_CFG_MENUCONFIG_PATH)/include/generated/autoconf.h, use $(MFRS_CFG) \033[0m"
+	@cp -af $(MFRS_CFG_MENUCONFIG_PATH)/include/generated/autoconf.h $(MFRS_CFG_MENUCONFIG_PATH)/autoconf-old.h
+endif
+	cp -af $(MFRS_CFG_MENUCONFIG_PATH)/.config ${SDK_DIR}/product/configs/$(MFRS_CFG)
+
+create_config_header: buildroot_step0
+	mkdir -p $(INCLUDE_DIR); cd $(INCLUDE_DIR); ln -sf $(MFRS_CFG_MENUCONFIG_PATH)/autoconf-old.h .
+
+destroy_config_header:
+	rm -f $(INCLUDE_DIR)/autoconf-old.h
+
+menuconfig_all:
+	@./build/script/menuconfig_all.sh
+	@make syncconfig
+
+kernel_menuconfig_all:
+	@make kernel_syncconfig
+	@KERNEL_OUTPUT=$(KERNEL_OUTPUT) MT_KERNEL_DIR=$(MT_KERNEL_DIR) ./build/script/kernel_menuconfig_all.sh
+	@make kernel_syncconfig
+
+pkg_la_path_release:
+	${SDK_DIR}/build/script/pkg_la_path.sh release
+
+pkg_la_path_build:
+	${SDK_DIR}/build/script/pkg_la_path.sh build
+
+vfmw:
+ifeq ($(CFG_MT_SDK_RELEASE),y)
+	$(MAKE) -f $(CURRENT_MAKEFILES) vfmw_prepare
+endif
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" M=$(MSP_DIR)/drv/vfmw
+
+vfmw_clean:
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" M=$(MSP_DIR)/drv/vfmw clean
+	make -C $(MSP_DIR)/drv/vfmw binclean
+
+#external release
+vfmw_release:
+	make -C $(MSP_DIR)/drv/vfmw ext_release
+
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+#external unrelease
+vfmw_unrelease:
+	make -C $(MSP_DIR)/drv/vfmw ext_unrelease
+endif
+
+#external prepare
+vfmw_prepare:
+	make -C $(MSP_DIR)/drv/vfmw ext_prepare
+
+vofw:
+ifeq ($(CFG_MT_SDK_RELEASE),y)
+	$(MAKE) -f $(CURRENT_MAKEFILES) vofw_prepare
+endif
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" M=$(MSP_DIR)/drv/vo_fw
+
+vofw_clean:
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" M=$(MSP_DIR)/drv/vo_fw clean
+	make -C $(MSP_DIR)/drv/vo_fw binclean
+
+#external release
+vofw_release:
+	make -C $(MSP_DIR)/drv/vo_fw ext_release
+
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+#external unrelease
+vofw_unrelease:
+	make -C $(MSP_DIR)/drv/vo_fw ext_unrelease
+endif
+
+#external prepare
+vofw_prepare:
+	make -C $(MSP_DIR)/drv/vo_fw ext_prepare
+
+sl_hdr:
+ifeq ($(CFG_MT_SDK_RELEASE),y)
+	$(MAKE) -f $(CURRENT_MAKEFILES) sl_hdr_prepare
+endif
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" M=$(MSP_DIR)/drv/vo_fw/sl_hdr
+
+sl_hdr_clean:
+	make -C $(MT_KERNEL_DIR) $(MT_KERNEL_OUTPUT_OPT) ARCH=$(KERNEL_ARCH) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" M=$(MSP_DIR)/drv/vo_fw/sl_hdr clean
+	make -C $(MSP_DIR)/drv/vo_fw/sl_hdr binclean
+
+#external release
+sl_hdr_release:
+	make -C $(MSP_DIR)/drv/vo_fw/sl_hdr ext_release
+
+ifeq ($(CFG_MT_SDK_RELEASE),n)
+#external unrelease
+sl_hdr_unrelease:
+	make -C $(MSP_DIR)/drv/vo_fw/sl_hdr ext_unrelease
+endif
+
+#external prepare
+sl_hdr_prepare:
+	make -C $(MSP_DIR)/drv/vo_fw/sl_hdr ext_prepare
+
+help:
+	@echo "valid target:"
+	@echo "help"
+	@echo "menuconfig syncconfig menuconfig_clean kernel_menuconfig kernel_syncconfig kernel_tinyconfig buildroot_menuconfig"
+	@echo "menuconfig_all kernel_menuconfig_all"
+	@echo "create_config_header destroy_config_header"
+	@echo "pkg_la_path_release pkg_la_path_build"
+	@echo "all clean uninstall install"
+	@echo "wash"
+	@echo "initramfs"
+	@echo "kernel kernel_clean kernel_install kernel_uninstall"
+	@echo "uImage uImage_install uImage_uninstall"
+	@echo "buildroot_step0 buildroot_step1 buildroot_step2 buildroot_step999 buildroot_clean buildroot_install buildroot_uninstall buildroot_mclean buildroot_minstall buildroot_muninstall"
+	@echo "check_copy_buildroot_step0 check_copy_buildroot_step1"
+	@echo "copy_lib_to_static rm_lib_from_static"
+	@echo "kware kware_clean kware_install kware_uninstall"
+	@echo "libc_mt libc_mt_clean libc_mt_install libc_mt_uninstall"
+	@echo "common common_clean common_install common_uninstall"
+	@echo "msp msp_clean msp_install msp_uninstall"
+	@echo "comp comp_clean comp_install comp_uninstall"
+	@echo "sample sample_clean sample_install sample_uninstall"
+	@echo "wb wb_clean wb_install wb_uninstall"
+	@echo "debug_tools debug_tools_clean debug_tools_install debug_tools_uninstall"
+	@echo "strip strip_uninstall"
+	@echo "flash flash_uninstall"
+	@echo "firmware firmware_encrypt firmware_clean firmware_install firmware_uninstall"
+	@echo "mboot mboot_clean mboot_install mboot_uninstall"
+	@echo "mall mclean muninstall minstall"
+	@echo "pub_uninstall"
+	@echo "copy_released_files remove_released_files"
+	@echo "j=8, you can change thread count, default is count of processor in /proc/cpuinfo"
+
+nagra_modules:
+	make  -C $(SDK_DIR)/nagra_modules
+nagra_modules_install:
+	make  -C $(SDK_DIR)/nagra_modules install
+nagra_modules_uninstall:
+	make  -C $(SDK_DIR)/nagra_modules uninstall
+nagra_modules_clean:
+	make  -C $(SDK_DIR)/nagra_modules clean
+

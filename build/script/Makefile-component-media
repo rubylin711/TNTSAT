@@ -1,0 +1,10 @@
+include ${SDK_DIR}/build/script/base.mk
+
+SUBDIRS = framework/ffmpeg
+
+ifeq ($(CONFIG_MT_GSTPLAYER_ENABLE),y)
+SUBDIRS += framework/gstreamer
+SUBDIRS += gstmtlzplayer
+endif
+
+include ${SDK_DIR}/build/script/Makefile-subdirs.rule

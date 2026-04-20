@@ -1,0 +1,45 @@
+ifeq ($(KERNELRELEASE),)
+include ${SDK_DIR}/build/script/base.mk
+
+.PHONY: all modules modules_install clean install uninstall distclean
+export KO OBJS INCLUDE_PATH
+
+ifeq ($(INSTALL_MOD_DIR),)
+  INSTALL_MOD_DIR_OPT :=
+else
+  INSTALL_MOD_DIR_OPT := INSTALL_MOD_DIR=$(INSTALL_MOD_DIR)
+endif
+
+all: modules
+	$(MAKE) -f $(CURRENT_MAKEFILES) -r install
+
+install: modules_install
+
+uninstall:
+ifeq ($(INSTALL_MOD_DIR),)
+	rm -f $(MODULE_DIR)/lib/modules/$(CFG_MT_KERNEL_VERSION)/updates/$(KO).ko
+else
+	rm -f $(MODULE_DIR)/lib/modules/$(CFG_MT_KERNEL_VERSION)/$(INSTALL_MOD_DIR)/$(KO).ko
+endif
+
+modules:
+	$(MAKE) -C $(MT_KERNEL_DIR) M=$(CURDIR) ARCH=$(KERNEL_ARCH) $(MT_KERNEL_OUTPUT_OPT) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" modules -j$(j)
+
+modules_install:
+	$(MAKE) -C $(MT_KERNEL_DIR) M=$(CURDIR) ARCH=$(KERNEL_ARCH) $(MT_KERNEL_OUTPUT_OPT) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" INSTALL_MOD_PATH=$(MODULE_DIR) $(INSTALL_MOD_DIR_OPT) modules_install
+
+clean:
+	$(MAKE) -C $(MT_KERNEL_DIR) M=$(CURDIR) ARCH=$(KERNEL_ARCH) $(MT_KERNEL_OUTPUT_OPT) CROSS_COMPILE="$(CONFIG_CROSS_COMPILE_KERNEL)" clean
+
+distclean:
+
+else
+
+EXTRA_CFLAGS += $(INCLUDE_PATH)
+
+obj-m := $(KO).o
+
+$(KO)-objs := $(OBJS)
+
+endif
+
