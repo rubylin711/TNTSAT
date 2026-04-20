@@ -1,0 +1,51 @@
+/********************************************************************************************/
+/* Montage Technology (Shanghai) Co., Ltd.                                                  */
+/* Montage Proprietary and Confidential                                                     */
+/* Copyright (c) 2022 Montage Technology Group Limited and its affiliated companies         */
+/********************************************************************************************/
+#ifndef __CC_TIMER_H__
+#define __CC_TIMER_H__
+
+
+#include "mt_type.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+typedef enum tagCCTIMER_ID_E
+{
+    CCTIMER_ID_608ERASE = 0x1,
+    CCTIMER_ID_608XDS,
+    CCTIMER_ID_708DELAY,
+    CCTIMER_ID_708ERASE,
+    CCTIMER_ID_BUTT
+} CCTIMER_ID_E;
+
+typedef enum tagCCTIMER_MODE_E
+{
+    TIMER_MODE_AUTO_RESTART = 0, /* the timer re-arms itself */
+    TIMER_MODE_ONE_SHOOT,        /* the timer start once and then stop */
+    TIMER_MODE_BUTT
+} CCTIMER_MODE_E;
+
+MT_S32 CCTimer_Init(void);
+
+MT_S32 CCTimer_DeInit(void);
+
+MT_S32 CCTimer_Open(CCTIMER_ID_E enTimerID, MT_VOID (*pfnHook)(MT_U32), MT_U32 u32Args);
+
+MT_S32 CCTimer_Close(CCTIMER_ID_E enTimerID);
+
+MT_S32 CCTimer_Start(CCTIMER_ID_E enTimerID, MT_U32 u32Msec, CCTIMER_MODE_E enMode);
+
+MT_S32 CCTimer_Stop(CCTIMER_ID_E enTimerID);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+
+

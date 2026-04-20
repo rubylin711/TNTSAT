@@ -1,0 +1,26 @@
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+
+include ${SDK_DIR}/Android.def
+
+LOCAL_PRELINK_MODULE := false
+
+LOCAL_MODULE := libmt_ttx
+ALL_DEFAULT_INSTALLED_MODULES += $(LOCAL_MODULE)
+
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_CFLAGS := $(CFG_MT_CFLAGS)
+LOCAL_CFLAGS += -DLOG_TAG=\"$(LOCAL_MODULE)\"
+
+CURDIR := .
+LOCAL_SRC_FILES := $(CURDIR)/src/mt_unf_ttx.c
+
+LOCAL_C_INCLUDES := $(COMMON_UNF_INCLUDE)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
+
+LOCAL_SHARED_LIBRARIES := libcutils libutils libdl libmt_common
+
+include $(BUILD_SHARED_LIBRARY)

@@ -1,0 +1,9 @@
+WITH_TCPIP_PROTOCOL=y
+#EXT_MEM_POOL_ON=y
+#ENABLE_OPEN_HTTPS=y
+#ENABLE_LIVE555_STREAM=y
+INCLUDE_PATH = -I${SDK_DIR}/common/inc -I$(KWARE_DIR)/media/utils -I$(KWARE_DIR)/media/mtlz_avfilter
+CFG_MT_KWARE_CFLAGS += -Werror-implicit-function-declaration
+ifeq ($(CONFIG_MT_MONTAGE_PLATFORM),y)
+CFG_MT_KWARE_CFLAGS += -DFP_USE_SYSTEM_MEM
+endif

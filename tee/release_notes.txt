@@ -1,0 +1,91 @@
+2024-04-30
+----------
+    - arm64:
+        - teeos:Support core1 hotplug (CommitID:7475689263)
+        - tee client:With debug info on (CommitID:2549d6f022)
+        - Remove unused images and TAs
+
+2024-05-17
+----------
+    - arm64:
+        - teeos:Support getting chip_id (CommitID:6646f6d426)
+                Support MONTAGE_TA & PRIVILEGED_TA
+                Support loading avcpu firmware
+                Support tee-dts
+        - tee client: Support MONTAGE_TA (CommitID:f8558ace20)
+
+2024-07-11
+----------
+    - arm64:
+        - teeos:Fix STR 2nd suspend block issue(CommitID:05afeb3e47)
+
+2024-07-29
+----------
+    - arm32:
+        - Add arm32 version.
+
+2024-08-06
+----------
+    - Update teeos to support core1 boot with REE at AArch32.
+
+2024-09-14
+----------
+    - Update teeos to fix bug #28356:
+        recovery ram should be cleared when resume finished(CommitID:e7a64c60f6).
+
+2024-09-23
+----------
+    - teeos:
+        sync commit: 32ea359e144b069f2a05354a7a16d8a61558b5da.
+        update smp configuration, pass dvb/ott/pvr test.
+
+2024-09-24
+----------
+    - Update teeos to fix bug #28356:
+        Only clear part of the recovery ram resume finished(CommitID:c4d4d0093e).
+
+2024-11-04
+----------
+    - CommitID:6027deafdb
+    
+2024-11-26
+----------
+    - teeos:
+        commit: a8c4b58f2.
+        add pm_resume feature in bl32.
+
+2025-01-10
+----------
+    - teeos:
+        commit: 52cd90d64
+        fix memory leak issue about tee core heap.
+
+2025-03-06
+----------
+    - teeos:
+        commit: ad774c9e3
+        no need to config axi bus clock.
+        
+2025-03-18
+----------
+    - teeos:
+        commit: c4ffe2ce0f365
+        add ostensive api for standby trace.
+    - bl31:
+        commit: df7cb73a87
+        support standby mode through psci_system_off.
+
+2025-04-03
+----------
+    - teeos:
+        commit: 219e1d046
+        register opc pm callback.
+        
+2025-04-22
+----------
+    - teeos:
+        commit: 747f43723f18
+				teeos: update for riscure review v1.1
+				1.Add smp_bind_user in smp.c, ensure that only the TA that is bound to this slot can perform subsequent configuration operations on it.
+				2.Enable CFG_TA_VER_CHECK, verify this function on IRD board.
+				3.Fix other issue, such as [Bound Checking] [Code Quality] [Permission Checking] [Overflow] and so on.

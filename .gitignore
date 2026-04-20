@@ -1,33 +1,168 @@
-*.o
-*.out
-*.log
-dist/
-node_modules/
-.env
-*.exe
-*.a
-*.so
-buildroot/
-*.img
-*.bin
-*.o
-*.a
-*.so
-*.log
-*.tar.gz
+# =========================================================
+# TNTSAT / Sym6 / DDK / Buildroot project .gitignore
+# =========================================================
+
+# -----------------------------
+# OS / Editor
+# -----------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
 *.tmp
-tools/
-*.tar.xz
-image/
-docs/
-external-binary/
-kernel/
-loader/
-mboot/
+*.temp
+*.bak
+
+.vscode/
+.idea/
+*.iml
+
+# -----------------------------
+# Logs / runtime dump
+# -----------------------------
+*.log
+*.err
+*.out
+*.core
+core
+core.*
+*.stackdump
+
+# -----------------------------
+# Archives / package files
+# -----------------------------
+*.tar
+*.tar.gz
+*.tgz
+*.tbz2
+*.zip
+*.7z
+*.rar
+
+# -----------------------------
+# Generic build outputs
+# -----------------------------
+*.o
+*.oo
+*.a
+*.so
+*.so.*
+*.lo
+*.la
+*.d
+*.cmd
+*.mod
+*.mod.c
+*.ko
+*.elf
+*.axf
+*.hex
+*.map
+*.lst
+*.sym
+
+# Executables / generated binaries
+*.bin
+*.img
+*.ubifs
+*.ubi
+*.squashfs
+*.cpio
+*.cpio.gz
+*.gz
+*.xz
+*.bz2
+
+# -----------------------------
+# Generic build directories
+# -----------------------------
+build/
+Build/
+output/
 out/
-pub/
-rootfs/
-*.debug
-kware/
-tee/ 
-tee_bsp/
+dist/
+bin/
+obj/
+objs/
+release/
+debug/
+tmp/
+temp/
+
+# Recursive generated directories inside submodules
+**/build/
+**/Build/
+**/output/
+**/out/
+**/tmp/
+**/temp/
+
+# -----------------------------
+# Buildroot
+# -----------------------------
+buildroot/output/
+buildroot/dl/
+buildroot/.config
+buildroot/.config.old
+buildroot/.stamp_*
+buildroot/.pkg-*
+
+# -----------------------------
+# Autotools / CMake generated
+# -----------------------------
+configure
+config.log
+config.status
+autom4te.cache/
+aclocal.m4
+m4/
+libtool
+
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+
+# -----------------------------
+# Python / test cache
+# -----------------------------
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# -----------------------------
+# Specific known generated paths in this project
+# -----------------------------
+component/sysbench/sysbench-1.0.20/third_party/concurrency_kit/ck/build/
+nagra_modules/nagra_dal/build/
+
+# -----------------------------
+# Security / certificates / keys
+# 若這些檔案是正式版本控內容，請刪除對應規則
+# -----------------------------
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# -----------------------------
+# Download / package cache
+# 視專案實際需求保留或移除
+# -----------------------------
+downloads/
+cache/
+
+# -----------------------------
+# Keep source directories tracked
+# 不要忽略真正的原始碼
+# -----------------------------
+!kware/
+!tee/
+!tee_bsp/
+!nagra_modules/

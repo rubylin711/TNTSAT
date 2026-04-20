@@ -1,0 +1,13 @@
+Nagra TA Information
+-------------------------------
+Version:	
+Variant:	
+TA build tool ID:	
+Signing tool ID:	
+Production TA Segment ID :	
+Security Level : 
+Note: OEM shall refer to SoC Vendor documentation to know how to segment device using this value. 
+TA won¡¯t boot if segment is not correct or properly programmed.
+Test TA Segment ID : 
+Note: OEM shall refer to SoC Vendor documentation to know how to segment device using this value. 
+TA won¡¯t boot if segment is not correct or properly programmed.
