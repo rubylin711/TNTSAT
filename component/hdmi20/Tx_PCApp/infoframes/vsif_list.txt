@@ -1,6 +1,0 @@
-1920x2205p24_RGB_12bit_3D
-3D 1080i60 Side_half
-3D 1080i50 Side_half
-3D 1080p24 Top&Bot
-3D 720p60  Top&Bot
-3D 720p50  Top&Bot

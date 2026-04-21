@@ -1,1 +1,0 @@
-savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/usb_rtl8188eu/rtl8188eu/Module.symvers :=  scripts/mod/modpost -M        -o /home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/usb_rtl8188eu/rtl8188eu/Module.symvers -T /home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/usb_rtl8188eu/rtl8188eu/modules.order -i Module.symvers -e 

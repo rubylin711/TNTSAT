@@ -1,5 +1,0 @@
-1. please modify the KLIB & KLIB_BUILD definition in the Makefile, if needed. 
-2. if script can't get the correct OS kernel version, please set the "kver" in the Makefile.
-3. check the lynx folder link : drivers/net/wireless/lynx
-4. if .config is not existing, make menuconfig to generate that.
-5. install the realated kernel module : install_driver.sh

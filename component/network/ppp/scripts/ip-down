@@ -1,4 +1,0 @@
-#!/bin/sh
-
-mv /etc/resolv.conf.orig /etc/resolv.conf
-rm /var/run/ppp0-ok

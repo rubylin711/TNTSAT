@@ -1,7 +1,0 @@
-dirs = \
-  Compatibility \
-  DRMimpl \
-  HALimpl \
-  PALimpl \
-  SmoothAdapter \
-  TestFramework \

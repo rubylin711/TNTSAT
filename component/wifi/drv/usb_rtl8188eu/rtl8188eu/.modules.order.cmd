@@ -1,1 +1,0 @@
-savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/usb_rtl8188eu/rtl8188eu/modules.order := {   echo /home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/usb_rtl8188eu/rtl8188eu/8188eu.o; :; } > /home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/usb_rtl8188eu/rtl8188eu/modules.order

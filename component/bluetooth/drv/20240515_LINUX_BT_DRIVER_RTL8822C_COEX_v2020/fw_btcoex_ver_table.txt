@@ -1,6 +1,0 @@
-==== BT USB CHIPS ====
-rtl8822cu_fw		 BTCOEX_20210106-2020	FW_VER= 0xd9c79f2b
- 
-==== BT UART CHIPS ====
-rtl8822cs_fw		 BTCOEX_20210106-2020	FW_VER= 0xddc79f2c
- 

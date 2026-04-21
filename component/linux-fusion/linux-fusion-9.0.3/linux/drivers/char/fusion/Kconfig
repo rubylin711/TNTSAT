@@ -1,4 +1,0 @@
-config FUSION_DEVICE
-	tristate "Fusion Kernel Device"
-	---help---
-	  Fusion is the IPC API used by DirectFB and FusionSound.

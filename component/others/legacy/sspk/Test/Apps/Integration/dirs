@@ -1,5 +1,0 @@
-dirs = \
-  SmoothTestLib	\
-  SSPKIntegrationTests	\
-  SSPKStressTests \
-  SSPKHeuristicsTests \

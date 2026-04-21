@@ -1,8 +1,0 @@
-#*****************************************************************
-#
-# Copyright (C) Microsoft Corporation. All rights reserved.
-#
-#*****************************************************************
-
-include $(MSPK_ROOT)/Platform/$(MSPK_PLATFORM)/Build/MspkMakeApp.mk
-

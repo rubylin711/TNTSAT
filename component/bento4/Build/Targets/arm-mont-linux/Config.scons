@@ -1,5 +1,0 @@
-LoadTool('gcc-generic', env, gcc_cross_prefix='/usr/local/linaro/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf/bin/arm-linux-gnueabihf',
-          gcc_extra_options='-march=armv7-a -mtune=cortex-a7 -mabi=aapcs-linux -mfloat-abi=hard -mfpu=neon-vfpv4 -mthumb-interwork')
-env.AppendUnique(CPPDEFINES = [('AP4_PLATFORM_BYTE_ORDER', 'AP4_PLATFORM_BYTE_ORDER_LITTLE_ENDIAN')])
-env.AppendUnique(CXXFLAGS = ['-fPIC', '-I../output/arm_output/drm'])
-env.AppendUnique(LINKFLAGS = ['-fPIC'])

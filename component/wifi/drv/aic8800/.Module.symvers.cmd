@@ -1,1 +1,0 @@
-savedcmd_/home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/aic8800/Module.symvers :=  scripts/mod/modpost -M        -o /home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/aic8800/Module.symvers -T /home/ruby_lin/TNTSAT/Sym6/ddk/component/wifi/drv/aic8800/modules.order -i Module.symvers -e 

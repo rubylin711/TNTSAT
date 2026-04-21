@@ -1,4 +1,0 @@
-/home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/20240515_LINUX_BT_DRIVER_RTL8822C_COEX_v2020/uart/bluetooth_uart_driver/hci_ldisc.o
-/home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/20240515_LINUX_BT_DRIVER_RTL8822C_COEX_v2020/uart/bluetooth_uart_driver/hci_h4.o
-/home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/20240515_LINUX_BT_DRIVER_RTL8822C_COEX_v2020/uart/bluetooth_uart_driver/hci_rtk_h5.o
-/home/ruby_lin/TNTSAT/Sym6/ddk/component/bluetooth/drv/20240515_LINUX_BT_DRIVER_RTL8822C_COEX_v2020/uart/bluetooth_uart_driver/rtk_coex.o

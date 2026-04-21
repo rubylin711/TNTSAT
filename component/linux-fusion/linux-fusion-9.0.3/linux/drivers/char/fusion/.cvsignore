@@ -1,6 +1,0 @@
-*.o.flags
-*.cmd
-Makefile
-fusion.ko
-fusion.mod.c
-.tmp_versions
